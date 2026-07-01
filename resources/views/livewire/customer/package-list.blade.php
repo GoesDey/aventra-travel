@@ -4,7 +4,7 @@
         <div class="bg-surface-white rounded-xl shadow-[0_4px_30px_rgba(0,35,102,0.05)] p-6 sticky top-[120px] overflow-hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="font-headline-md text-[20px] leading-7 text-oceanic-deep">Filters</h2>
-                <button wire:click="$reset" class="text-tropical-teal font-label-bold text-sm hover:underline">Clear All</button>
+                <button wire:click="resetFilters" class="text-tropical-teal font-label-bold text-sm hover:underline">Clear All</button>
             </div>
             
             <!-- Price Range -->
@@ -13,11 +13,11 @@
                 <div class="flex flex-col gap-3">
                     <div>
                         <label class="block font-caption text-outline mb-1">Min Price</label>
-                        <input wire:model.live.debounce.500ms="minPrice" type="number" class="w-full rounded-lg border-outline-variant/50 focus:border-tropical-teal focus:ring-tropical-teal text-sm text-on-surface p-2">
+                        <input wire:model.live.debounce.500ms="minPrice" type="number" class="w-full rounded-lg border-2 border-outline-variant/50 focus:border-tropical-teal focus:ring-tropical-teal text-sm text-on-surface p-2">
                     </div>
                     <div>
                         <label class="block font-caption text-outline mb-1">Max Price</label>
-                        <input wire:model.live.debounce.500ms="maxPrice" type="number" class="w-full rounded-lg border-outline-variant/50 focus:border-tropical-teal focus:ring-tropical-teal text-sm text-on-surface p-2">
+                        <input wire:model.live.debounce.500ms="maxPrice" type="number" class="w-full rounded-lg border-2 border-outline-variant/50 focus:border-tropical-teal focus:ring-tropical-teal text-sm text-on-surface p-2">
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 <h3 class="font-label-bold text-on-surface mb-3">Minimum Rating</h3>
                 <div class="flex items-center gap-1">
                     @for($i = 1; $i <= 5; $i++)
-                        <button wire:click="$set('minRating', {{ $i }})" class="{{ $minRating >= $i ? 'text-soft-coral' : 'text-outline-variant hover:text-soft-coral' }} transition-colors">
+                        <button wire:click="$set('minRating', {{ $i }})" class="{{ $minRating >= $i ? 'text-yellow-500' : 'text-outline-variant hover:text-soft-coral' }} transition-colors ">
                             <span class="material-symbols-outlined" {!! $minRating >= $i ? 'style="font-variation-settings: \'FILL\' 1;"' : '' !!}>star</span>
                         </button>
                     @endfor
@@ -86,7 +86,7 @@
                 <span class="material-symbols-outlined text-6xl mb-4 text-outline/50">search_off</span>
                 <h2 class="font-headline-md text-on-surface mb-2">No results found</h2>
                 <p class="font-body-md text-outline max-w-md mx-auto mb-6">Try adjusting your filters or modifying your search terms.</p>
-                <button wire:click="$reset" class="bg-tropical-teal text-surface-white px-6 py-2 rounded-full font-label-bold hover:bg-oceanic-deep transition-colors shadow-sm">Clear Search</button>
+                <button wire:click="resetFilters" class="bg-tropical-teal text-surface-white px-6 py-2 rounded-full font-label-bold hover:bg-oceanic-deep transition-colors shadow-sm">Clear Search</button>
             </div>
         @else
             <!-- Grid Results -->
@@ -101,8 +101,8 @@
                                     <div class="absolute inset-0 bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-700">No Image</div>
                                 @endif
                                 <div class="absolute top-4 right-4 bg-sand-beige text-on-tertiary-fixed font-caption px-2 py-1 rounded flex items-center gap-1 shadow-sm">
-                                    <span class="material-symbols-outlined text-[14px] text-soft-coral" style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="font-bold">{{ number_format($package->avg_rating, 1) }}</span>
+                                    <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="font-bold">{{ number_format($package->avg_rating, 0) }}</span>
                                 </div>
                             </div>
                         </a>

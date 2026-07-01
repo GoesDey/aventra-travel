@@ -82,8 +82,8 @@
                             <div class="w-full h-full bg-primary-container flex items-center justify-center text-white">No Image</div>
                         @endif
                         <div class="absolute top-4 right-4 bg-surface-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center space-x-1 shadow-sm">
-                            <span class="material-symbols-outlined text-soft-coral text-sm" data-weight="fill">star</span>
-                            <span class="font-caption text-caption text-on-surface">{{ number_format($package->avg_rating, 1) }}</span>
+                            <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-caption text-caption text-on-surface">{{ number_format($package->avg_rating, 0) }}</span>
                         </div>
                     </div>
                     <div class="p-6 flex-grow flex flex-col">

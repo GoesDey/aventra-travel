@@ -37,7 +37,7 @@
                     <span class="text-on-surface-variant">{{ $package->reviews->count() }} reviews</span>
                     <div class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded flex items-center space-x-1">
                         <span class="material-symbols-outlined fill text-sm">star</span>
-                        <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 1) }}</span>
+                        <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 0) }}</span>
                     </div>
                 </div>
             </div>

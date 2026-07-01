@@ -20,7 +20,7 @@
             <div class="flex items-center justify-center gap-4 mb-4 py-4 border border-outline-variant/20 rounded-xl bg-surface-container-low/50">
                 @for($i = 1; $i <= 5; $i++)
                     <button type="button" wire:click="$set('rating', {{ $i }})" class="focus:outline-none transition-transform hover:scale-110">
-                        <span class="material-symbols-outlined text-4xl {{ $rating >= $i ? 'text-soft-coral fill' : 'text-outline-variant/50' }}">star</span>
+                        <span class="material-symbols-outlined text-4xl {{ $rating >= $i ? 'text-yellow-500' : 'text-outline' }}" {!! $rating >= $i ? 'style="font-variation-settings: \'FILL\' 1;"' : '' !!}>star</span>
                     </button>
                 @endfor
             </div>

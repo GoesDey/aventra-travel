@@ -7,9 +7,9 @@
                 <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-oceanic-deep">
                     <span class="material-symbols-outlined fill">account_balance_wallet</span>
                 </div>
-                <div class="px-2 py-1 rounded-md bg-green-50 text-green-600 text-xs font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                    +12.5%
+                <div class="px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 {{ $revenueGrowth >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }}">
+                    <span class="material-symbols-outlined text-[14px]">{{ $revenueGrowth >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                    {{ $revenueGrowth > 0 ? '+' : '' }}{{ $revenueGrowth }}%
                 </div>
             </div>
             <div>
@@ -24,9 +24,9 @@
                 <div class="w-12 h-12 rounded-xl bg-tropical-teal/10 flex items-center justify-center text-tropical-teal">
                     <span class="material-symbols-outlined fill">confirmation_number</span>
                 </div>
-                <div class="px-2 py-1 rounded-md bg-green-50 text-green-600 text-xs font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                    +8.2%
+                <div class="px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 {{ $activeBookingsGrowth >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }}">
+                    <span class="material-symbols-outlined text-[14px]">{{ $activeBookingsGrowth >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                    {{ $activeBookingsGrowth > 0 ? '+' : '' }}{{ $activeBookingsGrowth }}%
                 </div>
             </div>
             <div>
@@ -41,9 +41,9 @@
                 <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
                     <span class="material-symbols-outlined fill">monetization_on</span>
                 </div>
-                <div class="px-2 py-1 rounded-md bg-gray-50 text-gray-600 text-xs font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">trending_flat</span>
-                    0.0%
+                <div class="px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 {{ $avgBookingValueGrowth > 0 ? 'bg-green-50 text-green-600' : ($avgBookingValueGrowth < 0 ? 'bg-red-50 text-red-600' : 'bg-gray-50 text-gray-600') }}">
+                    <span class="material-symbols-outlined text-[14px]">{{ $avgBookingValueGrowth > 0 ? 'trending_up' : ($avgBookingValueGrowth < 0 ? 'trending_down' : 'trending_flat') }}</span>
+                    {{ $avgBookingValueGrowth > 0 ? '+' : '' }}{{ $avgBookingValueGrowth }}%
                 </div>
             </div>
             <div>
