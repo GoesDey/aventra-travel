@@ -63,14 +63,14 @@
                     <h3 class="font-headline text-lg text-oceanic-deep">Revenue Trend</h3>
                     <p class="text-xs text-outline">Monthly breakdown for current year</p>
                 </div>
-                <select class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-3 py-1.5 text-sm text-on-surface focus:ring-oceanic-deep focus:border-oceanic-deep">
-                    <option>2024</option>
-                    <option>2025</option>
-                    <option>2026</option>
+                <select wire:model.live="selectedYear" class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-3 py-1.5 text-sm text-on-surface focus:ring-oceanic-deep focus:border-oceanic-deep">
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
                 </select>
             </div>
             
-            <div class="h-72 w-full" x-data="{ monthlyData: @js($monthlyRevenue) }" x-init="
+            <div wire:key="chart-{{ $selectedYear }}" class="h-72 w-full" x-data="{ monthlyData: @js($monthlyRevenue) }" x-init="
                 const ctx = $refs.canvas.getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',

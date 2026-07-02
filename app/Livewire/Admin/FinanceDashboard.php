@@ -18,15 +18,33 @@ class FinanceDashboard extends Component
     public $avgBookingValueGrowth = 0;
     public $refunds = 0;
 
+    public $selectedYear;
+    public $availableYears = [];
+
     public $monthlyRevenue = [];
     public $packagePerformance = [];
     public $recentTransactions = [];
 
     public function mount()
     {
+        $this->selectedYear = Carbon::now()->year;
+        $this->availableYears = Booking::selectRaw('YEAR(created_at) as year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
+        if (empty($this->availableYears)) {
+            $this->availableYears = [$this->selectedYear];
+        }
+        if (!in_array($this->selectedYear, $this->availableYears)) {
+            $this->availableYears[] = $this->selectedYear;
+            rsort($this->availableYears);
+        }
+
         $this->loadMetrics();
         $this->loadChartData();
         $this->loadRecentTransactions();
+    }
+
+    public function updatedSelectedYear()
+    {
+        $this->loadChartData();
     }
 
     private function loadMetrics()
@@ -73,8 +91,8 @@ class FinanceDashboard extends Component
 
     private function loadChartData()
     {
-        // Monthly Revenue Trend for current year
-        $currentYear = Carbon::now()->year;
+        // Monthly Revenue Trend for selected year
+        $currentYear = $this->selectedYear ?? Carbon::now()->year;
         
         $monthlyData = Booking::whereIn('status', ['completed', 'confirmed'])
             ->whereYear('created_at', $currentYear)
