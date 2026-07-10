@@ -49,6 +49,7 @@ class ReviewModal extends Component
         $this->rating = 5;
         $this->dispatch('reviewSubmitted');
         session()->flash('success', 'Terima kasih atas ulasan Anda!');
+        $this->redirect(request()->header('Referer'));
     }
 
     private function updatePackageRating(Booking $booking): void

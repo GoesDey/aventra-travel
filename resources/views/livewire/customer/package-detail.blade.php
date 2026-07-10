@@ -37,7 +37,7 @@
                     <span class="text-on-surface-variant">{{ $package->reviews->count() }} reviews</span>
                     <div class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded flex items-center space-x-1">
                         <span class="material-symbols-outlined fill text-sm">star</span>
-                        <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 1) }}</span>
+                        <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 0) }}</span>
                     </div>
                 </div>
             </div>
@@ -95,7 +95,10 @@
                                 </div>
                                 <div class="flex space-x-1 mb-3 text-tertiary-container">
                                     @for($i=1; $i<=5; $i++)
-                                        <span class="material-symbols-outlined text-sm {{ $i <= $review->rating ? 'fill' : 'opacity-30' }}">star</span>
+                                        <span class="material-symbols-outlined text-sm {{ $i <= $review->rating ? 'text-yellow-500' : 'opacity-30' }}"
+                                            {!! $i <= $review->rating ? 'style="font-variation-settings: \'FILL\' 1;"' : '' !!}>
+                                            star
+                                        </span>
                                     @endfor
                                 </div>
                                 <p class="font-body-md text-sm text-on-surface-variant line-clamp-3">

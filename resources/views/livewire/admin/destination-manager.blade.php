@@ -123,7 +123,7 @@
                     </div>
                     <div>
                         <label class="block font-label-bold text-sm text-oceanic-deep mb-1.5">Destination Image</label>
-                        <input wire:model="image" type="file" class="block w-full text-sm text-outline file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-label-bold file:bg-surface-container-low file:text-oceanic-deep hover:file:bg-surface-container transition-all cursor-pointer">
+                        <input id="dest-image-{{ $iteration }}" wire:model="image" type="file" class="block w-full text-sm text-outline file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-label-bold file:bg-surface-container-low file:text-oceanic-deep hover:file:bg-surface-container transition-all cursor-pointer">
                         @error('image') <span class="text-error font-caption text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
@@ -133,9 +133,10 @@
                     <button type="button" wire:click="$set('showModal', false)" class="px-6 py-2.5 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low hover:text-oceanic-deep font-label-bold text-sm transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2.5 rounded-full bg-tropical-teal hover:bg-oceanic-deep text-surface-white font-label-bold text-sm transition-colors shadow-sm flex items-center gap-2">
+                    <button type="submit" wire:loading.attr="disabled" wire:target="image, save" class="px-6 py-2.5 rounded-full bg-tropical-teal hover:bg-oceanic-deep text-surface-white font-label-bold text-sm transition-colors shadow-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
                         <span class="material-symbols-outlined text-[18px]">save</span>
-                        Save Destination
+                        <span wire:loading.remove wire:target="image">Save Destination</span>
+                        <span wire:loading wire:target="image">Uploading...</span>
                     </button>
                 </div>
             </form>

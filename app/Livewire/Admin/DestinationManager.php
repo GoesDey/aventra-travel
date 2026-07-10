@@ -12,6 +12,8 @@ class DestinationManager extends Component
 {
     use WithPagination, WithFileUploads;
 
+    public int $iteration = 0;
+
     public string $search = '';
     public bool $showModal = false;
     public ?Destination $editing = null;
@@ -34,11 +36,14 @@ class DestinationManager extends Component
     public function openCreate(): void
     {
         $this->reset(['name', 'description', 'location', 'image', 'editing']);
+        $this->iteration++;
         $this->showModal = true;
     }
 
     public function openEdit(Destination $destination): void
     {
+        $this->reset('image');
+        $this->iteration++;
         $this->editing = $destination;
         $this->name = $destination->name;
         $this->description = $destination->description;
@@ -50,7 +55,7 @@ class DestinationManager extends Component
     {
         $validated = $this->validate();
         $validated['slug'] = Str::slug($validated['name']);
-        dd($validated);
+         
         if ($this->image) {
             $validated['image_path'] = $this->image->store('destinations', 'public');
         }

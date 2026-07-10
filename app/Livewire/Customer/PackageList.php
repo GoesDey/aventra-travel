@@ -36,6 +36,12 @@ class PackageList extends Component
         $this->resetPage();
     }
 
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'minPrice', 'maxPrice', 'minRating', 'durationFilter']);
+        $this->resetPage();
+    }
+
     public function render()
     {
         $minPrice = is_numeric($this->minPrice) ? (int) $this->minPrice : 0;
@@ -48,7 +54,7 @@ class PackageList extends Component
             ->whereBetween('price_per_pax', [$minPrice, $maxPrice])
             ->where('avg_rating', '>=', $minRating)
             ->when($this->durationFilter, fn ($q) => $q->where('duration_days', (int) $this->durationFilter))
-            ->paginate(9);
+            ->paginate(6);
 
         return view('livewire.customer.package-list', compact('packages'));
     }

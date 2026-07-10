@@ -71,7 +71,7 @@
         @endphp
 
         <!-- Top Navigation Bar -->
-        <header class="h-20 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between px-8 flex-shrink-0 z-10 shadow-sm sticky top-0">
+        <header class="h-[84.8px] py-6 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between px-8 flex-shrink-0 z-10 shadow-sm sticky top-0">
             <div class="flex items-center gap-4">
                 <button class="md:hidden text-on-surface-variant">
                     <span class="material-symbols-outlined">menu</span>
@@ -80,12 +80,6 @@
             </div>
             
             <div class="flex items-center gap-6">
-                <!-- Notifications -->
-                <button class="relative p-2 text-on-surface-variant hover:text-oceanic-deep hover:bg-surface-container-low rounded-full transition-colors">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-soft-coral rounded-full border-2 border-surface-white"></span>
-                </button>
-                
                 <!-- Admin Profile -->
                 <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-6 group">
                     <div class="w-10 h-10 rounded-full bg-oceanic-deep text-surface-white flex items-center justify-center font-bold shadow-sm">
