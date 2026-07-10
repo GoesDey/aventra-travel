@@ -13,6 +13,8 @@ class PackageManager extends Component
 {
     use WithPagination, WithFileUploads;
 
+    public int $iteration = 0;
+
     public string $search = '';
     public bool $showModal = false;
     public ?Package $editing = null;
@@ -43,6 +45,7 @@ class PackageManager extends Component
     public function openCreate(): void
     {
         $this->reset(['name', 'description', 'price_per_pax', 'duration_days', 'max_guests', 'is_active', 'image', 'selectedDestinations', 'editing']);
+        $this->iteration++;
         $this->duration_days = 1;
         $this->max_guests = 10;
         $this->is_active = true;
@@ -51,6 +54,8 @@ class PackageManager extends Component
 
     public function openEdit(Package $package): void
     {
+        $this->reset('image');
+        $this->iteration++;
         $this->editing = $package;
         $this->name = $package->name;
         $this->description = $package->description;

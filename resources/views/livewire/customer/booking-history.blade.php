@@ -65,8 +65,7 @@
                         </button>
                     @elseif($booking->review)
                         <div class="px-6 py-2.5 bg-surface-container-low border border-tropical-teal/30 text-tropical-teal rounded-full font-label-bold text-sm text-center flex items-center gap-1 justify-center">
-                            <span class="material-symbols-outlined text-[16px] fill">check_circle</span> Reviewed
-                        </div>
+                            <span class="  
                     @endif
                 </div>
             </div>
