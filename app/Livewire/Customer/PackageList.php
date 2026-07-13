@@ -12,7 +12,7 @@ class PackageList extends Component
 
     public $search = '';
     public $minPrice = 0;
-    public $maxPrice = 5000000;
+    public $maxPrice = '';
     public $minRating = 0;
     public $durationFilter = '';
 
