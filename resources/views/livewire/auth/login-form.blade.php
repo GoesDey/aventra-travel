@@ -62,9 +62,9 @@
                 Sign In
             </button>
         </form>
-        
+
         <!-- Sign Up Link -->
-        <p class="text-center mt-8 font-body-md text-body-md text-on-surface-variant">
+        <p class="text-center mt-6 font-body-md text-body-md text-on-surface-variant">
             Don't have an account? 
             <a class="text-tropical-teal font-label-bold text-label-bold hover:underline underline-offset-4 ml-1" href="{{ route('register') }}">Sign up</a>
         </p>

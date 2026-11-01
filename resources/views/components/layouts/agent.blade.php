@@ -33,13 +33,18 @@
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
             <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">Menu Agen</div>
             
+            <a href="{{ route('agent.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('agent.dashboard') ? 'bg-tropical-teal/10 text-tropical-teal font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
+                <span class="material-symbols-outlined {{ request()->routeIs('agent.dashboard') ? 'fill' : '' }}">dashboard</span>
+                <span class="font-label-bold text-sm">Dashboard</span>
+            </a>
+
             <a href="{{ route('agent.packages.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('agent.packages.*') ? 'bg-tropical-teal/10 text-tropical-teal font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('agent.packages.*') ? 'fill' : '' }}">tour</span>
                 <span class="font-label-bold text-sm">Kelola Paket</span>
             </a>
 
-            <a href="{{ route('packages.index') }}" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                <span class="material-symbols-outlined">visibility</span>
+            <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined">public</span>
                 <span class="font-label-bold text-sm">Lihat Website</span>
             </a>
         </nav>
@@ -71,6 +76,11 @@
             </div>
             
             <div class="flex items-center gap-4">
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                    <span>Lihat Website</span>
+                </a>
+
                 <!-- Agent Profile -->
                 <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-4 sm:pl-6 group">
                     <div class="w-10 h-10 rounded-full bg-tropical-teal text-surface-white flex items-center justify-center font-bold shadow-sm">

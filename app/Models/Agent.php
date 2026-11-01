@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Agent extends Model
 {
@@ -56,6 +57,14 @@ class Agent extends Model
     public function packages(): HasMany
     {
         return $this->hasMany(Package::class);
+    }
+
+    /**
+     * Relasi HasManyThrough ke model Booking melalui Package.
+     */
+    public function bookings(): HasManyThrough
+    {
+        return $this->hasManyThrough(Booking::class, Package::class);
     }
 
     /**

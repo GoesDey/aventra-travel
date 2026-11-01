@@ -29,6 +29,12 @@
         </div>
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
             <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">Overview</div>
+            @if(auth()->user()?->isSuperAdmin())
+            <a href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('super-admin.dashboard') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
+                <span class="material-symbols-outlined {{ request()->routeIs('super-admin.dashboard') ? 'fill' : '' }}">admin_panel_settings</span>
+                <span class="font-label-bold text-sm">Super Admin</span>
+            </a>
+            @endif
             <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.finance') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.finance') ? 'fill' : '' }}">dashboard</span>
                 <span class="font-label-bold text-sm">Finance</span>
@@ -46,6 +52,12 @@
             <a href="{{ route('admin.packages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.packages') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.packages') ? 'fill' : '' }}">tour</span>
                 <span class="font-label-bold text-sm">Packages</span>
+            </a>
+
+            <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">Website</div>
+            <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined">public</span>
+                <span class="font-label-bold text-sm">Lihat Website</span>
             </a>
         </nav>
         <div class="p-4 border-t border-outline-variant/30">
@@ -79,9 +91,14 @@
                 <h1 class="font-headline-md text-[24px] text-oceanic-deep hidden md:block">{{ $pageTitle }}</h1>
             </div>
             
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                    <span>Lihat Website</span>
+                </a>
+                
                 <!-- Admin Profile -->
-                <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-6 group">
+                <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-4 sm:pl-6 group">
                     <div class="w-10 h-10 rounded-full bg-oceanic-deep text-surface-white flex items-center justify-center font-bold shadow-sm">
                         {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
                     </div>

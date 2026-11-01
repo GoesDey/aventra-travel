@@ -21,12 +21,31 @@ Route::post('/packages/{slug}/book', [UserBookingController::class, 'store'])
 use App\Http\Controllers\PaymentController;
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if ($user->isSuperAdmin()) {
+            return redirect()->route('super-admin.dashboard');
+        }
+        if ($user->isAgent()) {
+            return redirect()->route('agent.dashboard');
+        }
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.bookings');
+        }
+        return redirect()->route('history');
+    })->name('dashboard');
+
     Route::get('/history', BookingHistory::class)->name('history');
     Route::get('/payments/{booking_code}', [PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
 });
 
 use App\Livewire\Admin\FinanceDashboard;
+use App\Http\Controllers\SuperAdminDashboardController;
+
+Route::get('/super-admin/dashboard', [SuperAdminDashboardController::class, 'index'])
+    ->middleware(['auth', 'is_super_admin'])
+    ->name('super-admin.dashboard');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/finance', FinanceDashboard::class)->name('admin.finance');
@@ -35,10 +54,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/bookings', BookingManager::class)->name('admin.bookings');
 });
 
+use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AgentPackageController;
 use App\Http\Controllers\AgentBookingController;
 
 Route::middleware(['auth', 'is_agent'])->prefix('agent')->name('agent.')->group(function () {
+    Route::get('/dashboard', [AgentDashboardController::class, 'index'])->name('dashboard');
     Route::resource('packages', AgentPackageController::class);
     Route::patch('bookings/{booking}/status', [AgentBookingController::class, 'updateStatus'])->name('bookings.update-status');
 });
