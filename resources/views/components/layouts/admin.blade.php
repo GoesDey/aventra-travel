@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Admin Dashboard - Aventra Travel' }}</title>
+    <title>{{ $title ?? 'Admin Dashboard - TriHitaTour' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
     <aside class="hidden md:flex flex-col w-64 bg-surface-white border-r border-outline-variant/30 shrink-0 h-screen sticky top-0 z-20">
         <div class="p-6 border-b border-outline-variant/30 flex items-center gap-3">
             <span class="material-symbols-outlined fill text-oceanic-deep text-3xl">travel_explore</span>
-            <span class="font-display-lg text-[24px] font-bold text-oceanic-deep tracking-wide">AVENTRA</span>
+            <span class="font-display-lg text-[24px] font-bold text-oceanic-deep tracking-wide">TRIHITATOUR</span>
         </div>
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
             <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">Overview</div>
@@ -87,7 +87,7 @@
                     </div>
                     <div class="flex flex-col hidden sm:flex">
                         <span class="font-label-bold text-sm text-on-surface group-hover:text-oceanic-deep transition-colors">{{ auth()->user()->name ?? 'Admin' }}</span>
-                        <span class="font-caption text-[11px] text-outline">{{ auth()->user()->email ?? 'admin@aventra.com' }}</span>
+                        <span class="font-caption text-[11px] text-outline">{{ auth()->user()->email ?? 'admin@trihitatour.com' }}</span>
                     </div>
                 </div>
             </div>

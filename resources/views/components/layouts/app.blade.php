@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Aventra Travel' }}</title>
+    <title>{{ $title ?? 'TriHitaTour' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,7 @@
         <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
             <!-- Brand -->
             <a href="{{ route('home') }}" class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg font-bold text-oceanic-deep dark:text-primary-fixed tracking-tight hover:opacity-80 transition-opacity">
-                Aventra Travel
+                TriHitaTour
             </a>
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-8">
@@ -74,7 +74,7 @@
             <div class="flex flex-col space-y-6">
                 <a class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg font-bold text-surface-white flex items-center space-x-2" href="{{ route('home') }}">
                     <span class="material-symbols-outlined text-tropical-teal text-4xl">travel_explore</span>
-                    <span class="">Aventra</span>
+                    <span class="">TriHitaTour</span>
                 </a>
                 <p class="font-body-md text-body-md text-surface-variant">Solusi perjalanan modern yang menggabungkan kemewahan, kenyamanan, dan keamanan untuk pengalaman tak terlupakan.</p>
                 <div class="flex space-x-4">
@@ -121,7 +121,7 @@
         <div class="border-t border-surface-white/10">
             <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-6 text-center">
                 <p class="font-caption text-caption text-surface-variant/70">
-                    © 2024 Aventra Travel. The Sophisticated Explorer's Choice. Semua hak cipta dilindungi undang-undang.
+                    © 2024 TriHitaTour. The Sophisticated Explorer's Choice. Semua hak cipta dilindungi undang-undang.
                 </p>
             </div>
         </div>

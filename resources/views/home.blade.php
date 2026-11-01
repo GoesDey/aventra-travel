@@ -28,7 +28,7 @@
     <section class="py-20 md:py-32 bg-surface-container-low">
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
             <div class="text-center mb-16">
-                <h2 class="font-headline-md text-headline-md text-oceanic-deep mb-4">Why Choose Aventra?</h2>
+                <h2 class="font-headline-md text-headline-md text-oceanic-deep mb-4">Why Choose TriHitaTour?</h2>
                 <div class="w-24 h-1 bg-tropical-teal mx-auto rounded-full"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">

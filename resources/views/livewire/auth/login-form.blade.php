@@ -9,7 +9,7 @@
     <main class="w-full max-w-[480px] bg-surface-white rounded-[24px] ambient-shadow p-8 md:p-12 z-10 border border-outline-variant/30 backdrop-blur-xl relative">
         <!-- Brand / Header -->
         <div class="text-center mb-8">
-            <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-oceanic-deep mb-2">Aventra Travel</h1>
+            <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-oceanic-deep mb-2">TriHitaTour</h1>
             <p class="font-body-md text-body-md text-on-surface-variant">Welcome back. Your next adventure awaits.</p>
         </div>
         
