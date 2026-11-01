@@ -30,7 +30,8 @@ class RegisterForm extends Component
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => 'customer',
+            'role'     => 'user',
+            'status'   => 'active',
         ]);
 
         auth()->login($user);

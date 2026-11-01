@@ -32,13 +32,27 @@
             </div>
             
             <!-- Password Input -->
-            <div class="space-y-2">
+            <div class="space-y-2" x-data="{ showPassword: false }">
                 <div class="flex justify-between items-center">
                     <label class="font-label-bold text-label-bold text-on-surface block" for="password">Password</label>
                 </div>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline">#</span>
-                    <input wire:model="password" class="w-full bg-surface-container-low border-none rounded-lg pl-12 pr-12 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" id="password" placeholder="••••••••" required type="password">
+                    <input wire:model="password" 
+                           :type="showPassword ? 'text' : 'password'" 
+                           class="w-full bg-surface-container-low border-none rounded-lg pl-12 pr-12 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" 
+                           id="password" 
+                           placeholder="••••••••" 
+                           required>
+                    <button type="button" 
+                            @click="showPassword = !showPassword" 
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
+                            :title="showPassword ? 'Sembunyikan password' : 'Lihat password'"
+                            aria-label="Lihat atau sembunyikan password">
+                        <span class="material-symbols-outlined text-[20px] select-none" x-text="showPassword ? 'visibility_off' : 'visibility'">
+                            visibility
+                        </span>
+                    </button>
                 </div>
                 @error('password') <span class="text-error text-sm">{{ $message }}</span> @enderror
             </div>

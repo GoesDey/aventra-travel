@@ -43,7 +43,7 @@
                         <td class="py-4 px-6">
                             <div class="flex items-center gap-4">
                                 @if($package->cover_image)
-                                    <img src="{{ asset('storage/' . $package->cover_image) }}" class="w-14 h-14 rounded-lg object-cover shadow-sm border border-outline-variant/20">
+                                    <img src="{{ str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image) }}" class="w-14 h-14 rounded-lg object-cover shadow-sm border border-outline-variant/20">
                                 @else
                                     <div class="w-14 h-14 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center justify-center text-outline/50">
                                         <span class="material-symbols-outlined text-2xl">tour</span>

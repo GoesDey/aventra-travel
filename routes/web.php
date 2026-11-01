@@ -9,12 +9,21 @@ use App\Livewire\Admin\DestinationManager;
 use App\Livewire\Admin\PackageManager;
 use App\Livewire\Admin\BookingManager;
 
+use App\Http\Controllers\UserBookingController;
+
 Route::view('/', 'home')->name('home');
-Route::get('/packages', PackageList::class)->name('packages.index');
-Route::get('/packages/{package:slug}', PackageDetail::class)->name('packages.show');
+Route::get('/packages', [UserBookingController::class, 'index'])->name('packages.index');
+Route::get('/packages/{slug}', [UserBookingController::class, 'show'])->name('packages.show');
+Route::post('/packages/{slug}/book', [UserBookingController::class, 'store'])
+    ->middleware(['auth', 'is_user'])
+    ->name('packages.book');
+
+use App\Http\Controllers\PaymentController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/history', BookingHistory::class)->name('history');
+    Route::get('/payments/{booking_code}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
 });
 
 use App\Livewire\Admin\FinanceDashboard;
@@ -24,6 +33,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/destinations', DestinationManager::class)->name('admin.destinations');
     Route::get('/packages', PackageManager::class)->name('admin.packages');
     Route::get('/bookings', BookingManager::class)->name('admin.bookings');
+});
+
+use App\Http\Controllers\AgentPackageController;
+use App\Http\Controllers\AgentBookingController;
+
+Route::middleware(['auth', 'is_agent'])->prefix('agent')->name('agent.')->group(function () {
+    Route::resource('packages', AgentPackageController::class);
+    Route::patch('bookings/{booking}/status', [AgentBookingController::class, 'updateStatus'])->name('bookings.update-status');
 });
 
 // Since Livewire uses components for Auth as well, let's just define the routes directly

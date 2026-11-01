@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -22,7 +23,16 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
     ];
+
+    /**
+     * Relasi One-to-One ke model Agent.
+     */
+    public function agent(): HasOne
+    {
+        return $this->hasOne(Agent::class);
+    }
 
     public function bookings()
     {
@@ -34,9 +44,39 @@ class User extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    public function isAgent(): bool
+    {
+        return $this->role === 'agent';
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['super_admin', 'admin']);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
     }
 
     /**

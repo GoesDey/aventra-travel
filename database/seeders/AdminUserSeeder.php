@@ -11,17 +11,19 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name'     => 'Admin TriHitaTour',
+            'name'     => 'Super Admin TriHitaTour',
             'email'    => 'admin@trihitatour.com',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
+            'role'     => 'super_admin',
+            'status'   => 'active',
         ]);
 
         User::create([
             'name'     => 'Ardy',
             'email'    => 'ardy@example.com',
             'password' => Hash::make('password'),
-            'role'     => 'customer',
+            'role'     => 'user',
+            'status'   => 'active',
         ]);
     }
 }

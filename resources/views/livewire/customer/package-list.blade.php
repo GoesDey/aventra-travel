@@ -95,11 +95,13 @@
                     <article class="bg-surface-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,35,102,0.06)] hover:shadow-[0_10px_30px_rgba(0,35,102,0.12)] transition-shadow duration-300 group border border-outline-variant/10 flex flex-col h-full min-h-full">
                         <a href="{{ route('packages.show', $package->slug) }}" class="block">
                             <div class="relative h-64 overflow-hidden">
-                                @if($package->cover_image)
-                                    <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style="background-image: url('{{ asset('storage/' . $package->cover_image) }}');"></div>
-                                @else
-                                    <div class="absolute inset-0 bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-700">No Image</div>
-                                @endif
+                                @php
+                                    $coverUrl = 'https://placehold.co/800x600/00327D/ffffff?text=' . urlencode($package->name);
+                                    if ($package->cover_image) {
+                                        $coverUrl = str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image);
+                                    }
+                                @endphp
+                                <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style="background-image: url('{{ $coverUrl }}');"></div>
                                 <div class="absolute top-4 right-4 bg-sand-beige text-on-tertiary-fixed font-caption px-2 py-1 rounded flex items-center gap-1 shadow-sm">
                                     <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
                                     <span class="font-bold">{{ number_format($package->avg_rating, 0) }}</span>

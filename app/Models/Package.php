@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -12,8 +13,18 @@ class Package extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'description', 'price_per_pax',
-        'duration_days', 'max_guests', 'avg_rating', 'cover_image', 'is_active',
+        'agent_id',
+        'name',
+        'slug',
+        'description',
+        'category',
+        'region',
+        'price_per_pax',
+        'duration_days',
+        'max_guests',
+        'avg_rating',
+        'cover_image',
+        'is_active',
     ];
 
     protected $casts = [
@@ -21,6 +32,22 @@ class Package extends Model
         'avg_rating'    => 'decimal:2',
         'is_active'     => 'boolean',
     ];
+
+    /**
+     * Relasi ke model Agent.
+     */
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    /**
+     * Relasi ke model PackageSchedule.
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(PackageSchedule::class);
+    }
 
     public function destinations(): BelongsToMany
     {

@@ -23,10 +23,34 @@ class LoginForm extends Component
         $this->validate();
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
+            $user = Auth::user();
+
+            // 1. Cek jika akun berstatus suspended
+            if ($user->status === 'suspended') {
+                Auth::logout();
+                session()->invalidate();
+                session()->regenerateToken();
+
+                $this->addError('email', 'Akun Anda sedang ditangguhkan (suspended). Silakan hubungi Super Admin.');
+                return;
+            }
+
+            // 2. Cek jika agen masih berstatus pending (belum di-approve Super Admin)
+            if ($user->role === 'agent' && $user->status === 'pending') {
+                Auth::logout();
+                session()->invalidate();
+                session()->regenerateToken();
+
+                $this->addError('email', 'Akun agen Anda masih menunggu persetujuan (pending) dari Super Admin.');
+                return;
+            }
+
             session()->regenerate();
-            if (auth()->user()->isAdmin()) {
+
+            if ($user->role === 'super_admin' || $user->isAdmin()) {
                 return redirect()->route('admin.bookings');
             }
+
             return redirect()->route('packages.index');
         }
 

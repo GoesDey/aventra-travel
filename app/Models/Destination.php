@@ -4,13 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Destination extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'location', 'image_path'];
+    protected $fillable = [
+        'agent_id',
+        'name',
+        'slug',
+        'description',
+        'location',
+        'image_path',
+    ];
+
+    /**
+     * Relasi ke model Agent.
+     */
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
+    }
 
     public function packages(): BelongsToMany
     {

@@ -75,11 +75,18 @@
                 
                 @foreach($popularPackages as $package)
                 <a href="{{ route('packages.show', $package->slug) }}" class="bg-surface-white rounded-xl overflow-hidden shadow-sm hover:shadow-[0_10px_30px_rgba(0,35,102,0.1)] transition-all duration-300 border border-surface-container group cursor-pointer flex flex-col h-full block">
-                    <div class="relative h-64 overflow-hidden">
-                        @if($package->cover_image)
-                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $package->cover_image) }}">
-                        @else
-                            <div class="w-full h-full bg-primary-container flex items-center justify-center text-white">No Image</div>
+                    <div class="relative h-64 overflow-hidden bg-surface-container">
+                        @php
+                            $coverUrl = 'https://placehold.co/800x600/00327D/ffffff?text=' . urlencode($package->name);
+                            if ($package->cover_image) {
+                                $coverUrl = str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image);
+                            }
+                        @endphp
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $coverUrl }}" alt="{{ $package->name }}">
+                        @if(!$package->is_active)
+                            <div class="absolute top-4 left-4 bg-amber-500 text-white font-caption text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
+                                Belum Aktif
+                            </div>
                         @endif
                         <div class="absolute top-4 right-4 bg-surface-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center space-x-1 shadow-sm">
                             <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>

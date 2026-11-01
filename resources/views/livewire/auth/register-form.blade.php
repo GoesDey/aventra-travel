@@ -23,15 +23,47 @@
                 @error('email') <span class="text-error text-sm">{{ $message }}</span> @enderror
             </div>
             
-            <div class="space-y-2">
+            <div class="space-y-2" x-data="{ showPassword: false }">
                 <label class="font-label-bold text-label-bold text-on-surface block" for="password">Password</label>
-                <input wire:model="password" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" id="password" placeholder="••••••••" required type="password">
+                <div class="relative">
+                    <input wire:model="password" 
+                           :type="showPassword ? 'text' : 'password'" 
+                           class="w-full bg-surface-container-low border-none rounded-lg pl-4 pr-12 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" 
+                           id="password" 
+                           placeholder="••••••••" 
+                           required>
+                    <button type="button" 
+                            @click="showPassword = !showPassword" 
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
+                            :title="showPassword ? 'Sembunyikan password' : 'Lihat password'"
+                            aria-label="Lihat atau sembunyikan password">
+                        <span class="material-symbols-outlined text-[20px] select-none" x-text="showPassword ? 'visibility_off' : 'visibility'">
+                            visibility
+                        </span>
+                    </button>
+                </div>
                 @error('password') <span class="text-error text-sm">{{ $message }}</span> @enderror
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2" x-data="{ showConfirmPassword: false }">
                 <label class="font-label-bold text-label-bold text-on-surface block" for="password_confirmation">Confirm Password</label>
-                <input wire:model="password_confirmation" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" id="password_confirmation" placeholder="••••••••" required type="password">
+                <div class="relative">
+                    <input wire:model="password_confirmation" 
+                           :type="showConfirmPassword ? 'text' : 'password'" 
+                           class="w-full bg-surface-container-low border-none rounded-lg pl-4 pr-12 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" 
+                           id="password_confirmation" 
+                           placeholder="••••••••" 
+                           required>
+                    <button type="button" 
+                            @click="showConfirmPassword = !showConfirmPassword" 
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
+                            :title="showConfirmPassword ? 'Sembunyikan password' : 'Lihat password'"
+                            aria-label="Lihat atau sembunyikan konfirmasi password">
+                        <span class="material-symbols-outlined text-[20px] select-none" x-text="showConfirmPassword ? 'visibility_off' : 'visibility'">
+                            visibility
+                        </span>
+                    </button>
+                </div>
             </div>
             
             <button class="w-full bg-primary hover:bg-primary-container text-on-primary font-label-bold text-label-bold py-4 rounded-full transition-all duration-300 transform active:scale-[0.98] ambient-shadow flex items-center justify-center gap-2" type="submit">

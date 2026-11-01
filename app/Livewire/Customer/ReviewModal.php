@@ -28,8 +28,8 @@ class ReviewModal extends Component
 
         $booking = Booking::with('package')->findOrFail($this->bookingId);
 
-        // Prevent duplicate reviews
-        if ($booking->review()->exists()) {
+        // Hanya booking berstatus 'selesai' dan milik user yang bersangkutan yang dapat direview
+        if ($booking->user_id !== auth()->id() || $booking->status !== 'selesai' || $booking->review()->exists()) {
             $this->show = false;
             return;
         }

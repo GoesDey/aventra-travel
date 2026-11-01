@@ -1,12 +1,13 @@
 <div>
     <!-- Hero Gallery -->
     <section class="relative w-full mb-12" style="height: 440px;">
-        @if($package->cover_image)
-            <div class="bg-cover bg-center w-full h-full relative" style="background-image: url('{{ asset('storage/' . $package->cover_image) }}')">
-        @else
-            <div class="bg-primary-container/20 w-full h-full relative flex items-center justify-center text-primary text-xl">
-                No Image Available
-        @endif
+        @php
+            $coverUrl = 'https://placehold.co/1200x600/00327D/ffffff?text=' . urlencode($package->name);
+            if ($package->cover_image) {
+                $coverUrl = str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image);
+            }
+        @endphp
+        <div class="bg-cover bg-center w-full h-full relative" style="background-image: url('{{ $coverUrl }}')">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
             
             <!-- Back Button Glass -->
