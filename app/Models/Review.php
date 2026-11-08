@@ -12,6 +12,10 @@ class Review extends Model
 
     protected $fillable = ['booking_id', 'package_id', 'user_id', 'rating', 'comment'];
 
+    protected $casts = [
+        'rating' => 'integer',
+    ];
+
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);

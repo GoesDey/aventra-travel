@@ -176,6 +176,10 @@ class FinancialDashboardTest extends TestCase
         $response->assertStatus(200);
 
         // Verifikasi view data
+        $response->assertViewHas('total_commission', 160000);
+        $response->assertViewHas('total_successful_transactions', 2);
+        $response->assertViewHas('total_active_agents');
+        $response->assertViewHas('top_agents');
         $response->assertViewHas('totalPlatformCommission', 160000);
         $response->assertViewHas('totalGrossRevenue', 1600000);
         $response->assertViewHas('totalAgentEarnings', 1440000);
@@ -232,6 +236,9 @@ class FinancialDashboardTest extends TestCase
         $responseA->assertStatus(200);
 
         // HANYA melihat earning milik Agen A (900.000)
+        $responseA->assertViewHas('total_earning', 900000);
+        $responseA->assertViewHas('active_bookings_count', 1);
+        $responseA->assertViewHas('recent_bookings');
         $responseA->assertViewHas('totalEarnings', 900000);
         $responseA->assertViewHas('successfulOrdersCount', 1);
         $responseA->assertViewHas('activeOrdersCount', 1);
@@ -247,6 +254,9 @@ class FinancialDashboardTest extends TestCase
         $responseB->assertStatus(200);
 
         // HANYA melihat earning milik Agen B (540.000)
+        $responseB->assertViewHas('total_earning', 540000);
+        $responseB->assertViewHas('active_bookings_count', 0);
+        $responseB->assertViewHas('recent_bookings');
         $responseB->assertViewHas('totalEarnings', 540000);
         $responseB->assertViewHas('successfulOrdersCount', 1);
         $responseB->assertViewHas('activeOrdersCount', 0);

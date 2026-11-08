@@ -9,7 +9,13 @@
             <div class="relative w-full md:w-auto flex items-center gap-2 bg-surface-white px-4 py-2 rounded-lg border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,35,102,0.04)]">
                 <span class="font-label-bold text-label-bold text-on-surface-variant whitespace-nowrap">Filter Status:</span>
                 <select wire:model.live="statusFilter" class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-oceanic-deep font-medium cursor-pointer p-0 pr-6">
-                    <option value="">All Statuses</option>
+                    <option value="">Semua Status</option>
+                    <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
+                    <option value="dibayar">Dibayar</option>
+                    <option value="berjalan">Berjalan</option>
+                    <option value="selesai">Selesai</option>
+                    <option value="dibatalkan">Dibatalkan</option>
+                    <option value="perlu_refund">Perlu Refund</option>
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="completed">Completed</option>
@@ -57,30 +63,44 @@
                         </td>
                         <td class="py-4 px-6 text-on-surface-variant">{{ $booking->package->name }}</td>
                         <td class="py-4 px-6 text-on-surface">
-                            {{ $booking->travel_date->format('M d, Y') }}<br>
+                            {{ $booking->travel_date ? $booking->travel_date->format('M d, Y') : ($booking->schedule?->departure_date ? $booking->schedule->departure_date->format('M d, Y') : '-') }}<br>
                             <span class="font-caption text-[11px] text-outline">{{ $booking->guest_count }} Pax</span>
                         </td>
                         <td class="py-4 px-6 font-label-bold text-oceanic-deep text-right">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
                         <td class="py-4 px-6 text-center">
                             @php
                                 $colors = [
-                                    'pending' => 'bg-surface-variant text-on-surface-variant border-surface-variant',
-                                    'confirmed' => 'bg-secondary-fixed text-on-secondary-fixed border-secondary-fixed/50',
-                                    'completed' => 'bg-primary-container text-on-primary-container border-primary-container/50',
-                                    'cancelled' => 'bg-error-container text-on-error-container border-error-container/50'
+                                    'menunggu_pembayaran' => 'bg-amber-100 text-amber-800 border-amber-300',
+                                    'dibayar'             => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                                    'berjalan'            => 'bg-blue-100 text-blue-800 border-blue-300',
+                                    'selesai'             => 'bg-purple-100 text-purple-800 border-purple-300',
+                                    'dibatalkan'          => 'bg-red-100 text-red-800 border-red-300',
+                                    'kedaluwarsa'         => 'bg-slate-100 text-slate-800 border-slate-300',
+                                    'perlu_refund'        => 'bg-rose-100 text-rose-800 border-rose-300',
+                                    'pending'             => 'bg-surface-variant text-on-surface-variant border-surface-variant',
+                                    'confirmed'           => 'bg-secondary-fixed text-on-secondary-fixed border-secondary-fixed/50',
+                                    'completed'           => 'bg-primary-container text-on-primary-container border-primary-container/50',
+                                    'cancelled'           => 'bg-error-container text-on-error-container border-error-container/50',
                                 ];
+                                $statusClass = $colors[$booking->status] ?? 'bg-surface-container-high text-on-surface border-outline-variant';
                             @endphp
-                            <span class="px-3 py-1 rounded-full font-caption text-[11px] font-bold uppercase tracking-wider border {{ $colors[$booking->status] }}">
-                                {{ $booking->status }}
+                            <span class="px-3 py-1 rounded-full font-caption text-[11px] font-bold uppercase tracking-wider border {{ $statusClass }}">
+                                {{ str_replace('_', ' ', $booking->status) }}
                             </span>
                         </td>
                         <td class="py-4 px-6 text-center">
                             <div class="inline-block relative" x-data="{ open: false }">
                                 <select @change="$wire.updateStatus({{ $booking->id }}, $event.target.value)" class="text-xs font-label-bold rounded-lg border border-outline-variant/50 bg-surface-container-lowest px-3 py-1.5 focus:ring-1 focus:ring-tropical-teal text-oceanic-deep hover:bg-surface-white cursor-pointer shadow-sm">
+                                    <option value="menunggu_pembayaran" {{ $booking->status == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                                    <option value="dibayar" {{ $booking->status == 'dibayar' ? 'selected' : '' }}>Dibayar</option>
+                                    <option value="berjalan" {{ $booking->status == 'berjalan' ? 'selected' : '' }}>Berjalan</option>
+                                    <option value="selesai" {{ $booking->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="dibatalkan" {{ $booking->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                    <option value="perlu_refund" {{ $booking->status == 'perlu_refund' ? 'selected' : '' }}>Perlu Refund</option>
                                     <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirm</option>
-                                    <option value="completed" {{ $booking->status == 'completed' ? 'selected' : '' }}>Complete</option>
-                                    <option value="cancelled" {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancel</option>
+                                    <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                    <option value="completed" {{ $booking->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="cancelled" {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </div>
                         </td>

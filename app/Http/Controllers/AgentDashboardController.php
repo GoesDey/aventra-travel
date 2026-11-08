@@ -20,49 +20,44 @@ class AgentDashboardController extends Controller
         }
 
         // Definisi status transaksi
-        $validStatuses  = ['dibayar', 'berjalan', 'selesai'];
-        $activeStatuses = ['dibayar', 'berjalan'];
+        $validStatuses = ['dibayar', 'berjalan', 'selesai'];
 
-        // 1. Total Pendapatan Bersih (agent_earning) HANYA untuk agen yang sedang login
-        $totalEarnings = (int) $agent->bookings()
+        // 1. Total Pendapatan Bersih (agent_earning) HANYA untuk booking paket milik agen ini
+        $total_earning = (int) $agent->bookings()
             ->whereIn('status', $validStatuses)
             ->sum('agent_earning');
 
-        // 2. Total Pesanan Sukses (Lunas/Dijalankan/Selesai)
-        $successfulOrdersCount = $agent->bookings()
-            ->whereIn('status', $validStatuses)
+        // 2. Jumlah Pesanan Aktif (status: menunggu_pembayaran atau dibayar)
+        $active_bookings_count = $agent->bookings()
+            ->whereIn('status', ['menunggu_pembayaran', 'dibayar'])
             ->count();
 
-        // 3. Jumlah Pesanan Aktif (Perlu Dijalankan / Sedang Berlangsung)
-        $activeOrdersCount = $agent->bookings()
-            ->whereIn('status', $activeStatuses)
-            ->count();
-
-        // 4. Jumlah Pesanan Selesai
-        $completedOrdersCount = $agent->bookings()
-            ->where('status', 'selesai')
-            ->count();
-
-        // 5. Total Penjualan Kotor (Gross Sales) Paket Agen
-        $totalGrossSales = (int) $agent->bookings()
-            ->whereIn('status', $validStatuses)
-            ->sum('total_price');
-
-        // 6. Kueri Tabel Pesanan Terbaru (Data 100% terisolasi pada paket milik agen ini)
-        $recentBookings = $agent->bookings()
+        // 3. 10 Pesanan Terbaru milik agen ini beserta relasi package, schedule, dan user
+        $recent_bookings = $agent->bookings()
             ->with(['package', 'schedule', 'user'])
             ->latest('bookings.created_at')
-            ->paginate(10)
-            ->withQueryString();
+            ->take(10)
+            ->get();
+
+        // Aliases untuk kompatibilitas data view & test
+        $totalEarnings = $total_earning;
+        $activeOrdersCount = $active_bookings_count;
+        $recentBookings = $recent_bookings;
+        $successfulOrdersCount = $agent->bookings()->whereIn('status', $validStatuses)->count();
+        $completedOrdersCount = $agent->bookings()->where('status', 'selesai')->count();
+        $totalGrossSales = (int) $agent->bookings()->whereIn('status', $validStatuses)->sum('total_price');
 
         return view('agent.dashboard', compact(
             'agent',
+            'total_earning',
+            'active_bookings_count',
+            'recent_bookings',
             'totalEarnings',
-            'successfulOrdersCount',
             'activeOrdersCount',
+            'recentBookings',
+            'successfulOrdersCount',
             'completedOrdersCount',
-            'totalGrossSales',
-            'recentBookings'
+            'totalGrossSales'
         ));
     }
 }

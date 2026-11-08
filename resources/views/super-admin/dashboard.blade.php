@@ -29,116 +29,93 @@
             <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- 4 Key Financial Metrics Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Card 1: Komisi Bersih Platform -->
-            <div class="bg-surface-white rounded-2xl p-6 border border-emerald-500/20 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
+        <!-- 3 Key Financial Metrics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1: Total Pendapatan Platform -->
+            <div class="bg-surface-white rounded-2xl p-6 border border-emerald-500/25 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Komisi Bersih Platform</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Pendapatan Platform</span>
                     <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">account_balance_wallet</span>
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        Rp {{ number_format($totalPlatformCommission, 0, ',', '.') }}
+                    <div class="text-3xl font-black text-oceanic-deep">
+                        Rp {{ number_format($total_commission ?? $totalPlatformCommission, 0, ',', '.') }}
                     </div>
                     <p class="text-xs font-medium text-emerald-700 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">verified</span>
-                        <span>Hak Pendapatan TriHitaTour</span>
+                        <span>Komisi platform bersih (10%) dari seluruh booking sah</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
                     <span>Basis: 10% komisi per pax</span>
-                    <span class="font-bold text-on-surface">Auto-Split</span>
+                    <span class="font-bold text-emerald-700">Platform Revenue</span>
                 </div>
             </div>
 
-            <!-- Card 2: Total Pendapatan Kotor (Gross Volume) -->
+            <!-- Card 2: Total Transaksi Sukses -->
             <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Transaksi Kotor</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Transaksi Sukses</span>
                     <div class="w-12 h-12 rounded-xl bg-tropical-teal/10 text-tropical-teal flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined fill text-2xl">trending_up</span>
+                        <span class="material-symbols-outlined fill text-2xl">receipt_long</span>
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        Rp {{ number_format($totalGrossRevenue, 0, ',', '.') }}
+                    <div class="text-3xl font-black text-oceanic-deep">
+                        {{ number_format($total_successful_transactions ?? $totalSuccessfulBookings, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Transaksi</span>
                     </div>
                     <p class="text-xs font-medium text-tropical-teal flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">receipt_long</span>
-                        <span>{{ number_format($totalSuccessfulBookings) }} Pesanan Berhasil</span>
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        <span>Status: Dibayar, Berjalan, & Selesai</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Status: Dibayar/Berjalan/Selesai</span>
-                    <span class="font-bold text-on-surface">Midtrans Valid</span>
+                    <span>Omset Kotor: Rp {{ number_format($totalGrossRevenue, 0, ',', '.') }}</span>
+                    <span class="font-bold text-on-surface">Valid Midtrans</span>
                 </div>
             </div>
 
-            <!-- Card 3: Total Hak Pendapatan Mitra Agen -->
+            <!-- Card 3: Agen Aktif -->
             <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Hak Pendapatan Mitra</span>
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined fill text-2xl">handshake</span>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        Rp {{ number_format($totalAgentEarnings, 0, ',', '.') }}
-                    </div>
-                    <p class="text-xs font-medium text-blue-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">payments</span>
-                        <span>90% dari Gross Transaksi</span>
-                    </p>
-                </div>
-                <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Siap dicairkan ke Agen</span>
-                    <span class="font-bold text-on-surface">Disbursement</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Mitra Agen Aktif -->
-            <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Mitra Agen Aktif</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Agen Aktif</span>
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">storefront</span>
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        {{ $activeAgentsCount }} <span class="text-sm font-semibold text-outline">/ {{ $totalAgentsCount }} Agen</span>
+                    <div class="text-3xl font-black text-oceanic-deep">
+                        {{ number_format($total_active_agents ?? $activeAgentsCount, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Mitra</span>
                     </div>
                     <p class="text-xs font-medium text-purple-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">check_circle</span>
-                        <span>Status Akun: Active</span>
+                        <span class="material-symbols-outlined text-sm">verified_user</span>
+                        <span>User role 'agent' dengan status active</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
                     <span>Mitra Terverifikasi Platform</span>
-                    <span class="font-bold text-on-surface">B2B Partner</span>
+                    <span class="font-bold text-purple-700">B2B Partners</span>
                 </div>
             </div>
         </div>
 
-        <!-- Tabel 5 Agen dengan Transaksi Tertinggi -->
+        <!-- Tabel Performa Agen Teratas -->
         <div class="bg-surface-white rounded-3xl border border-outline-variant/30 shadow-sm overflow-hidden">
             <div class="p-6 md:p-8 border-b border-outline-variant/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h3 class="font-display-md text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                         <span class="material-symbols-outlined text-amber-500 fill">workspace_premium</span>
-                        <span>Top 5 Agen Berkinerja Finansial Tertinggi</span>
+                        <span>Performa Agen Teratas</span>
                     </h3>
                     <p class="text-xs md:text-sm text-outline mt-1">
-                        Peringkat mitra tour operator berdasarkan total volume transaksi sukses dan kontribusi komisi.
+                        Peringkat mitra tour operator berdasarkan kontribusi komisi dan jumlah transaksi sukses.
                     </p>
                 </div>
                 <div class="text-xs font-bold text-tropical-teal bg-tropical-teal/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
                     <span class="material-symbols-outlined text-sm">leaderboard</span>
-                    <span>Peringkat Berjalan</span>
+                    <span>Top 5 Kontributor</span>
                 </div>
             </div>
 

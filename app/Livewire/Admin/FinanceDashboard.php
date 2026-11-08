@@ -49,38 +49,42 @@ class FinanceDashboard extends Component
 
     private function loadMetrics()
     {
-        // Total Revenue: sum of total_price where status is completed
-        $this->totalRevenue = Booking::whereIn('status', ['completed', 'confirmed'])->sum('total_price');
+        $paidStatuses = ['completed', 'confirmed', 'dibayar', 'berjalan', 'selesai'];
+        $activeStatuses = ['pending', 'confirmed', 'menunggu_pembayaran', 'dibayar', 'berjalan'];
+        $refundStatuses = ['cancelled', 'dibatalkan', 'perlu_refund'];
 
-        // Active Bookings: count of pending/confirmed
-        $this->activeBookings = Booking::whereIn('status', ['pending', 'confirmed'])->count();
+        // Total Revenue: sum of total_price where status is completed/paid
+        $this->totalRevenue = Booking::whereIn('status', $paidStatuses)->sum('total_price');
+
+        // Active Bookings: count of pending/confirmed/active
+        $this->activeBookings = Booking::whereIn('status', $activeStatuses)->count();
 
         // Avg Booking Value
-        $revenueCount = Booking::whereIn('status', ['completed', 'confirmed'])->count();
+        $revenueCount = Booking::whereIn('status', $paidStatuses)->count();
         $this->avgBookingValue = $revenueCount > 0 ? $this->totalRevenue / $revenueCount : 0;
 
         // Refunds (Canceled bookings)
-        $this->refunds = Booking::where('status', 'cancelled')->sum('total_price');
+        $this->refunds = Booking::whereIn('status', $refundStatuses)->sum('total_price');
 
         // Growth Metrics (Month over Month)
         $now = Carbon::now();
         $lastMonth = Carbon::now()->subMonth();
 
-        $currentMonthRevenue = Booking::whereIn('status', ['completed', 'confirmed'])
+        $currentMonthRevenue = Booking::whereIn('status', $paidStatuses)
             ->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year)->sum('total_price');
-        $previousMonthRevenue = Booking::whereIn('status', ['completed', 'confirmed'])
+        $previousMonthRevenue = Booking::whereIn('status', $paidStatuses)
             ->whereMonth('created_at', $lastMonth->month)->whereYear('created_at', $lastMonth->year)->sum('total_price');
         $this->revenueGrowth = $previousMonthRevenue > 0 ? round((($currentMonthRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100, 1) : ($currentMonthRevenue > 0 ? 100 : 0);
 
-        $currentMonthActive = Booking::whereIn('status', ['pending', 'confirmed'])
+        $currentMonthActive = Booking::whereIn('status', $activeStatuses)
             ->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year)->count();
-        $previousMonthActive = Booking::whereIn('status', ['pending', 'confirmed'])
+        $previousMonthActive = Booking::whereIn('status', $activeStatuses)
             ->whereMonth('created_at', $lastMonth->month)->whereYear('created_at', $lastMonth->year)->count();
         $this->activeBookingsGrowth = $previousMonthActive > 0 ? round((($currentMonthActive - $previousMonthActive) / $previousMonthActive) * 100, 1) : ($currentMonthActive > 0 ? 100 : 0);
 
-        $currentMonthRevCount = Booking::whereIn('status', ['completed', 'confirmed'])
+        $currentMonthRevCount = Booking::whereIn('status', $paidStatuses)
             ->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year)->count();
-        $previousMonthRevCount = Booking::whereIn('status', ['completed', 'confirmed'])
+        $previousMonthRevCount = Booking::whereIn('status', $paidStatuses)
             ->whereMonth('created_at', $lastMonth->month)->whereYear('created_at', $lastMonth->year)->count();
         
         $currentMonthAvg = $currentMonthRevCount > 0 ? $currentMonthRevenue / $currentMonthRevCount : 0;
@@ -91,10 +95,12 @@ class FinanceDashboard extends Component
 
     private function loadChartData()
     {
+        $paidStatuses = ['completed', 'confirmed', 'dibayar', 'berjalan', 'selesai'];
+
         // Monthly Revenue Trend for selected year
         $currentYear = $this->selectedYear ?? Carbon::now()->year;
         
-        $monthlyData = Booking::whereIn('status', ['completed', 'confirmed'])
+        $monthlyData = Booking::whereIn('status', $paidStatuses)
             ->whereYear('created_at', $currentYear)
             ->selectRaw('MONTH(created_at) as month, SUM(total_price) as total')
             ->groupBy('month')
@@ -111,7 +117,7 @@ class FinanceDashboard extends Component
         // Package Performance
         $totalRev = $this->totalRevenue > 0 ? $this->totalRevenue : 1; // avoid division by zero
         
-        $packageData = Booking::whereIn('status', ['completed', 'confirmed'])
+        $packageData = Booking::whereIn('status', $paidStatuses)
             ->selectRaw('package_id, SUM(total_price) as total')
             ->groupBy('package_id')
             ->with('package') // Just need the package name

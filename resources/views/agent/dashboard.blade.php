@@ -38,97 +38,51 @@
             <div class="absolute -right-8 -bottom-8 w-64 h-64 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- 4 Financial & Operational Metric Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- 2 Financial & Operational Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Card 1: Total Pendapatan Bersih Agen -->
             <div class="bg-surface-white rounded-2xl p-6 border border-emerald-500/25 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Pendapatan Bersih</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Pendapatan Bersih</span>
                     <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">account_balance_wallet</span>
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        Rp {{ number_format($totalEarnings, 0, ',', '.') }}
+                    <div class="text-3xl font-black text-oceanic-deep">
+                        Rp {{ number_format($total_earning ?? $totalEarnings, 0, ',', '.') }}
                     </div>
                     <p class="text-xs font-medium text-emerald-700 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">verified</span>
-                        <span>90% dari Total Transaksi Sukses</span>
+                        <span>Hak bersih agen (90%) dari seluruh booking sah</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
                     <span>Terisolasi: Paket Anda Saja</span>
-                    <span class="font-bold text-emerald-700">Bersih</span>
+                    <span class="font-bold text-emerald-700">Multi-tenant Aman</span>
                 </div>
             </div>
 
-            <!-- Card 2: Total Pesanan Sukses -->
-            <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Pesanan Sukses</span>
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined fill text-2xl">check_circle</span>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        {{ number_format($successfulOrdersCount) }} <span class="text-sm font-semibold text-outline">Pesanan</span>
-                    </div>
-                    <p class="text-xs font-medium text-blue-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">done_all</span>
-                        <span>{{ number_format($completedOrdersCount) }} Wisata Selesai</span>
-                    </p>
-                </div>
-                <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Status: Dibayar, Berjalan, Selesai</span>
-                    <span class="font-bold text-on-surface">Valid</span>
-                </div>
-            </div>
-
-            <!-- Card 3: Pesanan Aktif (Perlu Dijalankan) -->
+            <!-- Card 2: Pesanan Aktif -->
             <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
                     <span class="text-xs font-bold text-outline uppercase tracking-wider">Pesanan Aktif</span>
                     <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined fill text-2xl">directions_run</span>
+                        <span class="material-symbols-outlined fill text-2xl">pending_actions</span>
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        {{ number_format($activeOrdersCount) }} <span class="text-sm font-semibold text-outline">Trip</span>
+                    <div class="text-3xl font-black text-oceanic-deep">
+                        {{ number_format($active_bookings_count ?? $activeOrdersCount, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Pesanan</span>
                     </div>
                     <p class="text-xs font-medium text-amber-700 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">schedule</span>
-                        <span>Siap atau Sedang Dijalankan</span>
+                        <span>Status: Menunggu Pembayaran & Dibayar</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Status: Dibayar / Berjalan</span>
-                    <span class="font-bold text-amber-700">Perlu Aksi</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Total Nilai Penjualan Kotor -->
-            <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Omset Kotor Paket</span>
-                    <div class="w-12 h-12 rounded-xl bg-tropical-teal/10 text-tropical-teal flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined fill text-2xl">price_check</span>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-black text-oceanic-deep">
-                        Rp {{ number_format($totalGrossSales, 0, ',', '.') }}
-                    </div>
-                    <p class="text-xs font-medium text-tropical-teal flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">pie_chart</span>
-                        <span>10% Komisi TriHita Dikeluarkan</span>
-                    </p>
-                </div>
-                <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Gross GMV Mitra</span>
-                    <span class="font-bold text-on-surface">Total Pax</span>
+                    <span>Perlu dipantau & dipersiapkan</span>
+                    <span class="font-bold text-amber-700">Operasional</span>
                 </div>
             </div>
         </div>
@@ -165,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-outline-variant/20 text-sm">
-                        @forelse($recentBookings as $booking)
+                        @forelse(($recent_bookings ?? $recentBookings) as $booking)
                             <tr class="hover:bg-surface-container-lowest/80 transition-colors">
                                 <!-- Kode Booking -->
                                 <td class="py-4 px-6">
@@ -297,10 +251,10 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
-            @if($recentBookings->hasPages())
+            <!-- Pagination (jika menggunakan Paginator) -->
+            @if(method_exists($recent_bookings ?? $recentBookings, 'hasPages') && ($recent_bookings ?? $recentBookings)->hasPages())
                 <div class="p-6 border-t border-outline-variant/30 bg-surface-container-lowest">
-                    {{ $recentBookings->links() }}
+                    {{ ($recent_bookings ?? $recentBookings)->links() }}
                 </div>
             @endif
         </div>
