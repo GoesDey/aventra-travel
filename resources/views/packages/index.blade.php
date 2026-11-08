@@ -64,6 +64,29 @@
     <div class="flex-1 bg-surface-container-lowest py-12 px-margin-mobile md:px-margin-desktop">
         <div class="max-w-container-max mx-auto space-y-8">
 
+            @if(session('success'))
+                <div class="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 text-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @auth
+                @if(auth()->user()->isUser())
+                    <div class="flex items-center justify-between gap-4 rounded-xl bg-tropical-teal/10 border border-tropical-teal/30 p-4 text-sm">
+                        <span class="text-oceanic-deep">
+                            @if($preference ?? null)
+                                Paket diurutkan sesuai minat Anda.
+                            @else
+                                Dapatkan rekomendasi paket yang cocok untuk Anda.
+                            @endif
+                        </span>
+                        <a href="{{ route('preferences.index') }}" class="font-semibold text-tropical-teal hover:underline whitespace-nowrap">
+                            {{ ($preference ?? null) ? 'Ubah Preferensi' : 'Isi Preferensi' }}
+                        </a>
+                    </div>
+                @endif
+            @endauth
+
             <!-- Result Count & Clear Filter -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/30 pb-4">
                 <div class="text-sm text-on-surface-variant">
@@ -112,6 +135,12 @@
                                 
                                 <!-- Badges on top of image -->
                                 <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
+                                    @if(($pkg->match_score ?? 0) >= 3)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md">
+                                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                                            Rekomendasi
+                                        </span>
+                                    @endif
                                     @if(!$pkg->is_active)
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500 text-white shadow-md">
                                             Belum Aktif

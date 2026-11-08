@@ -170,7 +170,12 @@
             const addBtn = document.getElementById('addScheduleBtn');
 
             // Default data from old input if validation failed, or at least 1 empty row
-            const oldSchedules = @json(old('schedules', [['start_date' => '', 'end_date' => '', 'quota' => 10]]));
+            @php
+                $defaultSchedules = old('schedules', [
+                    ['start_date' => '', 'end_date' => '', 'quota' => 10],
+                ]);
+            @endphp
+            const oldSchedules = @json($defaultSchedules);
             let scheduleIndex = 0;
 
             function createScheduleRow(index, data = {}) {

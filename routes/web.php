@@ -19,6 +19,12 @@ Route::post('/packages/{slug}/book', [UserBookingController::class, 'store'])
     ->name('packages.book');
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PreferenceController;
+
+Route::middleware(['auth', 'is_user'])->group(function () {
+    Route::get('/preferences', [PreferenceController::class, 'index'])->name('preferences.index');
+    Route::post('/preferences', [PreferenceController::class, 'store'])->name('preferences.store');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {

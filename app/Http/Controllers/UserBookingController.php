@@ -42,9 +42,43 @@ class UserBookingController extends Controller
             });
         }
 
-        $packages = $query->latest()->paginate(9)->withQueryString();
+        $preference = auth()->check() ? auth()->user()->userPreference : null;
 
-        return view('packages.index', compact('packages'));
+        if ($preference) {
+            // Content-based scoring: hitung match_score lalu urutkan & paginate manual
+            $regions    = $preference->preferred_regions ?? [];
+            $categories = $preference->preferred_categories ?? [];
+            $budget     = $preference->budget_max;
+
+            $scored = $query->latest()->get()->map(function ($pkg) use ($regions, $categories, $budget) {
+                $score = 0;
+                if (in_array($pkg->region, $regions, true)) {
+                    $score += 2;
+                }
+                if (in_array($pkg->category, $categories, true)) {
+                    $score += 2;
+                }
+                if ($budget !== null && (float) $pkg->price_per_pax <= (float) $budget) {
+                    $score += 1;
+                }
+                $pkg->match_score = $score;
+                return $pkg;
+            })->sortByDesc('match_score')->values();
+
+            $perPage = 9;
+            $page    = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+            $packages = new \Illuminate\Pagination\LengthAwarePaginator(
+                $scored->forPage($page, $perPage)->values(),
+                $scored->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $packages = $query->latest()->paginate(9)->withQueryString();
+        }
+
+        return view('packages.index', compact('packages', 'preference'));
     }
 
     /**
