@@ -19,6 +19,12 @@ class Booking extends Model
         'travel_date',
         'guest_count',
         'total_price',
+        'is_custom',
+        'total_hours',
+        'overtime_hours',
+        'overtime_charge',
+        'custom_destinations',
+        'special_requests',
         'commission_rate',
         'commission_amount',
         'agent_earning',
@@ -27,14 +33,47 @@ class Booking extends Model
     ];
 
     protected $casts = [
-        'travel_date'        => 'date',
-        'total_price'        => 'decimal:2',
-        'guest_count'        => 'integer',
-        'commission_rate'    => 'decimal:2',
-        'commission_amount'  => 'integer',
-        'agent_earning'      => 'integer',
-        'expires_at'         => 'datetime',
+        'travel_date'         => 'date',
+        'total_price'         => 'decimal:2',
+        'guest_count'         => 'integer',
+        'is_custom'           => 'boolean',
+        'total_hours'         => 'decimal:2',
+        'overtime_hours'      => 'integer',
+        'overtime_charge'     => 'integer',
+        'custom_destinations' => 'array',
+        'commission_rate'     => 'decimal:2',
+        'commission_amount'   => 'integer',
+        'agent_earning'       => 'integer',
+        'expires_at'          => 'datetime',
     ];
+
+    /**
+     * Hitung jam lembur & biaya tambahan untuk Custom Itinerary.
+     *
+     * Aturan:
+     * - total_hours <= custom_base_hours  => overtime 0, charge 0
+     * - total_hours >  custom_base_hours  => overtime_hours = ceil(total - base),
+     *                                        overtime_charge = overtime_hours * rate
+     *
+     * @return array{base_hours: int, rate_per_hour: int, total_hours: float, is_overtime: bool, overtime_hours: int, overtime_charge: int}
+     */
+    public static function calculateOvertime(float $totalHours): array
+    {
+        $baseHours   = (int) config('trihita.custom_base_hours', 8);
+        $ratePerHour = (int) config('trihita.overtime_rate_per_hour', 75000);
+        $total       = max(0.0, round($totalHours, 2));
+
+        $overtimeHours = $total > $baseHours ? (int) ceil($total - $baseHours) : 0;
+
+        return [
+            'base_hours'      => $baseHours,
+            'rate_per_hour'   => $ratePerHour,
+            'total_hours'     => $total,
+            'is_overtime'     => $overtimeHours > 0,
+            'overtime_hours'  => $overtimeHours,
+            'overtime_charge' => $overtimeHours * $ratePerHour,
+        ];
+    }
 
     /**
      * Relasi One-to-One ke model Payment.

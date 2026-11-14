@@ -57,7 +57,7 @@
             <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">Website</div>
             <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 <span class="material-symbols-outlined">public</span>
-                <span class="font-label-bold text-sm">Lihat Website</span>
+                <span class="font-label-bold text-sm">View Website</span>
             </a>
         </nav>
         <div class="p-4 border-t border-outline-variant/30">
@@ -94,7 +94,7 @@
             <div class="flex items-center gap-4">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
                     <span class="material-symbols-outlined text-sm">open_in_new</span>
-                    <span>Lihat Website</span>
+                    <span>View Website</span>
                 </a>
                 
                 <!-- Admin Profile -->

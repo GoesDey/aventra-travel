@@ -15,9 +15,9 @@
 
             <!-- Breadcrumb Navigation -->
             <nav class="flex items-center gap-2 text-xs md:text-sm text-outline">
-                <a href="{{ route('home') }}" class="hover:text-tropical-teal transition-colors">Beranda</a>
+                <a href="{{ route('home') }}" class="hover:text-tropical-teal transition-colors">Home</a>
                 <span>/</span>
-                <a href="{{ route('packages.index') }}" class="hover:text-tropical-teal transition-colors">Paket Wisata</a>
+                <a href="{{ route('packages.index') }}" class="hover:text-tropical-teal transition-colors">Tour Packages</a>
                 <span>/</span>
                 <span class="text-on-surface font-semibold truncate max-w-xs md:max-w-md">{{ $package->name }}</span>
             </nav>
@@ -41,8 +41,8 @@
                 <div class="bg-amber-50 border border-amber-300 text-amber-900 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
                     <span class="material-symbols-outlined text-amber-600 text-2xl">pause_circle</span>
                     <div>
-                        <div class="font-bold text-sm">Paket Wisata Sedang Belum Aktif</div>
-                        <div class="text-xs text-amber-800">Paket ini masih dalam tahap penyiapan oleh agen atau sedang dinonaktifkan sementara dan belum dapat dipesan.</div>
+                        <div class="font-bold text-sm">Tour Package Currently Inactive</div>
+                        <div class="text-xs text-amber-800">This package is currently being prepared or temporarily paused by the agent and cannot be reserved yet.</div>
                     </div>
                 </div>
             @endif
@@ -64,7 +64,7 @@
                                 {{ ucfirst($package->category) }}
                             </span>
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/90 text-oceanic-deep shadow-md">
-                                Bali {{ ucfirst($package->region) }}
+                                {{ \App\Models\Package::REGIONS[$package->region] ?? ucfirst($package->region) . ' Bali' }}
                             </span>
                         </div>
 
@@ -75,7 +75,7 @@
                                     <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
                                     <span>{{ number_format($package->avg_rating, 1) }}</span>
                                 </div>
-                                <span class="text-xs text-white/80">Diselenggarakan oleh: {{ $package->agent->agent_name ?? 'Agen Resmi' }}</span>
+                                <span class="text-xs text-white/80">Operated by: {{ $package->agent->agent_name ?? 'Official Partner Agent' }}</span>
                             </div>
                             <h1 class="font-display-lg text-2xl md:text-4xl font-bold tracking-tight text-shadow-subtle">
                                 {{ $package->name }}
@@ -90,8 +90,8 @@
                                 <span class="material-symbols-outlined">schedule</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Durasi</span>
-                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->duration_days }} Hari</span>
+                                <span class="text-[11px] text-outline block">Duration</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->duration_days }} {{ $package->duration_days > 1 ? 'Days' : 'Day' }}</span>
                             </div>
                         </div>
 
@@ -100,8 +100,8 @@
                                 <span class="material-symbols-outlined">group</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Maks. Peserta</span>
-                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->max_guests }} Orang</span>
+                                <span class="text-[11px] text-outline block">Max Capacity</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->max_guests }} Guests</span>
                             </div>
                         </div>
 
@@ -110,8 +110,8 @@
                                 <span class="material-symbols-outlined">event_available</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Jadwal H-3+</span>
-                                <span class="text-sm font-bold text-emerald-600">{{ $availableSchedules->count() }} Pilihan</span>
+                                <span class="text-[11px] text-outline block">D-3+ Schedules</span>
+                                <span class="text-sm font-bold text-emerald-600">{{ $availableSchedules->count() }} Available</span>
                             </div>
                         </div>
 
@@ -120,8 +120,8 @@
                                 <span class="material-symbols-outlined">verified</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Pemandu</span>
-                                <span class="text-sm font-bold text-oceanic-deep">Berlisensi</span>
+                                <span class="text-[11px] text-outline block">Tour Guide</span>
+                                <span class="text-sm font-bold text-oceanic-deep">Certified</span>
                             </div>
                         </div>
                     </div>
@@ -130,19 +130,19 @@
                     <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                         <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                             <span class="material-symbols-outlined text-tropical-teal">description</span>
-                            <span>Tentang Paket Ini</span>
+                            <span>About This Package</span>
                         </h2>
                         <div class="text-sm md:text-base text-on-surface-variant leading-relaxed whitespace-pre-line">
                             {{ $package->description }}
                         </div>
                     </div>
 
-                    <!-- Destinasi yang Dikunjungi -->
+                    <!-- Destinations Visited -->
                     @if($package->destinations->isNotEmpty())
                         <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                                 <span class="material-symbols-outlined text-tropical-teal">map</span>
-                                <span>Destinasi yang Dikunjungi</span>
+                                <span>Destinations Visited</span>
                             </h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 @foreach($package->destinations as $dest)
@@ -172,7 +172,7 @@
                         <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                                 <span class="material-symbols-outlined text-tropical-teal">business_center</span>
-                                <span>Penyelenggara Tur</span>
+                                <span>Tour Operator</span>
                             </h2>
                             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="w-14 h-14 rounded-2xl bg-tropical-teal text-white flex items-center justify-center font-bold text-xl shadow">
@@ -184,7 +184,7 @@
                                     <div class="flex items-center gap-4 text-xs text-outline pt-1">
                                         <span>NIB: {{ $package->agent->nib_number ?? '-' }}</span>
                                         <span>•</span>
-                                        <span>Armada: {{ $package->agent->vehicle_count }} Unit</span>
+                                        <span>Fleet: {{ $package->agent->vehicle_count }} Vehicles</span>
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +198,7 @@
                         
                         <!-- Price Header -->
                         <div class="border-b border-outline-variant/30 pb-4">
-                            <span class="text-xs text-outline block">Harga Resmi per Orang</span>
+                            <span class="text-xs text-outline block">Official Rate per Person</span>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span class="font-display-lg text-3xl font-bold text-oceanic-deep" id="priceDisplay">
                                     Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}
@@ -211,28 +211,29 @@
                         <form action="{{ route('packages.book', $package->slug) }}" method="POST" class="space-y-6" id="bookingForm">
                             @csrf
 
-                            <!-- Section: Jadwal Perjalanan (Validasi H-3) -->
+                            <!-- Section: Departure Schedule (D-3 Rule) -->
                             <div class="space-y-2">
                                 <label for="package_schedule_id" class="block font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                                    Pilih Jadwal Keberangkatan <span class="text-error">*</span>
+                                    Select Departure Schedule <span class="text-error">*</span>
                                 </label>
 
                                 @if($availableSchedules->isEmpty())
-                                    <!-- Warning Alert jika tidak ada jadwal yang memenuhi syarat H-3 -->
+                                    <!-- Warning Alert if no schedules match D-3 rule -->
                                     <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 space-y-2">
                                         <div class="flex items-center gap-2 font-bold text-xs">
                                             <span class="material-symbols-outlined text-amber-600 text-lg">event_busy</span>
-                                            <span>Jadwal Tidak Tersedia</span>
+                                            <span>No Schedules Available</span>
                                         </div>
                                         <p class="text-xs leading-relaxed">
-                                            Saat ini belum ada jadwal keberangkatan yang dapat dipesan. Pemesanan wajib dilakukan minimal lebih dari 3 hari sebelum keberangkatan (Batas H-3) dan kuota masih tersedia.
+                                            Currently there are no departure schedules available for booking. Reservations must be made at least 3 days prior to departure (D-3 rule) and subject to remaining quota.
                                         </p>
                                     </div>
                                 @else
                                     <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
                                         @foreach($availableSchedules as $sch)
                                             @php
-                                                $daysLeft = now()->diffInDays($sch->start_date, false);
+                                                $scheduleDate = \Carbon\Carbon::parse($sch->start_date)->startOfDay();
+                                                $daysLeft = (int) round($scheduleDate->diffInDays(now()->startOfDay()));
                                             @endphp
                                             <label class="block p-3 rounded-xl border border-outline-variant/40 hover:border-tropical-teal cursor-pointer transition-all has-[:checked]:border-tropical-teal has-[:checked]:bg-tropical-teal/5 bg-surface-container-lowest">
                                                 <div class="flex items-start gap-3">
@@ -244,8 +245,8 @@
                                                             {{ $sch->start_date->format('d M Y') }} - {{ $sch->end_date->format('d M Y') }}
                                                         </div>
                                                         <div class="flex items-center justify-between text-[11px] text-outline mt-1">
-                                                            <span class="text-emerald-700 font-semibold">Sisa Kuota: {{ $sch->quota }}</span>
-                                                            <span class="text-amber-800 font-medium">H-{{ $daysLeft }}</span>
+                                                            <span class="text-emerald-700 font-semibold">Seats Left: {{ $sch->quota }}</span>
+                                                            <span class="text-amber-800 font-medium">D-{{ $daysLeft }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -258,13 +259,13 @@
                                 @endif
                             </div>
 
-                            <!-- Section: Jumlah Peserta -->
+                            <!-- Section: Number of Guests -->
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <label for="guest_count" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                                        Jumlah Peserta (Pax) <span class="text-error">*</span>
+                                        Number of Guests (Pax) <span class="text-error">*</span>
                                     </label>
-                                    <span class="text-[11px] text-outline">Maks. {{ $package->max_guests }} pax</span>
+                                    <span class="text-[11px] text-outline">Max. {{ $package->max_guests }} pax</span>
                                 </div>
                                 
                                 <input type="number" name="guest_count" id="guest_count" value="{{ old('guest_count', 1) }}" min="1" max="{{ $package->max_guests }}" required
@@ -279,11 +280,11 @@
                             <!-- Total Price Calculation -->
                             <div class="bg-surface-container-low p-4 rounded-xl space-y-1">
                                 <div class="flex justify-between items-center text-xs text-outline">
-                                    <span>Estimasi Total:</span>
+                                    <span>Estimated Breakdown:</span>
                                     <span id="paxCountInfo">1 Pax × Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="font-bold text-sm text-oceanic-deep">Total Bayar:</span>
+                                    <span class="font-bold text-sm text-oceanic-deep">Total Payable:</span>
                                     <span class="font-display-lg text-xl font-bold text-tropical-teal" id="totalPriceDisplay">
                                         Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}
                                     </span>
@@ -294,38 +295,38 @@
                             @guest
                                 <a href="{{ route('login') }}" class="w-full bg-oceanic-deep hover:bg-primary-container text-white font-label-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-colors">
                                     <span class="material-symbols-outlined text-lg">login</span>
-                                    <span>Masuk untuk Memesan</span>
+                                    <span>Login to Book</span>
                                 </a>
                                 <p class="text-[11px] text-outline text-center">
-                                    Belum punya akun? <a href="{{ route('register') }}" class="text-tropical-teal underline font-medium">Daftar sekarang</a>
+                                    Don't have an account? <a href="{{ route('register') }}" class="text-tropical-teal underline font-medium">Register now</a>
                                 </p>
                             @else
                                 @if(!$package->is_active)
                                     <div class="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs space-y-1 text-center">
-                                        <div class="font-bold">Paket Belum Aktif</div>
-                                        <p class="text-[11px]">Paket wisata ini belum dibuka untuk pemesanan oleh agen.</p>
+                                        <div class="font-bold">Package Inactive</div>
+                                        <p class="text-[11px]">This tour package is currently not open for bookings by the partner agent.</p>
                                     </div>
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-lg">pause_circle</span>
-                                        <span>Paket Belum Aktif</span>
+                                        <span>Package Inactive</span>
                                     </button>
                                 @elseif(auth()->user()->role !== 'user')
                                     <div class="p-3 bg-blue-50 border border-blue-200 text-blue-900 rounded-xl text-xs space-y-1 text-center">
-                                        <div class="font-bold">Akun {{ ucfirst(auth()->user()->role) }}</div>
-                                        <p class="text-[11px]">Pemesanan tur hanya dapat dilakukan oleh akun Customer / Pengguna (role: user).</p>
+                                        <div class="font-bold">Account Role: {{ ucfirst(auth()->user()->role) }}</div>
+                                        <p class="text-[11px]">Tour bookings can only be made by Traveler accounts (role: user).</p>
                                     </div>
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed">
-                                        Akses Ditolak (Khusus User)
+                                        Access Denied (Travelers Only)
                                     </button>
                                 @elseif($availableSchedules->isEmpty())
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-lg">block</span>
-                                        <span>Jadwal Tidak Tersedia</span>
+                                        <span>No Schedules Available</span>
                                     </button>
                                 @else
                                     <button type="submit" class="w-full bg-tropical-teal hover:bg-secondary text-white font-label-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98">
                                         <span class="material-symbols-outlined text-lg">check_circle</span>
-                                        <span>Pesan Sekarang (H-3)</span>
+                                        <span>Book Tour Now</span>
                                     </button>
                                 @endif
                             @endguest

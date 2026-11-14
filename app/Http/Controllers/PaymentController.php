@@ -16,12 +16,12 @@ class PaymentController extends Controller
     public function show(string $booking_code, MidtransService $midtrans)
     {
         $booking = Booking::where('booking_code', $booking_code)
-            ->with(['package', 'schedule'])
+            ->with(['package', 'schedule', 'user'])
             ->firstOrFail();
 
         // 1. Otorisasi: Pastikan booking milik user yang sedang login
         if ($booking->user_id !== auth()->id()) {
-            abort(403, 'Akses ditolak. Pemesanan ini bukan milik akun Anda.');
+            abort(403, 'Access denied. This booking does not belong to your account.');
         }
 
         // 2. Ambil atau buat record Payment dengan lock cepat, panggilan API Snap di luar lock
@@ -54,7 +54,7 @@ class PaymentController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Gagal membuat Snap Token Midtrans: ' . $e->getMessage(), [
+            \Illuminate\Support\Facades\Log::error('Failed to create Midtrans Snap Token: ' . $e->getMessage(), [
                 'exception_class' => get_class($e),
                 'code'            => $e->getCode(),
                 'message'         => $e->getMessage(),
@@ -63,23 +63,23 @@ class PaymentController extends Controller
             ]);
 
             return redirect()->route('history')
-                ->with('error', 'Gagal memproses pembayaran melalui Midtrans. Silakan coba beberapa saat lagi.');
+                ->with('error', 'Failed to process payment via Midtrans. Please try again shortly.');
         }
 
         if (!$payment) {
             $latest = Booking::where('id', $booking->id)->first();
             if ($latest?->status === 'dibayar') {
                 return redirect()->route('history')
-                    ->with('success', 'Pemesanan ini sudah berhasil dibayar!');
+                    ->with('success', 'This booking has already been paid successfully!');
             }
 
             if ($latest?->isExpired() || in_array($latest?->status, ['kedaluwarsa', 'dibatalkan'])) {
                 return redirect()->route('history')
-                    ->with('error', 'Batas waktu pembayaran untuk pemesanan ini telah kedaluwarsa.');
+                    ->with('error', 'The payment time limit for this booking has expired.');
             }
 
             return redirect()->route('history')
-                ->with('error', "Status pemesanan sudah berubah ({$latest?->status}).");
+                ->with('error', "Booking status has changed ({$latest?->status}).");
         }
 
         $clientKey = config('midtrans.client_key');

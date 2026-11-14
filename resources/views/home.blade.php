@@ -37,34 +37,88 @@
                     <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
                         <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">verified_user</span>
                     </div>
-                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">Terpercaya</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Ribuan pelanggan telah mempercayakan perjalanan mereka kepada kami karena standar keamanan dan transparansi kami.</p>
+                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">Trusted &amp; Certified</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Thousands of travelers trust us for their Bali journeys thanks to our high safety standards, verified partners, and full transparency.</p>
                 </div>
                 <!-- Value Card 2 -->
                 <div class="bg-surface-white p-8 rounded-xl shadow-sm border border-surface-container hover:shadow-md transition-shadow flex flex-col items-center text-center group">
                     <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
                         <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">sell</span>
                     </div>
-                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">Harga Terbaik</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Kami menawarkan paket wisata dengan harga yang kompetitif tanpa mengorbankan kualitas fasilitas dan kenyamanan Anda.</p>
+                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">Best Value</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">We offer tour packages at competitive prices without ever compromising on quality, vehicle comfort, or itinerary richness.</p>
                 </div>
                 <!-- Value Card 3 -->
                 <div class="bg-surface-white p-8 rounded-xl shadow-sm border border-surface-container hover:shadow-md transition-shadow flex flex-col items-center text-center group">
                     <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
                         <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">support_agent</span>
                     </div>
-                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">Layanan 24/7</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Tim kami siap membantu kebutuhan perjalanan Anda kapan saja dan di mana saja, memberikan rasa tenang selama perjalanan.</p>
+                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">24/7 Support</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Our support team and partner travel agents are ready to assist your journey at every step, ensuring complete peace of mind.</p>
                 </div>
             </div>
         </div>
     </section>
-    
-    <!-- Popular Packages Section -->
-    <section class="py-20 md:py-32 bg-surface">
+
+    <!-- Travel Options Section: Regular Route vs Custom Itinerary -->
+    <section class="py-20 bg-surface">
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
             <div class="text-center mb-16">
-                <h2 class="font-headline-md text-headline-md text-oceanic-deep mb-4">Popular Package</h2>
+                <h2 class="font-headline-md text-headline-md text-oceanic-deep mb-4">Choose Your Way to Explore</h2>
+                <div class="w-24 h-1 bg-tropical-teal mx-auto rounded-full"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <!-- Option 1: Regular Route -->
+                <div class="bg-surface-white p-8 rounded-xl shadow-sm border border-surface-container hover:shadow-md transition-shadow flex flex-col justify-between group">
+                    <div>
+                        <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">map</span>
+                        </div>
+                        <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-xl">Regular Route</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                            Practical, pre-arranged tour packages curated directly by licensed travel agents. Enjoy fixed departures, guaranteed schedules, and popular sightseeing routes with clear per-pax pricing.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-surface-container-highest flex items-center justify-between">
+                        <span class="text-xs font-semibold text-outline">Curated by local agents</span>
+                        <a href="{{ route('packages.index') }}" class="bg-oceanic-deep hover:bg-primary text-surface-white font-label-bold text-xs px-6 py-2.5 rounded-full transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                            <span>Browse Packages</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Option 2: Custom Itinerary -->
+                <div class="bg-surface-white p-8 rounded-xl shadow-sm border border-tropical-teal/30 hover:border-tropical-teal hover:shadow-md transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="w-16 h-16 rounded-full bg-tropical-teal/10 flex items-center justify-center text-tropical-teal mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">tune</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <h3 class="font-label-bold text-label-bold text-on-surface text-xl">Custom Itinerary</h3>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-tropical-teal/10 text-tropical-teal uppercase tracking-wider">Tailor-Made</span>
+                        </div>
+                        <p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                            Design your own dream day across Bali. Select destinations from our catalog and customize the duration per stop. Includes a standard base of <strong>8 hours</strong>, with transparent overtime rates (Rp 75,000/hr rounded up) if your itinerary exceeds the limit.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-surface-container-highest flex items-center justify-between">
+                        <span class="text-xs font-semibold text-outline">Up to 8 hours included</span>
+                        <a href="{{ route('custom-itinerary.create') }}" class="bg-tropical-teal hover:bg-secondary text-surface-white font-label-bold text-xs px-6 py-2.5 rounded-full transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                            <span>Build Custom Itinerary</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Packages Section -->
+    <section class="py-20 md:py-32 bg-surface-container-low">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+            <div class="text-center mb-16">
+                <h2 class="font-headline-md text-headline-md text-oceanic-deep mb-4">Popular Packages</h2>
                 <div class="w-24 h-1 bg-tropical-teal mx-auto rounded-full"></div>
             </div>
             
@@ -85,7 +139,7 @@
                         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $coverUrl }}" alt="{{ $package->name }}">
                         @if(!$package->is_active)
                             <div class="absolute top-4 left-4 bg-amber-500 text-white font-caption text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
-                                Belum Aktif
+                                Inactive
                             </div>
                         @endif
                         <div class="absolute top-4 right-4 bg-surface-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center space-x-1 shadow-sm">
@@ -97,7 +151,7 @@
                         <h3 class="font-label-bold text-label-bold text-lg text-oceanic-deep mb-1 group-hover:text-tropical-teal transition-colors">{{ $package->name }}</h3>
                         <p class="font-body-md text-body-md text-on-surface-variant text-sm mb-6 flex-grow">{{ $package->duration_days }} Days Trip</p>
                         <div class="pt-4 border-t border-surface-container-highest">
-                            <p class="font-caption text-caption text-outline mb-1">Mulai dari</p>
+                            <p class="font-caption text-caption text-outline mb-1">Starting from</p>
                             <p class="font-price-hero text-price-hero text-oceanic-deep">Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -107,7 +161,7 @@
             
             <div class="text-center">
                 <a href="{{ route('packages.index') }}" class="bg-oceanic-deep hover:bg-primary text-surface-white font-label-bold text-label-bold px-8 py-3 rounded-full transition-colors inline-flex items-center space-x-2">
-                    <span class="">More Package</span>
+                    <span class="">View All Packages</span>
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
             </div>

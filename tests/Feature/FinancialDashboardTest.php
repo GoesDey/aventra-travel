@@ -188,7 +188,7 @@ class FinancialDashboardTest extends TestCase
         // Verifikasi konten halaman memuat nama agen teratas
         $response->assertSee('PT Bali Tour Operator A');
         $response->assertSee('PT Ubud Adventure B');
-        $response->assertSee('Dashboard Keuangan Super Admin');
+        $response->assertSee('Super Admin Financial Dashboard');
     }
 
     public function test_agent_dashboard_strictly_isolates_financial_data_between_agents(): void

@@ -1,14 +1,14 @@
-<x-layouts.agent title="Edit Paket Wisata - {{ $package->name }}">
+<x-layouts.agent title="Edit Tour Package - {{ $package->name }}">
     <div class="max-w-5xl mx-auto space-y-6">
 
         <!-- Navigation Bar / Breadcrumb -->
         <div class="flex items-center gap-3 text-sm">
             <a href="{{ route('agent.packages.index') }}" class="text-tropical-teal hover:underline flex items-center gap-1">
                 <span class="material-symbols-outlined text-base">arrow_back</span>
-                <span>Kembali ke Daftar Paket</span>
+                <span>Back to Packages</span>
             </a>
             <span class="text-outline">/</span>
-            <span class="text-on-surface-variant font-medium">Edit Paket</span>
+            <span class="text-on-surface-variant font-medium">Edit Package</span>
         </div>
 
         <!-- Form Card -->
@@ -16,17 +16,17 @@
             @csrf
             @method('PUT')
 
-            <!-- Section 1: Informasi Dasar Paket -->
+            <!-- Section 1: Basic Package Details -->
             <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-6">
                 <div>
-                    <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">Edit Informasi Dasar Paket</h2>
-                    <p class="text-xs text-on-surface-variant mt-0.5">Perbarui informasi paket perjalanan wisata Anda.</p>
+                    <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">Edit Basic Package Details</h2>
+                    <p class="text-xs text-on-surface-variant mt-0.5">Update the parameters of your tour package.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nama Paket -->
                     <div class="md:col-span-2 space-y-1.5">
-                        <label for="name" class="block font-label-bold text-sm text-on-surface">Nama Paket Wisata <span class="text-error">*</span></label>
+                        <label for="name" class="block font-label-bold text-sm text-on-surface">Tour Package Name <span class="text-error">*</span></label>
                         <input type="text" name="name" id="name" value="{{ old('name', $package->name) }}" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('name') border-error @enderror">
                         @error('name') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -34,30 +34,31 @@
 
                     <!-- Kategori (Dropdown) -->
                     <div class="space-y-1.5">
-                        <label for="category" class="block font-label-bold text-sm text-on-surface">Kategori Paket <span class="text-error">*</span></label>
+                        <label for="category" class="block font-label-bold text-sm text-on-surface">Package Category <span class="text-error">*</span></label>
                         <select name="category" id="category" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('category') border-error @enderror">
-                            <option value="reguler" {{ old('category', $package->category) === 'reguler' ? 'selected' : '' }}>Reguler (Open Trip / Terjadwal)</option>
-                            <option value="custom" {{ old('category', $package->category) === 'custom' ? 'selected' : '' }}>Custom (Private / Fleksibel)</option>
+                            <option value="reguler" {{ old('category', $package->category) === 'reguler' ? 'selected' : '' }}>Regular (Open Trip / Scheduled)</option>
+                            <option value="custom" {{ old('category', $package->category) === 'custom' ? 'selected' : '' }}>Custom (Private / Flexible Itinerary)</option>
                         </select>
                         @error('category') <span class="text-error text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Region (Dropdown) -->
                     <div class="space-y-1.5">
-                        <label for="region" class="block font-label-bold text-sm text-on-surface">Region / Wilayah <span class="text-error">*</span></label>
+                        <label for="region" class="block font-label-bold text-sm text-on-surface">Region / Area <span class="text-error">*</span></label>
                         <select name="region" id="region" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('region') border-error @enderror">
-                            <option value="timur" {{ old('region', $package->region) === 'timur' ? 'selected' : '' }}>Bali Timur (Nusa Penida, Karangasem, Klungkung)</option>
-                            <option value="barat" {{ old('region', $package->region) === 'barat' ? 'selected' : '' }}>Bali Barat (Tabanan, Jembrana, Buleleng)</option>
-                            <option value="lainnya" {{ old('region', $package->region) === 'lainnya' ? 'selected' : '' }}>Lainnya / Seluruh Bali</option>
+                            <option value="utara" {{ old('region', $package->region) === 'utara' ? 'selected' : '' }}>North Bali (Buleleng, Singaraja, Lovina)</option>
+                            <option value="selatan" {{ old('region', $package->region) === 'selatan' ? 'selected' : '' }}>South Bali (Badung, Denpasar, Gianyar, Kuta)</option>
+                            <option value="timur" {{ old('region', $package->region) === 'timur' ? 'selected' : '' }}>East Bali (Nusa Penida, Karangasem, Klungkung)</option>
+                            <option value="barat" {{ old('region', $package->region) === 'barat' ? 'selected' : '' }}>West Bali (Tabanan, Jembrana, Medewi)</option>
                         </select>
                         @error('region') <span class="text-error text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Harga Per Pax -->
                     <div class="space-y-1.5">
-                        <label for="price_per_pax" class="block font-label-bold text-sm text-on-surface">Harga per Pax (Rp) <span class="text-error">*</span></label>
+                        <label for="price_per_pax" class="block font-label-bold text-sm text-on-surface">Price per Person (Rp) <span class="text-error">*</span></label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-medium text-sm">Rp</span>
                             <input type="number" name="price_per_pax" id="price_per_pax" value="{{ old('price_per_pax', (int)$package->price_per_pax) }}" min="0" step="1000" required
@@ -68,7 +69,7 @@
 
                     <!-- Durasi Hari -->
                     <div class="space-y-1.5">
-                        <label for="duration_days" class="block font-label-bold text-sm text-on-surface">Durasi (Hari) <span class="text-error">*</span></label>
+                        <label for="duration_days" class="block font-label-bold text-sm text-on-surface">Duration (Days) <span class="text-error">*</span></label>
                         <input type="number" name="duration_days" id="duration_days" value="{{ old('duration_days', $package->duration_days) }}" min="1" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('duration_days') border-error @enderror">
                         @error('duration_days') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -76,7 +77,7 @@
 
                     <!-- Maksimal Tamu / Peserta -->
                     <div class="space-y-1.5">
-                        <label for="max_guests" class="block font-label-bold text-sm text-on-surface">Maksimal Peserta per Tour <span class="text-error">*</span></label>
+                        <label for="max_guests" class="block font-label-bold text-sm text-on-surface">Max Guests per Booking <span class="text-error">*</span></label>
                         <input type="number" name="max_guests" id="max_guests" value="{{ old('max_guests', $package->max_guests) }}" min="1" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('max_guests') border-error @enderror">
                         @error('max_guests') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -84,22 +85,22 @@
 
                     <!-- Foto Cover -->
                     <div class="space-y-2">
-                        <label for="cover_image" class="block font-label-bold text-sm text-on-surface">Foto Cover Paket</label>
+                        <label for="cover_image" class="block font-label-bold text-sm text-on-surface">Cover Image</label>
                         @if($package->cover_image)
                             <div class="flex items-center gap-3 mb-2">
                                 <img src="{{ str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image) }}" alt="{{ $package->name }}" class="w-16 h-16 rounded-xl object-cover border border-outline-variant/30">
-                                <span class="text-xs text-outline">Cover saat ini. Unggah baru jika ingin mengganti.</span>
+                                <span class="text-xs text-outline">Current cover. Upload a new image to replace it.</span>
                             </div>
                         @endif
                         <input type="file" name="cover_image" id="cover_image" accept="image/*"
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-tropical-teal/10 file:text-tropical-teal hover:file:bg-tropical-teal/20 focus:outline-none">
-                        <span class="text-[11px] text-outline">Format: JPG, PNG, WEBP. Maks 2MB.</span>
+                        <span class="text-[11px] text-outline">Supported formats: JPG, PNG, WEBP. Max 2MB.</span>
                         @error('cover_image') <span class="text-error text-xs block">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Deskripsi -->
                     <div class="md:col-span-2 space-y-1.5">
-                        <label for="description" class="block font-label-bold text-sm text-on-surface">Deskripsi Paket <span class="text-error">*</span></label>
+                        <label for="description" class="block font-label-bold text-sm text-on-surface">Package Description <span class="text-error">*</span></label>
                         <textarea name="description" id="description" rows="5" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl p-4 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('description') border-error @enderror">{{ old('description', $package->description) }}</textarea>
                         @error('description') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -108,7 +109,7 @@
                     <!-- Destinasi Wisata Pilihan -->
                     @if($destinations->isNotEmpty())
                         <div class="md:col-span-2 space-y-2 pt-2 border-t border-outline-variant/20">
-                            <label class="block font-label-bold text-sm text-on-surface">Destinasi yang Dikunjungi</label>
+                            <label class="block font-label-bold text-sm text-on-surface">Destinations Included</label>
                             @php
                                 $selectedDestIds = old('destinations', $package->destinations->pluck('id')->toArray());
                             @endphp
@@ -127,7 +128,7 @@
                     <div class="md:col-span-2 flex items-center gap-3 pt-2">
                         <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $package->is_active) ? 'checked' : '' }} class="w-4 h-4 rounded border-outline-variant text-tropical-teal focus:ring-tropical-teal">
                         <label for="is_active" class="text-sm font-semibold text-on-surface cursor-pointer">
-                            Publikasikan paket ini (Paket Aktif & dapat dipesan pengguna)
+                            Publish this tour package (Active and visible for customer bookings)
                         </label>
                     </div>
                 </div>
@@ -137,12 +138,12 @@
             <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">Jadwal Perjalanan & Kuota</h2>
-                        <p class="text-xs text-on-surface-variant mt-0.5">Kelola tanggal keberangkatan, tanggal selesai, dan kuota peserta untuk setiap jadwal.</p>
+                        <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">Departure Schedules &amp; Quotas</h2>
+                        <p class="text-xs text-on-surface-variant mt-0.5">Manage departure dates, return dates, and quota for each schedule.</p>
                     </div>
                     <button type="button" id="addScheduleBtn" class="inline-flex items-center gap-2 bg-tropical-teal/10 hover:bg-tropical-teal/20 text-tropical-teal font-label-bold text-xs px-4 py-2.5 rounded-xl transition-colors shrink-0">
                         <span class="material-symbols-outlined text-base">add</span>
-                        <span>Tambah Jadwal</span>
+                        <span>Add Schedule</span>
                     </button>
                 </div>
 
@@ -161,10 +162,10 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-end gap-4 pt-2">
                 <a href="{{ route('agent.packages.index') }}" class="px-6 py-3 rounded-xl border border-outline-variant/50 text-on-surface hover:bg-surface-container-low font-semibold text-sm transition-colors">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-8 py-3 rounded-xl bg-tropical-teal hover:bg-secondary text-white font-label-bold text-sm shadow-md hover:shadow-lg transition-all duration-200">
-                    Perbarui Paket & Jadwal
+                    Update Package &amp; Schedules
                 </button>
             </div>
         </form>
@@ -205,22 +206,22 @@
                     <input type="hidden" name="schedules[${index}][id]" value="${scheduleId}">
                     <div class="flex flex-col md:flex-row md:items-end gap-4">
                         <div class="flex-1 space-y-1">
-                            <label class="block font-label-bold text-xs text-on-surface">Tanggal Mulai <span class="text-error">*</span></label>
+                            <label class="block font-label-bold text-xs text-on-surface">Departure Date <span class="text-error">*</span></label>
                             <input type="date" name="schedules[${index}][start_date]" value="${startDate}" required
                                 class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-start">
                         </div>
                         <div class="flex-1 space-y-1">
-                            <label class="block font-label-bold text-xs text-on-surface">Tanggal Selesai <span class="text-error">*</span></label>
+                            <label class="block font-label-bold text-xs text-on-surface">Return Date <span class="text-error">*</span></label>
                             <input type="date" name="schedules[${index}][end_date]" value="${endDate}" required
                                 class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-end">
                         </div>
                         <div class="w-full md:w-36 space-y-1">
-                            <label class="block font-label-bold text-xs text-on-surface">Kuota Peserta <span class="text-error">*</span></label>
+                            <label class="block font-label-bold text-xs text-on-surface">Quota (Seats) <span class="text-error">*</span></label>
                             <input type="number" name="schedules[${index}][quota]" value="${quota}" min="1" required
                                 class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none">
                         </div>
                         <div class="shrink-0 flex items-center justify-end">
-                            <button type="button" class="removeScheduleBtn p-2 text-error hover:bg-rose-100 rounded-lg transition-colors" title="Hapus Jadwal">
+                            <button type="button" class="removeScheduleBtn p-2 text-error hover:bg-rose-100 rounded-lg transition-colors" title="Delete Schedule">
                                 <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
                         </div>
@@ -231,7 +232,7 @@
                 row.querySelector('.removeScheduleBtn').addEventListener('click', function () {
                     const totalRows = container.querySelectorAll('.schedule-row').length;
                     if (totalRows <= 1) {
-                        alert('Minimal satu jadwal perjalanan wajib tersedia.');
+                        alert('At least one departure schedule is required.');
                         return;
                     }
                     row.remove();

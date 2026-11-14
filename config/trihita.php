@@ -31,4 +31,26 @@ return [
     |
     */
     'max_guest_per_booking' => (int) env('TRIHITA_MAX_GUEST_PER_BOOKING', 20),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Itinerary - Base Hours
+    |--------------------------------------------------------------------------
+    |
+    | Durasi standar (jam) paket Custom Itinerary tanpa biaya tambahan.
+    | Jika total durasi melebihi nilai ini, kelebihannya dikenakan overtime.
+    |
+    */
+    'custom_base_hours' => (int) env('TRIHITA_CUSTOM_BASE_HOURS', 8),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Itinerary - Overtime Rate per Hour (IDR)
+    |--------------------------------------------------------------------------
+    |
+    | Tarif tambahan per jam (dibulatkan ke atas) setelah melewati
+    | custom_base_hours.
+    |
+    */
+    'overtime_rate_per_hour' => (int) env('TRIHITA_OVERTIME_RATE_PER_HOUR', 75000),
 ];

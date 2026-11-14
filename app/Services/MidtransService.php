@@ -58,17 +58,44 @@ class MidtransService
                 'gross_amount' => $grossAmount,
             ],
             'customer_details' => [
-                'first_name' => $booking->user->name,
-                'email'      => $booking->user->email,
+                'first_name' => $booking->user?->name ?? 'Traveler',
+                'email'      => $booking->user?->email ?? 'traveler@example.com',
             ],
-            'item_details' => [
-                [
-                    'id'       => (string) $booking->package_id,
-                    'price'    => (int) $booking->package->price_per_pax,
-                    'quantity' => (int) $booking->guest_count,
-                    'name'     => mb_substr($booking->package->name, 0, 50),
-                ]
-            ],
+            'item_details' => (function () use ($booking, $grossAmount) {
+                $items = [
+                    [
+                        'id'       => (string) ($booking->package_id ?? 'pkg-' . $booking->id),
+                        'price'    => (int) ($booking->package?->price_per_pax ?? (int) $booking->total_price),
+                        'quantity' => (int) ($booking->guest_count ?? 1),
+                        'name'     => mb_substr($booking->package?->name ?? 'Tour Package', 0, 50),
+                    ]
+                ];
+
+                // Hanya sertakan overtime item jika booking bertipe custom dan memiliki overtime_charge
+                if (!empty($booking->is_custom) && !empty($booking->overtime_charge) && (int) $booking->overtime_charge > 0) {
+                    $items[] = [
+                        'id'       => 'overtime-charge',
+                        'price'    => (int) $booking->overtime_charge,
+                        'quantity' => 1,
+                        'name'     => 'Custom Overtime (' . (int) ($booking->overtime_hours ?? 0) . ' hrs)',
+                    ];
+                }
+
+                // Midtrans strictly requires sum(price * quantity) === gross_amount
+                $sum = array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $items));
+                if ($sum !== $grossAmount) {
+                    return [
+                        [
+                            'id'       => (string) ($booking->package_id ?? 'pkg-' . $booking->id),
+                            'price'    => $grossAmount,
+                            'quantity' => 1,
+                            'name'     => mb_substr($booking->package?->name ?? 'Tour Package', 0, 50),
+                        ]
+                    ];
+                }
+
+                return $items;
+            })(),
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s O'),
                 'unit'       => 'minute',

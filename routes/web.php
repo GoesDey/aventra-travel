@@ -19,6 +19,13 @@ Route::post('/packages/{slug}/book', [UserBookingController::class, 'store'])
     ->name('packages.book');
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CustomItineraryController;
+use App\Http\Controllers\Api\MidtransWebhookController;
+
+// Midtrans Webhook / Callback notification endpoints (bypassed from CSRF)
+Route::post('/midtrans/callback', [MidtransWebhookController::class, 'handle'])->name('midtrans.callback');
+Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
+Route::post('/payment/notification', [MidtransWebhookController::class, 'handle'])->name('midtrans.notification');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
@@ -38,6 +45,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/history', BookingHistory::class)->name('history');
     Route::get('/payments/{booking_code}', [PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
+
+    // Custom Itinerary
+    Route::get('/custom-itinerary', [CustomItineraryController::class, 'create'])->name('custom-itinerary.create');
+    Route::post('/custom-itinerary', [CustomItineraryController::class, 'store'])->name('custom-itinerary.store');
+    Route::get('/user/custom-itinerary', [CustomItineraryController::class, 'create'])->name('user.custom-itinerary.create');
+    Route::post('/user/custom-itinerary', [CustomItineraryController::class, 'store'])->name('user.custom-itinerary.store');
 });
 
 use App\Livewire\Admin\FinanceDashboard;

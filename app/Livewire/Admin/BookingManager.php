@@ -16,12 +16,12 @@ class BookingManager extends Component
     {
         if (auth()->user()?->isAgent()) {
             if ($booking->package->agent_id !== auth()->user()->agent?->id) {
-                abort(403, 'Akses ditolak. Booking ini bukan bagian dari paket travel Anda.');
+                abort(403, 'Access denied. This booking does not belong to your travel packages.');
             }
 
             try {
                 $booking->transitionStatusByAgent($status);
-                session()->flash('success', "Status booking berhasil diperbarui menjadi {$status}.");
+                session()->flash('success', "Booking status successfully updated to {$status}.");
             } catch (\DomainException $e) {
                 session()->flash('error', $e->getMessage());
             }
@@ -29,7 +29,7 @@ class BookingManager extends Component
         }
 
         $booking->update(['status' => $status]);
-        session()->flash('success', 'Status booking diperbarui.');
+        session()->flash('success', 'Booking status updated.');
     }
 
     public function render()

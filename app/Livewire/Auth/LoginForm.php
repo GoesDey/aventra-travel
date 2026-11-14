@@ -45,7 +45,7 @@ class LoginForm extends Component
                 session()->invalidate();
                 session()->regenerateToken();
 
-                $this->addError('email', 'Akun Anda sedang ditangguhkan (suspended). Silakan hubungi Super Admin.');
+                $this->addError('email', 'Your account has been suspended. Please contact Super Admin.');
                 return;
             }
 
@@ -55,7 +55,7 @@ class LoginForm extends Component
                 session()->invalidate();
                 session()->regenerateToken();
 
-                $this->addError('email', 'Akun agen Anda masih menunggu persetujuan (pending) dari Super Admin.');
+                $this->addError('email', 'Your agent account is currently pending approval from Super Admin.');
                 return;
             }
 
@@ -76,7 +76,7 @@ class LoginForm extends Component
             return redirect()->route('packages.index');
         }
 
-        $this->addError('email', 'Kredensial tidak valid.');
+        $this->addError('email', 'These credentials do not match our records.');
     }
 
     public function render()

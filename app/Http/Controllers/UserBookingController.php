@@ -26,12 +26,9 @@ class UserBookingController extends Controller
                   ->whereDate('start_date', '>=', now()->addDays(3)->toDateString());
             }]);
 
-        // Opsional: Filter kategori & region jika dikirim via query string
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('region')) {
+        // Filter region (filter kategori sudah dihapus dari katalog publik)
+        // Hanya terima region resmi (utara, selatan, timur, barat); nilai lain diabaikan
+        if ($request->filled('region') && in_array($request->region, Package::regionKeys(), true)) {
             $query->where('region', $request->region);
         }
 
@@ -40,6 +37,36 @@ class UserBookingController extends Controller
                 $q->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%');
             });
+        }
+
+        // Rekomendasi berbasis preferensi user (jika ada): paket yang paling cocok tampil lebih dulu.
+        // Skor: region cocok +2, kategori cocok +2, harga <= budget +1. Filter tetap berlaku.
+        $preference = auth()->check() ? auth()->user()->userPreference : null;
+
+        if ($preference) {
+            $scoreParts = [];
+            $bindings   = [];
+
+            $regions = array_values(array_intersect((array) $preference->preferred_regions, Package::regionKeys()));
+            if (!empty($regions)) {
+                $scoreParts[] = 'CASE WHEN region IN (' . implode(',', array_fill(0, count($regions), '?')) . ') THEN 2 ELSE 0 END';
+                array_push($bindings, ...$regions);
+            }
+
+            $categories = array_values(array_intersect((array) $preference->preferred_categories, ['reguler', 'custom']));
+            if (!empty($categories)) {
+                $scoreParts[] = 'CASE WHEN category IN (' . implode(',', array_fill(0, count($categories), '?')) . ') THEN 2 ELSE 0 END';
+                array_push($bindings, ...$categories);
+            }
+
+            if ($preference->budget_max !== null) {
+                $scoreParts[] = 'CASE WHEN price_per_pax <= ? THEN 1 ELSE 0 END';
+                $bindings[]   = (float) $preference->budget_max;
+            }
+
+            if (!empty($scoreParts)) {
+                $query->orderByRaw('(' . implode(' + ', $scoreParts) . ') DESC', $bindings);
+            }
         }
 
         $packages = $query->latest()->paginate(9)->withQueryString();
@@ -80,12 +107,12 @@ class UserBookingController extends Controller
             'package_schedule_id' => 'required|exists:package_schedules,id',
             'guest_count'         => "required|integer|min:1|max:{$maxConfig}",
         ], [
-            'package_schedule_id.required' => 'Silakan pilih jadwal keberangkatan yang tersedia.',
-            'package_schedule_id.exists'   => 'Jadwal perjalanan tidak valid.',
-            'guest_count.required'         => 'Jumlah peserta wajib diisi.',
-            'guest_count.integer'          => 'Jumlah peserta harus berupa angka.',
-            'guest_count.min'              => 'Jumlah peserta minimal 1 orang.',
-            'guest_count.max'              => "Jumlah peserta maksimal {$maxConfig} orang.",
+            'package_schedule_id.required' => 'Please select an available departure schedule.',
+            'package_schedule_id.exists'   => 'Invalid travel schedule selected.',
+            'guest_count.required'         => 'Guest count is required.',
+            'guest_count.integer'          => 'Guest count must be an integer.',
+            'guest_count.min'              => 'Guest count must be at least 1 person.',
+            'guest_count.max'              => "Maximum guest count is {$maxConfig} guests.",
         ]);
 
         $guestCount = (int) $request->guest_count;
@@ -98,21 +125,21 @@ class UserBookingController extends Controller
         // Validasi: Paket harus berstatus aktif
         if (!$package->is_active) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'package_schedule_id' => 'Pemesanan tidak dapat diproses karena paket wisata ini saat ini sedang tidak aktif.',
+                'package_schedule_id' => 'Booking cannot be processed because this tour package is currently inactive.',
             ]);
         }
 
         // Validasi: Agen pemilik paket harus berstatus 'active'
         if (!$package->agent || !$package->agent->user || $package->agent->user->status !== 'active') {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'package_schedule_id' => 'Pemesanan tidak dapat diproses karena agen penyedia paket saat ini sedang tidak aktif.',
+                'package_schedule_id' => 'Booking cannot be processed because the tour agent is currently inactive.',
             ]);
         }
 
         // Validasi Kapasitas Maksimal Paket
         if ($guestCount > $package->max_guests) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'guest_count' => "Kapasitas maksimal satu pemesanan untuk paket ini adalah {$package->max_guests} orang.",
+                'guest_count' => "Maximum capacity per booking for this package is {$package->max_guests} guests.",
             ]);
         }
 
@@ -130,14 +157,14 @@ class UserBookingController extends Controller
 
             if ($scheduleStartDate->lessThan($h3Limit)) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'package_schedule_id' => 'Pemesanan gagal: Batas waktu pemesanan maksimal H-3 sebelum jadwal keberangkatan.',
+                    'package_schedule_id' => 'Booking failed: Bookings must be made at least 3 days before departure.',
                 ]);
             }
 
             // 3. Validasi Ketersediaan Kuota
             if ($schedule->quota < $guestCount) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'guest_count' => "Mohon maaf, sisa kuota untuk jadwal ini hanya tersedia {$schedule->quota} orang. Silakan sesuaikan jumlah peserta.",
+                    'guest_count' => "Sorry, remaining quota for this schedule is only {$schedule->quota} seats. Please adjust your guest count.",
                 ]);
             }
 
@@ -153,7 +180,7 @@ class UserBookingController extends Controller
 
             if ($existingPending) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'package_schedule_id' => 'Anda masih memiliki pemesanan aktif yang menunggu pembayaran untuk jadwal ini (Kode: ' . $existingPending->booking_code . '). Silakan selesaikan pembayaran tersebut.',
+                    'package_schedule_id' => 'You already have an active booking awaiting payment for this schedule (Code: ' . $existingPending->booking_code . '). Please complete that payment.',
                 ]);
             }
 
@@ -176,7 +203,7 @@ class UserBookingController extends Controller
             // 7. Kurangi Kuota Jadwal
             $schedule->decrement('quota', $guestCount);
 
-            // 8. Simpan Booking
+            // 8. Simpan Booking (Paket Reguler: kolom kustom diisi default 0/null)
             return Booking::create([
                 'booking_code'        => $bookingCode,
                 'user_id'             => auth()->id(),
@@ -185,6 +212,12 @@ class UserBookingController extends Controller
                 'travel_date'         => $schedule->start_date,
                 'guest_count'         => $guestCount,
                 'total_price'         => $total,
+                'is_custom'           => false,
+                'total_hours'         => null,
+                'overtime_hours'      => 0,
+                'overtime_charge'     => 0,
+                'custom_destinations' => null,
+                'special_requests'    => null,
                 'commission_rate'     => $commissionRate,
                 'commission_amount'   => $commissionAmount,
                 'agent_earning'       => $agentEarning,
@@ -194,6 +227,6 @@ class UserBookingController extends Controller
         }, 3);
 
         return redirect()->route('payments.show', $booking->booking_code)
-            ->with('success', 'Pemesanan berhasil dibuat! Silakan selesaikan pembayaran sebelum batas waktu berakhir.');
+            ->with('success', 'Booking successfully created! Please complete payment before the expiration time.');
     }
 }

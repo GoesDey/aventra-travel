@@ -109,13 +109,13 @@ class PackageManager extends Component
         $this->duration_days = 1;
         $this->max_guests = 10;
         $this->is_active = true;
-        session()->flash('success', $isEditing ? 'Paket berhasil diperbarui' : 'Paket berhasil ditambahkan');
+        session()->flash('success', $isEditing ? 'Package updated successfully' : 'Package added successfully');
     }
 
     public function delete(Package $package): void
     {
         $package->delete();
-        session()->flash('success', 'Paket berhasil dihapus');
+        session()->flash('success', 'Package deleted successfully');
     }
 
     public function render()

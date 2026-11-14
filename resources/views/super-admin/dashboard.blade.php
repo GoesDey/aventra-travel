@@ -6,21 +6,21 @@
                 <div class="space-y-2">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur-md text-tropical-teal border border-white/20">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Fase 3: Financial Settlement & Monitoring Engine</span>
+                        <span>Financial Settlement &amp; Monitoring Engine</span>
                     </div>
                     <h2 class="font-display-lg text-2xl md:text-3xl font-bold tracking-tight">
-                        Dashboard Keuangan Super Admin
+                        Super Admin Financial Dashboard
                     </h2>
                     <p class="text-sm text-slate-200 max-w-2xl leading-relaxed">
-                        Pantau arus kas kotor, pembagian hak mitra agen, dan komisi bersih platform TriHitaTour secara real-time dari seluruh transaksi booking yang sah.
+                        Monitor gross revenue, partner agent disbursements, and net platform commissions in real time from all verified bookings.
                     </p>
                 </div>
                 
                 <div class="flex items-center gap-3 self-start md:self-auto">
                     <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-right">
-                        <span class="text-xs text-slate-300 block font-medium">Tarif Komisi Platform</span>
+                        <span class="text-xs text-slate-300 block font-medium">Platform Commission</span>
                         <span class="text-xl font-extrabold text-tropical-teal">10%</span>
-                        <span class="text-[11px] text-slate-300 block">Sesuai TriHita Config</span>
+                        <span class="text-[11px] text-slate-300 block">TriHita Standard Rate</span>
                     </div>
                 </div>
             </div>
@@ -31,10 +31,10 @@
 
         <!-- 3 Key Financial Metrics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Card 1: Total Pendapatan Platform -->
+            <!-- Card 1: Total Platform Commission -->
             <div class="bg-surface-white rounded-2xl p-6 border border-emerald-500/25 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Pendapatan Platform</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Platform Revenue</span>
                     <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">account_balance_wallet</span>
                     </div>
@@ -45,57 +45,57 @@
                     </div>
                     <p class="text-xs font-medium text-emerald-700 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">verified</span>
-                        <span>Komisi platform bersih (10%) dari seluruh booking sah</span>
+                        <span>Net platform commission (10%) from all verified bookings</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Basis: 10% komisi per pax</span>
+                    <span>Basis: 10% Platform Commission</span>
                     <span class="font-bold text-emerald-700">Platform Revenue</span>
                 </div>
             </div>
 
-            <!-- Card 2: Total Transaksi Sukses -->
+            <!-- Card 2: Total Successful Bookings -->
             <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Transaksi Sukses</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Total Successful Bookings</span>
                     <div class="w-12 h-12 rounded-xl bg-tropical-teal/10 text-tropical-teal flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">receipt_long</span>
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div class="text-3xl font-black text-oceanic-deep">
-                        {{ number_format($total_successful_transactions ?? $totalSuccessfulBookings, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Transaksi</span>
+                        {{ number_format($total_successful_transactions ?? $totalSuccessfulBookings, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Bookings</span>
                     </div>
                     <p class="text-xs font-medium text-tropical-teal flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">check_circle</span>
-                        <span>Status: Dibayar, Berjalan, & Selesai</span>
+                        <span>Status: Paid, Ongoing &amp; Completed</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Omset Kotor: Rp {{ number_format($totalGrossRevenue, 0, ',', '.') }}</span>
-                    <span class="font-bold text-on-surface">Valid Midtrans</span>
+                    <span>Gross Turnover: Rp {{ number_format($totalGrossRevenue, 0, ',', '.') }}</span>
+                    <span class="font-bold text-on-surface">Verified Transactions</span>
                 </div>
             </div>
 
-            <!-- Card 3: Agen Aktif -->
+            <!-- Card 3: Active Partner Agents -->
             <div class="bg-surface-white rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Agen Aktif</span>
+                    <span class="text-xs font-bold text-outline uppercase tracking-wider">Active Partner Agents</span>
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined fill text-2xl">storefront</span>
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div class="text-3xl font-black text-oceanic-deep">
-                        {{ number_format($total_active_agents ?? $activeAgentsCount, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Mitra</span>
+                        {{ number_format($total_active_agents ?? $activeAgentsCount, 0, ',', '.') }} <span class="text-base font-semibold text-outline">Partners</span>
                     </div>
                     <p class="text-xs font-medium text-purple-700 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">verified_user</span>
-                        <span>User role 'agent' dengan status active</span>
+                        <span>Verified agents with active account status</span>
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Mitra Terverifikasi Platform</span>
+                    <span>Verified Platform Operators</span>
                     <span class="font-bold text-purple-700">B2B Partners</span>
                 </div>
             </div>
@@ -107,15 +107,15 @@
                 <div>
                     <h3 class="font-display-md text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                         <span class="material-symbols-outlined text-amber-500 fill">workspace_premium</span>
-                        <span>Performa Agen Teratas</span>
+                        <span>Top Performing Travel Agents</span>
                     </h3>
                     <p class="text-xs md:text-sm text-outline mt-1">
-                        Peringkat mitra tour operator berdasarkan kontribusi komisi dan jumlah transaksi sukses.
+                        Ranking of tour operators based on platform revenue contribution and completed volume.
                     </p>
                 </div>
                 <div class="text-xs font-bold text-tropical-teal bg-tropical-teal/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
                     <span class="material-symbols-outlined text-sm">leaderboard</span>
-                    <span>Top 5 Kontributor</span>
+                    <span>Top 5 Contributors</span>
                 </div>
             </div>
 
@@ -124,12 +124,12 @@
                     <thead>
                         <tr class="bg-surface-container-low/50 text-xs font-bold text-outline uppercase tracking-wider border-b border-outline-variant/30">
                             <th class="py-4 px-6 text-center w-16">Rank</th>
-                            <th class="py-4 px-6">Informasi Mitra Agen</th>
-                            <th class="py-4 px-6 text-center">Armada</th>
-                            <th class="py-4 px-6 text-center">Pesanan Sukses</th>
-                            <th class="py-4 px-6 text-right">Total Omset Agen</th>
-                            <th class="py-4 px-6 text-right">Komisi Platform (10%)</th>
-                            <th class="py-4 px-6 text-right">Hak Bersih Agen (90%)</th>
+                            <th class="py-4 px-6">Partner Agent</th>
+                            <th class="py-4 px-6 text-center">Fleet</th>
+                            <th class="py-4 px-6 text-center">Completed Bookings</th>
+                            <th class="py-4 px-6 text-right">Gross Sales</th>
+                            <th class="py-4 px-6 text-right">Platform Share (10%)</th>
+                            <th class="py-4 px-6 text-right">Agent Payout (90%)</th>
                             <th class="py-4 px-6 text-center">Status</th>
                         </tr>
                     </thead>
@@ -186,43 +186,43 @@
                                 <td class="py-4 px-6 text-center">
                                     <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface">
                                         <span class="material-symbols-outlined text-xs text-outline">directions_bus</span>
-                                        <span>{{ $topAgent->vehicle_count }} Unit</span>
+                                        <span>{{ $topAgent->vehicle_count }} Units</span>
                                     </span>
                                 </td>
 
-                                <!-- Pesanan Sukses -->
+                                <!-- Successful Bookings -->
                                 <td class="py-4 px-6 text-center">
                                     <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                        {{ $bookingsCount }} Transaksi
+                                        {{ $bookingsCount }} Bookings
                                     </span>
                                 </td>
 
-                                <!-- Total Omset -->
+                                <!-- Total Turnover -->
                                 <td class="py-4 px-6 text-right font-bold text-oceanic-deep">
                                     Rp {{ number_format($turnover, 0, ',', '.') }}
                                 </td>
 
-                                <!-- Komisi Platform -->
+                                <!-- Platform Commission -->
                                 <td class="py-4 px-6 text-right font-extrabold text-emerald-600">
                                     Rp {{ number_format($comm, 0, ',', '.') }}
                                 </td>
 
-                                <!-- Hak Agen -->
+                                <!-- Agent Earning -->
                                 <td class="py-4 px-6 text-right font-bold text-blue-700">
                                     Rp {{ number_format($earning, 0, ',', '.') }}
                                 </td>
 
-                                <!-- Status Agen -->
+                                <!-- Agent Status -->
                                 <td class="py-4 px-6 text-center">
                                     @if(($topAgent->user->status ?? '') === 'active')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            <span>Aktif</span>
+                                            <span>Active</span>
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            <span>{{ ucfirst($topAgent->user->status ?? 'Non-Aktif') }}</span>
+                                            <span>{{ ucfirst($topAgent->user->status ?? 'Inactive') }}</span>
                                         </span>
                                     @endif
                                 </td>
@@ -232,7 +232,7 @@
                                 <td colspan="8" class="py-12 text-center text-outline">
                                     <div class="flex flex-col items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-4xl text-outline/50">storefront</span>
-                                        <p class="font-medium text-sm">Belum ada data transaksi mitra agen yang tercatat.</p>
+                                        <p class="font-medium text-sm">No partner agent transactions recorded yet.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -248,10 +248,10 @@
                 <div>
                     <h3 class="font-display-md text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                         <span class="material-symbols-outlined text-tropical-teal fill">history</span>
-                        <span>Transaksi Sah Terbaru (Audit Lintas Agen)</span>
+                        <span>Recent Verified Transactions (Cross-Agent Audit)</span>
                     </h3>
                     <p class="text-xs md:text-sm text-outline mt-1">
-                        Daftar 6 pemesanan terakhir yang statusnya telah terkonfirmasi dibayar melalui Midtrans Snap.
+                        List of the latest customer bookings with verified payment status via Midtrans Snap.
                     </p>
                 </div>
             </div>
@@ -260,14 +260,14 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-surface-container-low/50 text-xs font-bold text-outline uppercase tracking-wider border-b border-outline-variant/30">
-                            <th class="py-3.5 px-6">Kode Booking</th>
-                            <th class="py-3.5 px-6">Paket Wisata & Mitra</th>
-                            <th class="py-3.5 px-6">Pelanggan</th>
-                            <th class="py-3.5 px-6 text-right">Total Transaksi</th>
-                            <th class="py-3.5 px-6 text-right">Komisi (10%)</th>
-                            <th class="py-3.5 px-6 text-right">Hak Agen (90%)</th>
+                            <th class="py-3.5 px-6">Booking Code</th>
+                            <th class="py-3.5 px-6">Tour Package &amp; Operator</th>
+                            <th class="py-3.5 px-6">Traveler</th>
+                            <th class="py-3.5 px-6 text-right">Total Amount</th>
+                            <th class="py-3.5 px-6 text-right">Platform Fee (10%)</th>
+                            <th class="py-3.5 px-6 text-right">Agent Earning (90%)</th>
                             <th class="py-3.5 px-6 text-center">Status</th>
-                            <th class="py-3.5 px-6 text-center">Waktu</th>
+                            <th class="py-3.5 px-6 text-center">Timestamp</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-outline-variant/20 text-sm">
@@ -278,7 +278,7 @@
                                 </td>
                                 <td class="py-3.5 px-6">
                                     <div class="font-bold text-on-surface">{{ $tx->package->name ?? '-' }}</div>
-                                    <div class="text-xs text-outline">{{ $tx->package->agent->agent_name ?? 'Agen' }}</div>
+                                    <div class="text-xs text-outline">{{ $tx->package->agent->agent_name ?? 'Official Agent' }}</div>
                                 </td>
                                 <td class="py-3.5 px-6">
                                     <div class="font-medium text-on-surface">{{ $tx->user->name ?? '-' }}</div>
@@ -297,17 +297,41 @@
                                     @if($tx->status === 'dibayar')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            <span>Dibayar</span>
+                                            <span>Paid</span>
                                         </span>
                                     @elseif($tx->status === 'berjalan')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                            <span>Berjalan</span>
+                                            <span>Ongoing</span>
                                         </span>
                                     @elseif($tx->status === 'selesai')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                                            <span>Selesai</span>
+                                            <span>Completed</span>
+                                        </span>
+                                    @elseif($tx->status === 'menunggu_pembayaran')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            <span>Awaiting Payment</span>
+                                        </span>
+                                    @elseif($tx->status === 'dibatalkan')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                            <span>Cancelled</span>
+                                        </span>
+                                    @elseif($tx->status === 'kedaluwarsa')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                            <span>Expired</span>
+                                        </span>
+                                    @elseif($tx->status === 'perlu_refund')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                            <span>Refund Needed</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800">
+                                            <span>{{ ucfirst(str_replace('_', ' ', $tx->status)) }}</span>
                                         </span>
                                     @endif
                                 </td>
@@ -318,7 +342,7 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="py-8 text-center text-outline">
-                                    Belum ada transaksi terkini.
+                                    No recent transactions found.
                                 </td>
                             </tr>
                         @endforelse

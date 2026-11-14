@@ -31,16 +31,20 @@ class BookingWidget extends Component
         ]);
 
         $booking = Booking::create([
-            'booking_code' => 'AVN-' . strtoupper(Str::random(6)),
-            'user_id'      => auth()->id(),
-            'package_id'   => $this->package->id,
-            'travel_date'  => $this->travelDate,
-            'guest_count'  => $this->guestCount,
-            'total_price'  => $this->subtotal,
-            'status'       => 'pending',
+            'booking_code'    => 'TRIP-' . strtoupper(Str::random(4)) . '-' . date('Ymd') . rand(10, 99),
+            'user_id'         => auth()->id(),
+            'package_id'      => $this->package->id,
+            'travel_date'     => $this->travelDate,
+            'guest_count'     => $this->guestCount,
+            'total_price'     => $this->subtotal,
+            'is_custom'       => false,
+            'total_hours'     => null,
+            'overtime_hours'  => 0,
+            'overtime_charge' => 0,
+            'status'          => 'menunggu_pembayaran',
         ]);
 
-        session()->flash('success', 'Booking berhasil! Menunggu konfirmasi admin.');
+        session()->flash('success', 'Booking successful! Waiting for admin confirmation.');
         $this->redirectRoute('history');
     }
 

@@ -366,4 +366,24 @@ class MidtransIntegrationTest extends TestCase
         // Kuota dikembalikan 3 (5 + 3 = 8)
         $this->assertEquals(8, $this->schedule->quota);
     }
+
+    public function test_midtrans_callback_route_bypasses_csrf(): void
+    {
+        [$booking, $payment] = $this->createTestBookingAndPayment();
+
+        $payload = [
+            'order_id'           => $booking->booking_code,
+            'status_code'        => '200',
+            'gross_amount'       => (string) $payment->amount,
+            'signature_key'      => 'INVALID_FAKE_SIGNATURE_KEY',
+            'transaction_status' => 'settlement',
+        ];
+
+        // Testing direct post without CSRF token to /midtrans/callback
+        $response = $this->post('/midtrans/callback', $payload);
+
+        // It should pass CSRF verification and hit the controller (which rejects fake signature with 403, NOT 419 Page Expired)
+        $this->assertNotEquals(419, $response->getStatusCode(), 'Route /midtrans/callback must not fail with 419 CSRF Token Mismatch.');
+        $response->assertStatus(403);
+    }
 }

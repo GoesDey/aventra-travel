@@ -64,7 +64,7 @@
                                 <button wire:click="openEdit({{ $destination->id }})" class="p-1.5 text-on-surface-variant hover:text-tropical-teal hover:bg-surface-container-low rounded-md transition-colors" title="Edit">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
                                 </button>
-                                <button wire:click="delete({{ $destination->id }})" wire:confirm="Yakin ingin menghapus destinasi ini?" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/30 rounded-md transition-colors" title="Delete">
+                                <button wire:click="delete({{ $destination->id }})" wire:confirm="Are you sure you want to delete this destination?" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/30 rounded-md transition-colors" title="Delete">
                                     <span class="material-symbols-outlined text-[20px]">delete</span>
                                 </button>
                             </div>

@@ -1,4 +1,4 @@
-<x-layouts.app title="Eksplorasi Paket Wisata - TriHitaTour">
+<x-layouts.app title="Explore Tour Packages - TriHitaTour">
     <!-- Hero / Header Section -->
     <div class="relative bg-oceanic-deep text-surface-white pt-28 pb-16 px-margin-mobile md:px-margin-desktop overflow-hidden">
         <!-- Decorative subtle background -->
@@ -10,21 +10,21 @@
         <div class="relative max-w-container-max mx-auto text-center space-y-4">
             <div class="inline-flex items-center gap-2 bg-tropical-teal/20 text-secondary-fixed border border-tropical-teal/30 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase">
                 <span class="material-symbols-outlined text-sm">explore</span>
-                <span>Destinasi & Petualangan Bali</span>
+                <span>Bali Destinations &amp; Adventures</span>
             </div>
             <h1 class="font-display-lg text-3xl md:text-5xl font-bold tracking-tight">
-                Temukan Paket Wisata Impian Anda
+                Discover Your Dream Tour Package
             </h1>
             <p class="font-body-md text-on-primary/80 max-w-2xl mx-auto text-sm md:text-base">
-                Pilih paket perjalanan terbaik yang dikelola langsung oleh agen travel lokal berlisensi dengan itinerary transparan dan jadwal terjamin.
+                Choose curated travel packages operated directly by licensed local travel agents with transparent itineraries and guaranteed departures.
             </p>
 
-            <!-- Search & Filter Bar -->
-            <form action="{{ route('packages.index') }}" method="GET" class="mt-8 max-w-4xl mx-auto bg-surface-white p-3 md:p-4 rounded-2xl md:rounded-full shadow-2xl border border-outline-variant/30 flex flex-col md:flex-row items-center gap-3 text-on-surface">
+            <!-- Search & Filter Bar (Category Filter Removed, Region Updated) -->
+            <form action="{{ route('packages.index') }}" method="GET" class="mt-8 max-w-3xl mx-auto bg-surface-white p-3 md:p-4 rounded-2xl md:rounded-full shadow-2xl border border-outline-variant/30 flex flex-col md:flex-row items-center gap-3 text-on-surface">
                 <!-- Search Input -->
                 <div class="flex-1 flex items-center gap-3 px-4 w-full">
                     <span class="material-symbols-outlined text-outline">search</span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama paket wisata..." class="w-full text-sm bg-transparent border-none focus:outline-none placeholder:text-outline">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tour packages..." class="w-full text-sm bg-transparent border-none focus:outline-none placeholder:text-outline">
                 </div>
 
                 <div class="hidden md:block w-px h-8 bg-outline-variant/40"></div>
@@ -33,22 +33,11 @@
                 <div class="flex items-center gap-2 px-3 w-full md:w-auto">
                     <span class="material-symbols-outlined text-outline text-lg">location_on</span>
                     <select name="region" class="text-xs md:text-sm bg-transparent border-none focus:outline-none text-on-surface font-medium cursor-pointer w-full md:w-auto">
-                        <option value="">Semua Wilayah</option>
-                        <option value="timur" {{ request('region') === 'timur' ? 'selected' : '' }}>Bali Timur</option>
-                        <option value="barat" {{ request('region') === 'barat' ? 'selected' : '' }}>Bali Barat</option>
-                        <option value="lainnya" {{ request('region') === 'lainnya' ? 'selected' : '' }}>Lainnya</option>
-                    </select>
-                </div>
-
-                <div class="hidden md:block w-px h-8 bg-outline-variant/40"></div>
-
-                <!-- Category Filter -->
-                <div class="flex items-center gap-2 px-3 w-full md:w-auto">
-                    <span class="material-symbols-outlined text-outline text-lg">category</span>
-                    <select name="category" class="text-xs md:text-sm bg-transparent border-none focus:outline-none text-on-surface font-medium cursor-pointer w-full md:w-auto">
-                        <option value="">Semua Kategori</option>
-                        <option value="reguler" {{ request('category') === 'reguler' ? 'selected' : '' }}>Reguler (Open Trip)</option>
-                        <option value="custom" {{ request('category') === 'custom' ? 'selected' : '' }}>Custom (Private)</option>
+                        <option value="">All Regions</option>
+                        <option value="utara" {{ request('region') === 'utara' ? 'selected' : '' }}>North Bali</option>
+                        <option value="selatan" {{ request('region') === 'selatan' ? 'selected' : '' }}>South Bali</option>
+                        <option value="timur" {{ request('region') === 'timur' ? 'selected' : '' }}>East Bali</option>
+                        <option value="barat" {{ request('region') === 'barat' ? 'selected' : '' }}>West Bali</option>
                     </select>
                 </div>
 
@@ -57,6 +46,14 @@
                     <span>Filter</span>
                 </button>
             </form>
+
+            <!-- Quick Custom Itinerary Hint -->
+            <div class="pt-2">
+                <a href="{{ route('custom-itinerary.create') }}" class="inline-flex items-center gap-1.5 text-xs text-tropical-teal hover:text-white transition-colors underline underline-offset-4">
+                    <span>Can't find the perfect trip? Request a Custom Itinerary</span>
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -64,15 +61,32 @@
     <div class="flex-1 bg-surface-container-lowest py-12 px-margin-mobile md:px-margin-desktop">
         <div class="max-w-container-max mx-auto space-y-8">
 
+            <!-- Custom Itinerary CTA Banner -->
+            <div class="bg-surface-white rounded-2xl p-4 sm:p-5 border border-tropical-teal/30 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5 w-full md:w-auto">
+                    <div class="w-10 h-10 rounded-xl bg-tropical-teal/10 text-tropical-teal flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl">tune</span>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Tailor-Made Bali Tour</span>
+                        <h3 class="font-bold text-sm md:text-base text-oceanic-deep">Can't find the perfect trip? Request a Custom Itinerary</h3>
+                    </div>
+                </div>
+                <a href="{{ route('custom-itinerary.create') }}" class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-tropical-teal hover:bg-secondary text-surface-white font-label-bold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 shrink-0">
+                    <span>Build Custom Itinerary</span>
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+
             <!-- Result Count & Clear Filter -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/30 pb-4">
                 <div class="text-sm text-on-surface-variant">
-                    Menampilkan <span class="font-bold text-on-surface">{{ $packages->total() }}</span> paket wisata aktif
+                    Showing <span class="font-bold text-on-surface">{{ $packages->total() }}</span> active tour packages
                 </div>
-                @if(request()->anyFilled(['search', 'region', 'category']))
+                @if(request()->anyFilled(['search', 'region']))
                     <a href="{{ route('packages.index') }}" class="text-xs text-tropical-teal hover:underline flex items-center gap-1 font-semibold">
                         <span class="material-symbols-outlined text-sm">close</span>
-                        <span>Reset Semua Filter</span>
+                        <span>Reset Filters</span>
                     </a>
                 @endif
             </div>
@@ -83,12 +97,12 @@
                     <div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4 text-outline">
                         <span class="material-symbols-outlined text-4xl">travel_explore</span>
                     </div>
-                    <h3 class="font-headline-md text-xl font-bold text-oceanic-deep mb-2">Paket Tidak Ditemukan</h3>
+                    <h3 class="font-headline-md text-xl font-bold text-oceanic-deep mb-2">No Tour Packages Found</h3>
                     <p class="text-sm text-on-surface-variant max-w-md mx-auto mb-6">
-                        Maaf, kami tidak menemukan paket wisata yang cocok dengan kriteria pencarian Anda. Silakan coba kata kunci atau filter lain.
+                        Sorry, we could not find any tour packages matching your search criteria. Please try another keyword or region filter.
                     </p>
                     <a href="{{ route('packages.index') }}" class="inline-flex items-center gap-2 bg-tropical-teal text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow hover:bg-secondary transition-colors">
-                        Lihat Semua Paket
+                        View All Packages
                     </a>
                 </div>
             @else
@@ -114,14 +128,14 @@
                                 <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                                     @if(!$pkg->is_active)
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500 text-white shadow-md">
-                                            Belum Aktif
+                                            Inactive
                                         </span>
                                     @endif
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-md {{ $pkg->category === 'custom' ? 'bg-purple-600 text-white' : 'bg-oceanic-deep text-white' }}">
                                         {{ ucfirst($pkg->category) }}
                                     </span>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white/90 text-oceanic-deep backdrop-blur-sm shadow-md">
-                                        Bali {{ ucfirst($pkg->region) }}
+                                        {{ \App\Models\Package::REGIONS[$pkg->region] ?? ucfirst($pkg->region) . ' Bali' }}
                                     </span>
                                 </div>
 
@@ -150,28 +164,28 @@
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-1.5">
                                             <span class="material-symbols-outlined text-tropical-teal text-base">schedule</span>
-                                            <span>{{ $pkg->duration_days }} Hari Tour</span>
+                                            <span>{{ $pkg->duration_days }} {{ $pkg->duration_days > 1 ? 'Days Tour' : 'Day Tour' }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <span class="material-symbols-outlined text-outline text-base">group</span>
-                                            <span>Maks. {{ $pkg->max_guests }} Orang</span>
+                                            <span>Max. {{ $pkg->max_guests }} Guests</span>
                                         </div>
                                     </div>
 
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-1.5 text-outline">
                                             <span class="material-symbols-outlined text-base">business_center</span>
-                                            <span class="truncate max-w-[140px]">{{ $pkg->agent->agent_name ?? 'Agen Resmi' }}</span>
+                                            <span class="truncate max-w-[140px]">{{ $pkg->agent->agent_name ?? 'Official Agent' }}</span>
                                         </div>
                                         @if($pkg->is_active)
                                             <div class="text-emerald-700 font-semibold flex items-center gap-1">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                <span>{{ $pkg->schedules_count }} Jadwal Aktif</span>
+                                                <span>{{ $pkg->schedules_count }} Active Schedules</span>
                                             </div>
                                         @else
                                             <div class="text-amber-700 font-semibold flex items-center gap-1">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                <span>Belum Aktif</span>
+                                                <span>Inactive</span>
                                             </div>
                                         @endif
                                     </div>
@@ -180,14 +194,14 @@
                                 <!-- Card Footer: Price & CTA -->
                                 <div class="pt-3 border-t border-outline-variant/30 flex items-center justify-between">
                                     <div>
-                                        <span class="text-[11px] text-outline block leading-none">Mulai dari</span>
+                                        <span class="text-[11px] text-outline block leading-none">Starting from</span>
                                         <span class="font-display-lg text-lg font-bold text-oceanic-deep">
                                             Rp {{ number_format($pkg->price_per_pax, 0, ',', '.') }}
                                         </span>
                                         <span class="text-[10px] text-outline">/pax</span>
                                     </div>
                                     <a href="{{ route('packages.show', $pkg->slug) }}" class="inline-flex items-center gap-1 bg-tropical-teal hover:bg-secondary text-white font-label-bold text-xs px-4 py-2.5 rounded-xl shadow transition-colors">
-                                        <span>Detail</span>
+                                        <span>Details</span>
                                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
                                     </a>
                                 </div>

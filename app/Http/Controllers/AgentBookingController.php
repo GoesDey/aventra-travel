@@ -15,14 +15,14 @@ class AgentBookingController extends Controller
     {
         $agent = auth()->user()?->agent;
         if (!$agent || $booking->package->agent_id !== $agent->id) {
-            abort(403, 'Akses ditolak. Booking ini bukan milik paket wisata Anda.');
+            abort(403, 'Access denied. This booking does not belong to your tour packages.');
         }
 
         $validated = $request->validate([
             'status' => 'required|string|in:berjalan,selesai',
         ], [
-            'status.required' => 'Status target wajib dipilih.',
-            'status.in'       => 'Agen hanya diizinkan mengubah status menjadi berjalan atau selesai.',
+            'status.required' => 'Target status is required.',
+            'status.in'       => 'Agents are only permitted to change status to ongoing or completed.',
         ]);
 
         try {
@@ -36,11 +36,11 @@ class AgentBookingController extends Controller
 
         if ($request->wantsJson()) {
             return response()->json([
-                'message' => "Status booking berhasil diperbarui menjadi {$validated['status']}.",
+                'message' => "Booking status successfully updated to {$validated['status']}.",
                 'booking' => $booking->fresh(),
             ]);
         }
 
-        return back()->with('success', "Status booking berhasil diperbarui menjadi {$validated['status']}.");
+        return back()->with('success', "Booking status successfully updated to {$validated['status']}.");
     }
 }

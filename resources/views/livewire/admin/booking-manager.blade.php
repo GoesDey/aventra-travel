@@ -9,13 +9,13 @@
             <div class="relative w-full md:w-auto flex items-center gap-2 bg-surface-white px-4 py-2 rounded-lg border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,35,102,0.04)]">
                 <span class="font-label-bold text-label-bold text-on-surface-variant whitespace-nowrap">Filter Status:</span>
                 <select wire:model.live="statusFilter" class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-oceanic-deep font-medium cursor-pointer p-0 pr-6">
-                    <option value="">Semua Status</option>
-                    <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
-                    <option value="dibayar">Dibayar</option>
-                    <option value="berjalan">Berjalan</option>
-                    <option value="selesai">Selesai</option>
-                    <option value="dibatalkan">Dibatalkan</option>
-                    <option value="perlu_refund">Perlu Refund</option>
+                    <option value="">All Statuses</option>
+                    <option value="menunggu_pembayaran">Awaiting Payment</option>
+                    <option value="dibayar">Paid</option>
+                    <option value="berjalan">Ongoing</option>
+                    <option value="selesai">Completed</option>
+                    <option value="dibatalkan">Cancelled</option>
+                    <option value="perlu_refund">Refund Needed</option>
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="completed">Completed</option>
@@ -82,21 +82,30 @@
                                     'completed'           => 'bg-primary-container text-on-primary-container border-primary-container/50',
                                     'cancelled'           => 'bg-error-container text-on-error-container border-error-container/50',
                                 ];
+                                $statusLabels = [
+                                    'menunggu_pembayaran' => 'Awaiting Payment',
+                                    'dibayar'             => 'Paid',
+                                    'berjalan'            => 'Ongoing',
+                                    'selesai'             => 'Completed',
+                                    'dibatalkan'          => 'Cancelled',
+                                    'kedaluwarsa'         => 'Expired',
+                                    'perlu_refund'        => 'Refund Needed',
+                                ];
                                 $statusClass = $colors[$booking->status] ?? 'bg-surface-container-high text-on-surface border-outline-variant';
                             @endphp
                             <span class="px-3 py-1 rounded-full font-caption text-[11px] font-bold uppercase tracking-wider border {{ $statusClass }}">
-                                {{ str_replace('_', ' ', $booking->status) }}
+                                {{ $statusLabels[$booking->status] ?? str_replace('_', ' ', $booking->status) }}
                             </span>
                         </td>
                         <td class="py-4 px-6 text-center">
                             <div class="inline-block relative" x-data="{ open: false }">
                                 <select @change="$wire.updateStatus({{ $booking->id }}, $event.target.value)" class="text-xs font-label-bold rounded-lg border border-outline-variant/50 bg-surface-container-lowest px-3 py-1.5 focus:ring-1 focus:ring-tropical-teal text-oceanic-deep hover:bg-surface-white cursor-pointer shadow-sm">
-                                    <option value="menunggu_pembayaran" {{ $booking->status == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                                    <option value="dibayar" {{ $booking->status == 'dibayar' ? 'selected' : '' }}>Dibayar</option>
-                                    <option value="berjalan" {{ $booking->status == 'berjalan' ? 'selected' : '' }}>Berjalan</option>
-                                    <option value="selesai" {{ $booking->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                    <option value="dibatalkan" {{ $booking->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                                    <option value="perlu_refund" {{ $booking->status == 'perlu_refund' ? 'selected' : '' }}>Perlu Refund</option>
+                                    <option value="menunggu_pembayaran" {{ $booking->status == 'menunggu_pembayaran' ? 'selected' : '' }}>Awaiting Payment</option>
+                                    <option value="dibayar" {{ $booking->status == 'dibayar' ? 'selected' : '' }}>Paid</option>
+                                    <option value="berjalan" {{ $booking->status == 'berjalan' ? 'selected' : '' }}>Ongoing</option>
+                                    <option value="selesai" {{ $booking->status == 'selesai' ? 'selected' : '' }}>Completed</option>
+                                    <option value="dibatalkan" {{ $booking->status == 'dibatalkan' ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="perlu_refund" {{ $booking->status == 'perlu_refund' ? 'selected' : '' }}>Refund Needed</option>
                                     <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                     <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
                                     <option value="completed" {{ $booking->status == 'completed' ? 'selected' : '' }}>Completed</option>

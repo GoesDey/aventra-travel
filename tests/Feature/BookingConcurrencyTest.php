@@ -310,17 +310,17 @@ class BookingConcurrencyTest extends TestCase
             'quota'      => 5,
         ]);
 
-        // 1. Katalog /packages tetap menampilkan paket dan badge "Belum Aktif"
+        // 1. Katalog /packages tetap menampilkan paket dan badge "Inactive"
         $catalogResponse = $this->get(route('packages.index'));
         $catalogResponse->assertOk();
         $catalogResponse->assertSee($inactivePackage->name);
-        $catalogResponse->assertSee('Belum Aktif');
+        $catalogResponse->assertSee('Inactive');
 
         // 2. Halaman detail /packages/{slug} tetap bisa diakses dan menampilkan gambar cover
         $detailResponse = $this->get(route('packages.show', $inactivePackage->slug));
         $detailResponse->assertOk();
         $detailResponse->assertSee($inactivePackage->cover_image);
-        $detailResponse->assertSee('Paket Wisata Sedang Belum Aktif');
+        $detailResponse->assertSee('Tour Package Currently Inactive');
 
         // 3. Pemesanan paket belum aktif harus ditolak oleh backend
         $customer = User::factory()->create(['role' => 'user', 'status' => 'active']);

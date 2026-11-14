@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class AgentPackageController extends Controller
 {
@@ -20,7 +21,7 @@ class AgentPackageController extends Controller
         $agent = auth()->user()?->agent;
 
         if (!$agent) {
-            abort(403, 'Akses ditolak. Profil agen belum terdaftar.');
+            abort(403, 'Access denied. Agent profile not found.');
         }
 
         return $agent->id;
@@ -71,7 +72,7 @@ class AgentPackageController extends Controller
             'duration_days'          => 'required|integer|min:1',
             'max_guests'             => 'required|integer|min:1',
             'category'               => 'required|in:reguler,custom',
-            'region'                 => 'required|in:timur,barat,lainnya',
+            'region'                 => ['required', Rule::in(Package::regionKeys())],
             'cover_image'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'is_active'              => 'nullable|boolean',
             'destinations'           => 'nullable|array',
@@ -81,16 +82,16 @@ class AgentPackageController extends Controller
             'schedules.*.end_date'   => 'required|date|after_or_equal:schedules.*.start_date',
             'schedules.*.quota'      => 'required|integer|min:1',
         ], [
-            'name.required'                   => 'Nama paket wajib diisi.',
-            'description.required'            => 'Deskripsi paket wajib diisi.',
-            'price_per_pax.required'          => 'Harga per pax wajib diisi.',
-            'category.required'               => 'Kategori paket wajib dipilih.',
-            'region.required'                 => 'Region destinasi wajib dipilih.',
-            'schedules.required'              => 'Minimal satu jadwal perjalanan wajib ditambahkan.',
-            'schedules.*.start_date.required' => 'Tanggal mulai jadwal wajib diisi.',
-            'schedules.*.end_date.required'   => 'Tanggal selesai jadwal wajib diisi.',
-            'schedules.*.end_date.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai.',
-            'schedules.*.quota.required'      => 'Kuota peserta jadwal wajib diisi.',
+            'name.required'                   => 'Package name is required.',
+            'description.required'            => 'Package description is required.',
+            'price_per_pax.required'          => 'Price per person is required.',
+            'category.required'               => 'Package category is required.',
+            'region.required'                 => 'Destination region is required.',
+            'schedules.required'              => 'At least one trip schedule is required.',
+            'schedules.*.start_date.required' => 'Schedule start date is required.',
+            'schedules.*.end_date.required'   => 'Schedule end date is required.',
+            'schedules.*.end_date.after_or_equal' => 'End date must be on or after start date.',
+            'schedules.*.quota.required'      => 'Guest quota is required.',
         ]);
 
         // Generate unique slug
@@ -142,7 +143,7 @@ class AgentPackageController extends Controller
             }
         });
 
-        return redirect()->route('agent.packages.index')->with('success', 'Paket wisata berhasil dibuat beserta jadwal perjalanannya.');
+        return redirect()->route('agent.packages.index')->with('success', 'Tour package and schedules created successfully.');
     }
 
     /**
@@ -179,7 +180,7 @@ class AgentPackageController extends Controller
             'duration_days'          => 'required|integer|min:1',
             'max_guests'             => 'required|integer|min:1',
             'category'               => 'required|in:reguler,custom',
-            'region'                 => 'required|in:timur,barat,lainnya',
+            'region'                 => ['required', Rule::in(Package::regionKeys())],
             'cover_image'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'is_active'              => 'nullable|boolean',
             'destinations'           => 'nullable|array',
@@ -190,16 +191,16 @@ class AgentPackageController extends Controller
             'schedules.*.end_date'   => 'required|date|after_or_equal:schedules.*.start_date',
             'schedules.*.quota'      => 'required|integer|min:1',
         ], [
-            'name.required'                   => 'Nama paket wajib diisi.',
-            'description.required'            => 'Deskripsi paket wajib diisi.',
-            'price_per_pax.required'          => 'Harga per pax wajib diisi.',
-            'category.required'               => 'Kategori paket wajib dipilih.',
-            'region.required'                 => 'Region destinasi wajib dipilih.',
-            'schedules.required'              => 'Minimal satu jadwal perjalanan wajib ditambahkan.',
-            'schedules.*.start_date.required' => 'Tanggal mulai jadwal wajib diisi.',
-            'schedules.*.end_date.required'   => 'Tanggal selesai jadwal wajib diisi.',
-            'schedules.*.end_date.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai.',
-            'schedules.*.quota.required'      => 'Kuota peserta jadwal wajib diisi.',
+            'name.required'                   => 'Package name is required.',
+            'description.required'            => 'Package description is required.',
+            'price_per_pax.required'          => 'Price per person is required.',
+            'category.required'               => 'Package category is required.',
+            'region.required'                 => 'Destination region is required.',
+            'schedules.required'              => 'At least one trip schedule is required.',
+            'schedules.*.start_date.required' => 'Schedule start date is required.',
+            'schedules.*.end_date.required'   => 'Schedule end date is required.',
+            'schedules.*.end_date.after_or_equal' => 'End date must be on or after start date.',
+            'schedules.*.quota.required'      => 'Guest quota is required.',
         ]);
 
         DB::transaction(function () use ($validated, $package, $request) {
@@ -275,7 +276,7 @@ class AgentPackageController extends Controller
             }
         });
 
-        return redirect()->route('agent.packages.index')->with('success', 'Paket wisata dan jadwal berhasil diperbarui.');
+        return redirect()->route('agent.packages.index')->with('success', 'Tour package and schedules updated successfully.');
     }
 
     /**
@@ -293,6 +294,6 @@ class AgentPackageController extends Controller
 
         $package->delete();
 
-        return redirect()->route('agent.packages.index')->with('success', 'Paket wisata berhasil dihapus.');
+        return redirect()->route('agent.packages.index')->with('success', 'Tour package deleted successfully.');
     }
 }

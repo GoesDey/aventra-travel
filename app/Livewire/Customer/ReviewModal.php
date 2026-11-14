@@ -48,7 +48,7 @@ class ReviewModal extends Component
         $this->reset(['bookingId', 'rating', 'comment']);
         $this->rating = 5;
         $this->dispatch('reviewSubmitted');
-        session()->flash('success', 'Terima kasih atas ulasan Anda!');
+        session()->flash('success', 'Thank you for your review!');
         $this->redirect(request()->header('Referer'));
     }
 

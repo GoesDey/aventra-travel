@@ -112,8 +112,24 @@ class PackageSeeder extends Seeder
             ]
         ];
 
+        // Pemetaan region resmi (utara, selatan, timur, barat) berdasarkan lokasi paket
+        $regionMap = [
+            'ubud-cultural-tour'            => 'selatan',
+            'nusa-penida-island-hopping'    => 'timur',
+            'mount-batur-sunrise-trekking'  => 'utara',
+            'gili-islands-gateway-3d2n'     => 'timur',
+            'bali-waterfall-explorer'       => 'utara',
+            'uluwatu-temple-kecak-dance'    => 'selatan',
+            'lombok-rinjani-trekking-4d3n'  => 'timur',
+            'bali-safari-marine-park'       => 'selatan',
+            'kintamani-cycling-tour'        => 'utara',
+            'seminyak-luxury-sunset-cruise' => 'selatan',
+            'komodo-island-adventure-3d2n'  => 'timur',
+        ];
+
         foreach ($packages as $pkgData) {
             $pkgData['slug'] = Str::slug($pkgData['name']);
+            $pkgData['region'] = $pkgData['region'] ?? ($regionMap[$pkgData['slug']] ?? 'selatan');
             // Randomly generate avg_rating for better visual testing
             $pkgData['avg_rating'] = rand(40, 50) / 10; // 4.0 - 5.0
 

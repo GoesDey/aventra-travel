@@ -15,3 +15,7 @@ use App\Http\Controllers\Api\MidtransWebhookController;
 Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])
     ->middleware('throttle:300,1')
     ->name('api.midtrans.webhook');
+
+Route::post('/midtrans/callback', [MidtransWebhookController::class, 'handle'])
+    ->middleware('throttle:300,1')
+    ->name('api.midtrans.callback');

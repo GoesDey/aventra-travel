@@ -35,8 +35,8 @@
                     <button type="button" 
                             @click="showPassword = !showPassword" 
                             class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
-                            :title="showPassword ? 'Sembunyikan password' : 'Lihat password'"
-                            aria-label="Lihat atau sembunyikan password">
+                            :title="showPassword ? 'Hide password' : 'Show password'"
+                            aria-label="Show or hide password">
                         <span class="material-symbols-outlined text-[20px] select-none" x-text="showPassword ? 'visibility_off' : 'visibility'">
                             visibility
                         </span>
@@ -57,8 +57,8 @@
                     <button type="button" 
                             @click="showConfirmPassword = !showConfirmPassword" 
                             class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
-                            :title="showConfirmPassword ? 'Sembunyikan password' : 'Lihat password'"
-                            aria-label="Lihat atau sembunyikan konfirmasi password">
+                            :title="showConfirmPassword ? 'Hide password' : 'Show password'"
+                            aria-label="Show or hide confirm password">
                         <span class="material-symbols-outlined text-[20px] select-none" x-text="showConfirmPassword ? 'visibility_off' : 'visibility'">
                             visibility
                         </span>

@@ -69,13 +69,13 @@ class DestinationManager extends Component
 
         $this->showModal = false;
         $this->reset(['name', 'description', 'location', 'image', 'editing']);
-        session()->flash('success', $isEditing ? 'Destinasi berhasil diperbarui' : 'Destinasi berhasil ditambahkan');
+        session()->flash('success', $isEditing ? 'Destination updated successfully' : 'Destination added successfully');
     }
 
     public function delete(Destination $destination): void
     {
         $destination->delete();
-        session()->flash('success', 'Destinasi berhasil dihapus');
+        session()->flash('success', 'Destination deleted successfully');
     }
 
     public function render()
