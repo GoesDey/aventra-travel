@@ -24,7 +24,7 @@ class CustomItineraryBuilder extends Component
     public ?float $startLat = -8.670458;
     public ?float $startLng = 115.262512;
     public string $travelDate = '';
-    public int $guestCount = 2;
+    public int $guestCount = 1;
 
     // Step 4: Selected Destinations & Route Stops
     /**
@@ -85,7 +85,7 @@ class CustomItineraryBuilder extends Component
         $this->maxGuests    = (int) config('trihita.max_guest_per_booking', 20);
         $this->minDate      = now()->addDays(3)->toDateString();
         $this->travelDate   = $this->minDate;
-        $this->guestCount   = 2;
+        $this->guestCount   = 1;
 
         if ($initialPackageId) {
             $pkg = Package::find($initialPackageId);
@@ -438,7 +438,7 @@ class CustomItineraryBuilder extends Component
 
     public function getBaseTourCostProperty(): int
     {
-        $guests = max(1, $this->guestCount);
+        $guests = max(1, (int) ($this->guestCount ?? 1));
         return $guests * $this->basePricePerPax;
     }
 
@@ -472,7 +472,7 @@ class CustomItineraryBuilder extends Component
 
         $overtime = $this->overtimeCalculation;
         $totalPrice = $this->grandTotal;
-        $guestCount = $this->guestCount;
+        $guestCount = max(1, (int) ($this->guestCount ?? 1));
 
         $commissionRate   = (float) config('trihita.commission_rate', 10);
         $commissionAmount = (int) round(($totalPrice * $commissionRate) / 100);

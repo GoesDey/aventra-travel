@@ -30,6 +30,7 @@ class CustomItineraryBuilderLivewireTest extends TestCase
         $component->assertSee('Trip Summary');
 
         // Check defaults
+        $this->assertSame(1, $component->get('guestCount'));
         $this->assertNotEmpty($component->get('selectedRegion'));
         $this->assertNotNull($component->get('selectedAgentId'));
         $this->assertNotEmpty($component->get('startPoint'));
