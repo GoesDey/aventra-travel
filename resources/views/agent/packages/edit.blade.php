@@ -187,9 +187,10 @@
                         'quota'      => $sch->quota,
                     ];
                 })->toArray();
+                $initialSchedulesData = old('schedules', $existingSchedules);
             @endphp
 
-            const initialSchedules = @json(old('schedules', $existingSchedules));
+            const initialSchedules = @json($initialSchedulesData);
             let scheduleIndex = 0;
 
             function createScheduleRow(index, data = {}) {

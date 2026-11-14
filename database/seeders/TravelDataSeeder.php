@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Agent;
 use App\Models\Destination;
 use App\Models\Package;
-use App\Models\PackageSchedule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -41,65 +40,14 @@ class TravelDataSeeder extends Seeder
             ]
         );
 
-        // 2. Seeding Destinasi dengan Image Path Dummy / Unsplash
-        $destinationsData = [
-            [
-                'name' => 'Monkey Forest Ubud',
-                'location' => 'Ubud, Gianyar',
-                'image' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Cagar alam suci dengan ratusan monyet ekor panjang dan pepohonan purba yang rindang.',
-            ],
-            [
-                'name' => 'Tirta Empul Temple',
-                'location' => 'Tampaksiring, Gianyar',
-                'image' => 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Pura pemandian suci bersejarah dengan mata air alami untuk ritual penyucian diri (Melukat).',
-            ],
-            [
-                'name' => 'Tanah Lot Sunset',
-                'location' => 'Beraban, Tabanan',
-                'image' => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Pura ikonik di atas bongkahan batu karang besar di tengah samudera dengan sunset memukau.',
-            ],
-            [
-                'name' => 'Uluwatu Cliff & Temple',
-                'location' => 'Pecatu, Badung',
-                'image' => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Pura luhur di tebing karang setinggi 70 meter menghadap Samudera Hindia dengan atraksi Tari Kecak.',
-            ],
-            [
-                'name' => 'Kelingking Beach Nusa Penida',
-                'location' => 'Nusa Penida, Klungkung',
-                'image' => 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Tebing karst megah berbentuk T-Rex dengan pasir putih pantai dan air laut biru toska spektakuler.',
-            ],
-            [
-                'name' => 'Mount Batur Caldera',
-                'location' => 'Kintamani, Bangli',
-                'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-                'description' => 'Gunung berapi aktif dengan panorama sunrise menembus kabut awan dan danau Batur yang menyejukkan.',
-            ],
-        ];
+        // 2. Pastikan destinasi milik agen terdaftar
+        Destination::whereNull('agent_id')->update(['agent_id' => $agent->id]);
 
-        $createdDestinations = [];
-        foreach ($destinationsData as $d) {
-            $createdDestinations[] = Destination::updateOrCreate(
-                ['slug' => Str::slug($d['name'])],
-                [
-                    'agent_id'    => $agent->id,
-                    'name'        => $d['name'],
-                    'location'    => $d['location'],
-                    'image_path'  => $d['image'],
-                    'description' => $d['description'],
-                ]
-            );
-        }
-
-        // 3. Seeding Paket Wisata dengan Cover Image & Jadwal
+        // 3. Seeding Paket Wisata Unggulan dengan Pemetaan Destinasi Statis yang Logis
         $packagesData = [
             [
                 'name'          => 'Eksplorasi Nusa Penida Timur & Snorkeling',
-                'description'   => 'Jelajahi keajaiban pulau Nusa Penida bagian timur. Nikmati keindahan Diamond Beach, Atuh Beach, Rumah Pohon Molenteng, dan berenang bersama ikan pari Manta Ray.',
+                'description'   => 'Jelajahi keajaiban pulau Nusa Penida. Nikmati keindahan Diamond Beach, Kelingking Beach, dan berenang di jernihnya perairan Crystal Bay.',
                 'category'      => 'reguler',
                 'region'        => 'timur',
                 'price_per_pax' => 750000,
@@ -108,10 +56,15 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 4.9,
                 'cover_image'   => 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Diamond Beach Nusa Penida',
+                    'Kelingking Beach Nusa Penida',
+                    'Crystal Bay Nusa Penida',
+                ],
             ],
             [
                 'name'          => 'Ubud Heritage & Sacred Waterfall Tour',
-                'description'   => 'Wisata budaya dan alam khas Ubud. Menyusuri Monkey Forest, melihat arsitektur Puri Saren Agung, merasakan kesegaran Tirta Empul, dan bersantai di Tegalalang Rice Terrace.',
+                'description'   => 'Wisata budaya dan alam khas Ubud. Menyusuri Monkey Forest, merasakan kesegaran Tirta Empul, dan bersantai di Tegalalang Rice Terrace.',
                 'category'      => 'reguler',
                 'region'        => 'selatan',
                 'price_per_pax' => 450000,
@@ -120,6 +73,11 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 4.8,
                 'cover_image'   => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Monkey Forest Ubud',
+                    'Tirta Empul Temple',
+                    'Tegalalang Rice Terrace',
+                ],
             ],
             [
                 'name'          => 'Mount Batur Sunrise Trekking & Hot Spring',
@@ -132,6 +90,10 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 5.0,
                 'cover_image'   => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Mount Batur Caldera',
+                    'Kintamani Natural Hot Spring',
+                ],
             ],
             [
                 'name'          => 'Sunset Cliff Uluwatu & Tari Kecak Romance',
@@ -144,10 +106,14 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 4.7,
                 'cover_image'   => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Uluwatu Cliff & Temple',
+                    'Jimbaran Bay Seafood Beach',
+                ],
             ],
             [
                 'name'          => 'Tanah Lot & Pura Ulun Danu Beratan Explorer',
-                'description'   => 'Jelajahi keindahan Bali Barat mulai dari Pura Danau Beratan di Bedugul yang sejuk berkabut hingga pemandangan sunset siluet legendaris Pura Tanah Lot di tepi samudra.',
+                'description'   => 'Jelajahi keindahan Bali Barat mulai dari Pura Ulun Danu Beratan di Bedugul yang sejuk berkabut hingga pemandangan sunset siluet legendaris Pura Tanah Lot di tepi samudra.',
                 'category'      => 'custom',
                 'region'        => 'barat',
                 'price_per_pax' => 520000,
@@ -156,10 +122,14 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 4.9,
                 'cover_image'   => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Pura Ulun Danu Beratan',
+                    'Tanah Lot Sunset',
+                ],
             ],
             [
                 'name'          => 'Petualangan Eksklusif Bali Barat 3D2N',
-                'description'   => 'Paket liburan private 3 hari 2 malam menelusuri keasrian Taman Nasional Bali Barat, Pulau Menjangan untuk diving kelas dunia, dan resort tepi hutan rimba.',
+                'description'   => 'Paket liburan private 3 hari 2 malam menelusuri keasrian Taman Nasional Bali Barat dan Pulau Menjangan untuk snorkeling & diving kelas dunia.',
                 'category'      => 'custom',
                 'region'        => 'barat',
                 'price_per_pax' => 2800000,
@@ -168,10 +138,17 @@ class TravelDataSeeder extends Seeder
                 'avg_rating'    => 5.0,
                 'cover_image'   => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
                 'is_active'     => true,
+                'destinations'  => [
+                    'Taman Nasional Bali Barat',
+                    'Pulau Menjangan',
+                ],
             ],
         ];
 
         foreach ($packagesData as $pkg) {
+            $destinationNames = $pkg['destinations'] ?? [];
+            unset($pkg['destinations']);
+
             $slug = Str::slug($pkg['name']);
             $package = Package::updateOrCreate(
                 ['slug' => $slug],
@@ -181,19 +158,23 @@ class TravelDataSeeder extends Seeder
                 ])
             );
 
-            // Hubungkan destinasi ke paket wisata
-            if (!empty($createdDestinations)) {
-                $package->destinations()->sync([
-                    $createdDestinations[0]->id => ['visit_order' => 1],
-                    $createdDestinations[1]->id => ['visit_order' => 2],
-                ]);
+            // Hubungkan destinasi secara statis sesuai urutan kunjungan (visit_order)
+            $syncData = [];
+            foreach ($destinationNames as $index => $destName) {
+                $dest = Destination::where('slug', Str::slug($destName))->first();
+                if ($dest) {
+                    $syncData[$dest->id] = ['visit_order' => $index + 1];
+                }
+            }
+
+            if (!empty($syncData)) {
+                $package->destinations()->sync($syncData);
             }
 
             // 4. Seeding Jadwal Perjalanan (Package Schedules)
-            // Buat beberapa jadwal: H-2 (tidak lolos validasi), H+5, H+10, H+18 (lolos validasi)
             $package->schedules()->delete();
 
-            // Jadwal 1: 2 hari lagi (H-2: Sengaja untuk pengujian validasi H-3 agar tidak tampil)
+            // Jadwal 1: 2 hari lagi (H-2: tidak lolos validasi H-3)
             $package->schedules()->create([
                 'start_date' => now()->addDays(2)->toDateString(),
                 'end_date'   => now()->addDays(2 + $pkg['duration_days'] - 1)->toDateString(),
@@ -220,6 +201,25 @@ class TravelDataSeeder extends Seeder
                 'end_date'   => now()->addDays(25 + $pkg['duration_days'] - 1)->toDateString(),
                 'quota'      => 20,
             ]);
+        }
+
+        // Pastikan semua paket dari PackageSeeder juga memiliki agent_id & jadwal aktif
+        $otherPackages = Package::whereNull('agent_id')->get();
+        foreach ($otherPackages as $otherPkg) {
+            $otherPkg->update(['agent_id' => $agent->id]);
+
+            if ($otherPkg->schedules()->count() === 0) {
+                $otherPkg->schedules()->create([
+                    'start_date' => now()->addDays(6)->toDateString(),
+                    'end_date'   => now()->addDays(6 + $otherPkg->duration_days - 1)->toDateString(),
+                    'quota'      => 12,
+                ]);
+                $otherPkg->schedules()->create([
+                    'start_date' => now()->addDays(14)->toDateString(),
+                    'end_date'   => now()->addDays(14 + $otherPkg->duration_days - 1)->toDateString(),
+                    'quota'      => 15,
+                ]);
+            }
         }
     }
 }

@@ -20,7 +20,14 @@ Route::post('/packages/{slug}/book', [UserBookingController::class, 'store'])
 
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomItineraryController;
+use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\Api\MidtransWebhookController;
+
+// User Preferences
+Route::middleware(['auth', 'is_user'])->group(function () {
+    Route::get('/preferences', [PreferenceController::class, 'index'])->name('preferences.index');
+    Route::post('/preferences', [PreferenceController::class, 'store'])->name('preferences.store');
+});
 
 // Midtrans Webhook / Callback notification endpoints (bypassed from CSRF)
 Route::post('/midtrans/callback', [MidtransWebhookController::class, 'handle'])->name('midtrans.callback');

@@ -17,7 +17,14 @@ class Destination extends Model
         'slug',
         'description',
         'location',
+        'latitude',
+        'longitude',
         'image_path',
+    ];
+
+    protected $casts = [
+        'latitude'  => 'float',
+        'longitude' => 'float',
     ];
 
     /**

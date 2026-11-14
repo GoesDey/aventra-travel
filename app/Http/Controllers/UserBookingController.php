@@ -39,39 +39,43 @@ class UserBookingController extends Controller
             });
         }
 
-        // Rekomendasi berbasis preferensi user (jika ada): paket yang paling cocok tampil lebih dulu.
-        // Skor: region cocok +2, kategori cocok +2, harga <= budget +1. Filter tetap berlaku.
         $preference = auth()->check() ? auth()->user()->userPreference : null;
 
         if ($preference) {
-            $scoreParts = [];
-            $bindings   = [];
+            // Content-based scoring: hitung match_score lalu urutkan & paginate manual
+            $regions    = $preference->preferred_regions ?? [];
+            $categories = $preference->preferred_categories ?? [];
+            $budget     = $preference->budget_max;
 
-            $regions = array_values(array_intersect((array) $preference->preferred_regions, Package::regionKeys()));
-            if (!empty($regions)) {
-                $scoreParts[] = 'CASE WHEN region IN (' . implode(',', array_fill(0, count($regions), '?')) . ') THEN 2 ELSE 0 END';
-                array_push($bindings, ...$regions);
-            }
+            $scored = $query->latest()->get()->map(function ($pkg) use ($regions, $categories, $budget) {
+                $score = 0;
+                if (in_array($pkg->region, $regions, true)) {
+                    $score += 2;
+                }
+                if (in_array($pkg->category, $categories, true)) {
+                    $score += 2;
+                }
+                if ($budget !== null && (float) $pkg->price_per_pax <= (float) $budget) {
+                    $score += 1;
+                }
+                $pkg->match_score = $score;
+                return $pkg;
+            })->sortByDesc('match_score')->values();
 
-            $categories = array_values(array_intersect((array) $preference->preferred_categories, ['reguler', 'custom']));
-            if (!empty($categories)) {
-                $scoreParts[] = 'CASE WHEN category IN (' . implode(',', array_fill(0, count($categories), '?')) . ') THEN 2 ELSE 0 END';
-                array_push($bindings, ...$categories);
-            }
-
-            if ($preference->budget_max !== null) {
-                $scoreParts[] = 'CASE WHEN price_per_pax <= ? THEN 1 ELSE 0 END';
-                $bindings[]   = (float) $preference->budget_max;
-            }
-
-            if (!empty($scoreParts)) {
-                $query->orderByRaw('(' . implode(' + ', $scoreParts) . ') DESC', $bindings);
-            }
+            $perPage = 9;
+            $page    = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+            $packages = new \Illuminate\Pagination\LengthAwarePaginator(
+                $scored->forPage($page, $perPage)->values(),
+                $scored->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $packages = $query->latest()->paginate(9)->withQueryString();
         }
 
-        $packages = $query->latest()->paginate(9)->withQueryString();
-
-        return view('packages.index', compact('packages'));
+        return view('packages.index', compact('packages', 'preference'));
     }
 
     /**

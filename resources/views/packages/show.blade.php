@@ -1,4 +1,16 @@
 <x-layouts.app title="{{ $package->name }} - TriHitaTour">
+    <!-- Leaflet.js CSS & JS (OpenStreetMap) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Routing Machine CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <style>
+        .leaflet-routing-container {
+            display: none !important;
+        }
+    </style>
+
     @php
         $coverUrl = 'https://placehold.co/1200x600/00327D/ffffff?text=' . urlencode($package->name);
         if ($package->cover_image) {
@@ -135,6 +147,65 @@
                         <div class="text-sm md:text-base text-on-surface-variant leading-relaxed whitespace-pre-line">
                             {{ $package->description }}
                         </div>
+                    </div>
+
+                    <!-- Interactive Location & Route (Leaflet.js + OpenStreetMap) -->
+                    @php
+                        $mapDestinations = $package->destinations->map(function ($dest, $index) {
+                            return [
+                                'order'       => $index + 1,
+                                'name'        => $dest->name,
+                                'location'    => $dest->location,
+                                'latitude'    => $dest->latitude !== null ? (float) $dest->latitude : null,
+                                'longitude'   => $dest->longitude !== null ? (float) $dest->longitude : null,
+                            ];
+                        })->filter(fn ($d) => $d['latitude'] !== null && $d['longitude'] !== null)->values();
+                    @endphp
+                    <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
+                                <span class="material-symbols-outlined text-tropical-teal">route</span>
+                                <span>Location &amp; Travel Route</span>
+                            </h2>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-tropical-teal bg-tropical-teal/10 px-3 py-1 rounded-full w-fit">
+                                <span class="material-symbols-outlined text-sm">pin_drop</span>
+                                <span>{{ $package->destinations->count() }} {{ Str::plural('Stop', $package->destinations->count()) }}</span>
+                            </span>
+                        </div>
+
+                        <p class="text-xs md:text-sm text-on-surface-variant leading-relaxed">
+                            This interactive map displays destination waypoints and sequential driving routes for this tour package. Click on any marker to view destination details.
+                        </p>
+
+                        <!-- Leaflet Interactive Map Canvas -->
+                        <div id="map" class="w-full h-80 rounded-xl shadow-sm z-0 relative border border-outline-variant/30"></div>
+
+                        <!-- Route Sequence Order -->
+                        @if($package->destinations->isNotEmpty())
+                            <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-3">
+                                <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Tour Route Order</span>
+                                <ol class="space-y-2.5">
+                                    @foreach($package->destinations as $idx => $dest)
+                                        <li class="flex items-start gap-3 text-xs md:text-sm">
+                                            <span class="w-6 h-6 rounded-full {{ $loop->last ? 'bg-oceanic-deep text-white' : 'bg-tropical-teal/15 text-tropical-teal' }} font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                {{ $idx + 1 }}
+                                            </span>
+                                            <div class="min-w-0 flex-1">
+                                                <span class="font-bold text-oceanic-deep">{{ $dest->name }}</span>
+                                                <span class="text-outline"> — {{ $dest->location }}</span>
+                                                @if($loop->first && $package->destinations->count() > 1)
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-tropical-teal/10 text-tropical-teal rounded-full">Starting Point</span>
+                                                @elseif($loop->last && $package->destinations->count() > 1)
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-bold bg-oceanic-deep/10 text-oceanic-deep rounded-full">Final Stop</span>
+                                                @elseif($package->destinations->count() > 2)
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-700 rounded-full">Stop {{ $idx + 1 }}</span>
+                                                @endif
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Destinations Visited -->
@@ -361,6 +432,127 @@
             if (guestInput) {
                 guestInput.addEventListener('input', updatePrice);
                 guestInput.addEventListener('change', updatePrice);
+            }
+        });
+    </script>
+
+    <!-- Leaflet.js Interactive Map & Real Road Routing (Leaflet Routing Machine) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer || typeof L === 'undefined') return;
+
+            const destinations = @json($mapDestinations);
+
+            // Koordinat default Bali Tengah jika paket belum memiliki koordinat destinasi
+            const defaultCenter = [-8.409518, 115.188916];
+            const map = L.map('map').setView(defaultCenter, 10);
+
+            // Tile Layer OpenStreetMap (Gratis tanpa API Key)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            if (!destinations || destinations.length === 0) {
+                return;
+            }
+
+            // 1. Tambahkan Marker & Popup untuk setiap destinasi paket wisata
+            const destinationWaypoints = [];
+            const bounds = L.latLngBounds();
+
+            destinations.forEach(function (dest) {
+                const latLng = L.latLng(dest.latitude, dest.longitude);
+                destinationWaypoints.push(latLng);
+                bounds.extend(latLng);
+
+                const marker = L.marker(latLng).addTo(map);
+                marker.bindPopup(
+                    `<div class="text-xs">
+                        <div class="font-bold text-slate-900">${dest.order}. ${dest.name}</div>
+                        <div class="text-slate-500 mt-0.5">${dest.location}</div>
+                    </div>`
+                );
+            });
+
+            // Pasang tampilan awal mencakup destinasi paket sembari menunggu geolocation
+            if (destinationWaypoints.length > 1) {
+                map.fitBounds(bounds, { padding: [40, 40] });
+            } else if (destinationWaypoints.length === 1) {
+                map.setView(destinationWaypoints[0], 13);
+            }
+
+            // 2. Fungsi untuk menggambar rute jalan raya menggunakan L.Routing.control
+            let routingControl = null;
+
+            function drawRoadRoute(waypointsArray) {
+                if (typeof L.Routing === 'undefined' || waypointsArray.length < 2) {
+                    return;
+                }
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: waypointsArray,
+                    show: false,
+                    addWaypoints: false,
+                    routeWhileDragging: false,
+                    draggableWaypoints: false,
+                    fitSelectedRoutes: true,
+                    lineOptions: {
+                        styles: [
+                            { color: '#006A6A', opacity: 0.9, weight: 5 }
+                        ],
+                        extendToWaypoints: true,
+                        missingRouteTolerance: 0
+                    },
+                    // Kembalikan null agar marker bawaan plugin tidak menimpa/dobel dengan marker kita
+                    createMarker: function () {
+                        return null;
+                    }
+                }).addTo(map);
+            }
+
+            // 3. Deteksi Lokasi User (Titik Awal Rute)
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) {
+                        const userLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+
+                        // Marker khusus dengan warna berbeda untuk Lokasi Anda
+                        const userIcon = L.divIcon({
+                            className: 'custom-user-location-marker',
+                            html: `<div style="width: 18px; height: 18px; background-color: #ef4444; border: 3px solid #ffffff; border-radius: 9999px; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.35);"></div>`,
+                            iconSize: [18, 18],
+                            iconAnchor: [9, 9],
+                            popupAnchor: [0, -10]
+                        });
+
+                        L.marker(userLatLng, { icon: userIcon })
+                            .addTo(map)
+                            .bindPopup(
+                                `<div class="text-xs">
+                                    <div class="font-bold text-rose-600">Lokasi Anda Saat Ini</div>
+                                    <div class="text-slate-500 mt-0.5">Titik awal keberangkatan</div>
+                                </div>`
+                            );
+
+                        // Gabungkan lokasi user sebagai titik pertama diikuti seluruh destinasi paket
+                        const allWaypoints = [userLatLng, ...destinationWaypoints];
+                        drawRoadRoute(allWaypoints);
+                    },
+                    function () {
+                        // Fallback jika user menolak izin lokasi: mulai rute dari destinasi pertama
+                        drawRoadRoute(destinationWaypoints);
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+                );
+            } else {
+                // Fallback jika browser tidak mendukung Geolocation
+                drawRoadRoute(destinationWaypoints);
             }
         });
     </script>
