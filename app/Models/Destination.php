@@ -17,6 +17,7 @@ class Destination extends Model
         'slug',
         'description',
         'location',
+        'region',
         'latitude',
         'longitude',
         'image_path',

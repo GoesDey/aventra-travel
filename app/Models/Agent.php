@@ -24,6 +24,9 @@ class Agent extends Model
         'address',
         'phone_number',
         'vehicle_count',
+        'operating_regions',
+        'latitude',
+        'longitude',
         'nib_number',
         'logo_path',
         'bank_name',
@@ -39,7 +42,10 @@ class Agent extends Model
     protected function casts(): array
     {
         return [
-            'vehicle_count' => 'integer',
+            'vehicle_count'     => 'integer',
+            'operating_regions' => 'array',
+            'latitude'          => 'float',
+            'longitude'         => 'float',
         ];
     }
 

@@ -208,12 +208,40 @@ class DestinationSeeder extends Seeder
             ],
         ];
 
+        $regionMap = [
+            'mount-batur-caldera'                 => 'utara',
+            'kintamani-natural-hot-spring'        => 'utara',
+            'pura-ulun-danu-beratan'              => 'utara',
+            'sekumpul-waterfall'                  => 'utara',
+            'gitgit-waterfall'                    => 'utara',
+            'monkey-forest-ubud'                  => 'selatan',
+            'tirta-empul-temple'                  => 'selatan',
+            'tegalalang-rice-terrace'             => 'selatan',
+            'bali-safari-marine-park'             => 'selatan',
+            'uluwatu-cliff-temple'                => 'selatan',
+            'jimbaran-bay-seafood-beach'          => 'selatan',
+            'pelabuhan-benoa-sunset-harbor'       => 'selatan',
+            'kelingking-beach-nusa-penida'        => 'timur',
+            'diamond-beach-nusa-penida'           => 'timur',
+            'crystal-bay-nusa-penida'             => 'timur',
+            'gili-trawangan'                      => 'timur',
+            'gili-air'                            => 'timur',
+            'taman-nasional-gunung-rinjani'       => 'timur',
+            'pulau-padar-taman-nasional-komodo'   => 'timur',
+            'pink-beach-komodo'                   => 'timur',
+            'tanah-lot-sunset'                    => 'barat',
+            'taman-nasional-bali-barat'           => 'barat',
+            'pulau-menjangan'                     => 'barat',
+        ];
+
         foreach ($destinations as $d) {
+            $slug = Str::slug($d['name']);
             Destination::updateOrCreate(
-                ['slug' => Str::slug($d['name'])],
+                ['slug' => $slug],
                 [
                     'name'        => $d['name'],
                     'location'    => $d['location'],
+                    'region'      => $regionMap[$slug] ?? 'selatan',
                     'latitude'    => $d['latitude'],
                     'longitude'   => $d['longitude'],
                     'image_path'  => $d['image'],

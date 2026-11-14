@@ -18,32 +18,7 @@ class CustomItineraryController extends Controller
      */
     public function create(Request $request)
     {
-        $destinations = Destination::orderBy('name')->get();
-
-        $packages = Package::where('is_active', true)
-            ->whereHas('agent.user', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->with(['agent', 'destinations'])
-            ->orderByRaw("CASE WHEN category = 'custom' THEN 0 ELSE 1 END")
-            ->orderBy('name')
-            ->get();
-
-        $selectedPackageId = $request->query('package_id', $packages->first()?->id);
-        $baseHours         = (int) config('trihita.custom_base_hours', 8);
-        $overtimeRate      = (int) config('trihita.overtime_rate_per_hour', 75000);
-        $minDate           = now()->addDays(3)->toDateString();
-        $maxGuests         = (int) config('trihita.max_guest_per_booking', 20);
-
-        return view('custom-itinerary.create', compact(
-            'destinations',
-            'packages',
-            'selectedPackageId',
-            'baseHours',
-            'overtimeRate',
-            'minDate',
-            'maxGuests'
-        ));
+        return view('custom-itinerary.create');
     }
 
     /**
@@ -147,6 +122,10 @@ class CustomItineraryController extends Controller
                 'package_schedule_id' => null,
                 'travel_date'         => Carbon::parse($validated['travel_date'])->toDateString(),
                 'guest_count'         => $guestCount,
+                'start_point'         => $request->input('start_point', $package->agent->address ?? 'Sanur, Denpasar, Bali'),
+                'travel_time_hours'   => (float) $request->input('travel_time_hours', 0.0),
+                'stay_time_hours'     => (float) $request->input('stay_time_hours', $overtime['total_hours']),
+                'travel_distance_km'  => (float) $request->input('travel_distance_km', 0.0),
                 'total_price'         => $totalPrice,
                 'is_custom'           => true,
                 'total_hours'         => $overtime['total_hours'],
