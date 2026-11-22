@@ -78,6 +78,11 @@ class TravelDataSeeder extends Seeder
             ],
         ];
 
+        $westUnsplash = [
+            'tanah-lot-ulun-danu-beratan-explorer'      => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80',
+            'west-bali-menjangan-island-adventure-3d2n' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        ];
+
         foreach ($westBaliPackages as $pkg) {
             $destinationNames = $pkg['destinations'] ?? [];
             unset($pkg['destinations']);
@@ -88,7 +93,7 @@ class TravelDataSeeder extends Seeder
                 array_merge($pkg, [
                     'agent_id'    => $agent->id,
                     'slug'        => $slug,
-                    'cover_image' => "images/packages/{$slug}.jpg",
+                    'cover_image' => $westUnsplash[$slug] ?? "images/packages/{$slug}.jpg",
                     'avg_rating'  => 0,
                 ])
             );
@@ -106,29 +111,24 @@ class TravelDataSeeder extends Seeder
             }
         }
 
-        // 4. Assign default agent to any unowned packages and ensure 4 future schedules (>= H+4) for EVERY package
-        $scheduleOffsets = [
-            ['days' => 4,  'quota' => 10],
-            ['days' => 9,  'quota' => 12],
-            ['days' => 15, 'quota' => 15],
-            ['days' => 22, 'quota' => 18],
-        ];
+        // 4. Assign default agent to any unowned packages and ensure 4 future schedules (>= H+4) with quota matching max_guests
+        $scheduleDayOffsets = [4, 9, 15, 22];
 
-        $allPackages = Package::all();
+        $allPackages = Package::where('is_active', true)->get();
         foreach ($allPackages as $pkg) {
             if (!$pkg->agent_id) {
                 $pkg->update(['agent_id' => $agent->id]);
             }
 
-            foreach ($scheduleOffsets as $offset) {
-                $startDate = now()->addDays($offset['days'])->toDateString();
-                $endDate   = now()->addDays($offset['days'] + max(1, (int) $pkg->duration_days) - 1)->toDateString();
+            foreach ($scheduleDayOffsets as $daysAhead) {
+                $startDate = now()->addDays($daysAhead)->toDateString();
+                $endDate   = now()->addDays($daysAhead + max(1, (int) $pkg->duration_days) - 1)->toDateString();
 
                 $pkg->schedules()->firstOrCreate(
                     ['start_date' => $startDate],
                     [
                         'end_date' => $endDate,
-                        'quota'    => min($offset['quota'], max(1, (int) $pkg->max_guests)),
+                        'quota'    => max(1, (int) $pkg->max_guests),
                     ]
                 );
             }

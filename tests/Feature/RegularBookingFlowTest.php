@@ -8,11 +8,13 @@ use App\Models\Package;
 use App\Models\PackageSchedule;
 use App\Models\User;
 use App\Services\MidtransService;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery;
 use Tests\TestCase;
 
 class RegularBookingFlowTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_user_can_book_regular_package_and_view_payment_page(): void
     {
         // 1. Setup Active Agent & Package

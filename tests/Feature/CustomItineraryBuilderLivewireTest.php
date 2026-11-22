@@ -8,11 +8,13 @@ use App\Models\Booking;
 use App\Models\Destination;
 use App\Models\Package;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomItineraryBuilderLivewireTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_itinerary_builder_renders_and_initializes_with_region_agent_and_stops(): void
     {
         $user = User::factory()->create([

@@ -173,13 +173,27 @@ class PackageSeeder extends Seeder
             ],
         ];
 
+        $unsplashBySlug = [
+            'ubud-cultural-tour'                    => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop',
+            'nusa-penida-island-hopping'            => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800&auto=format&fit=crop',
+            'mount-batur-sunrise-trekking'          => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800&auto=format&fit=crop',
+            'east-bali-heritage-water-palace'       => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop',
+            'bali-waterfall-explorer'               => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
+            'uluwatu-temple-kecak-dance'            => 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=800&auto=format&fit=crop',
+            'north-bali-dolphin-hot-springs'        => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
+            'bali-safari-marine-park'               => 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=800&auto=format&fit=crop',
+            'kintamani-cycling-tour'                => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
+            'seminyak-luxury-sunset-cruise'         => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+            'south-bali-sunset-cultural-highlights' => 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=800&auto=format&fit=crop',
+        ];
+
         foreach ($packages as $pkgData) {
             $destinationNames = $pkgData['destinations'] ?? [];
             unset($pkgData['destinations']);
 
             $slug = Str::slug($pkgData['name']);
             $pkgData['slug']        = $slug;
-            $pkgData['cover_image'] = "images/packages/{$slug}.jpg";
+            $pkgData['cover_image'] = $unsplashBySlug[$slug] ?? "images/packages/{$slug}.jpg";
             $pkgData['avg_rating']  = 0;
 
             $package = Package::updateOrCreate(

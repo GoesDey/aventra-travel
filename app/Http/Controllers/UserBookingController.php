@@ -18,8 +18,9 @@ class UserBookingController extends Controller
      */
     public function index(Request $request)
     {
-        // Tampilkan semua paket wisata (aktif maupun belum aktif) beserta gambarnya
+        // Tampilkan hanya paket wisata aktif pada katalog publik
         $query = Package::query()
+            ->where('is_active', true)
             ->with(['destinations', 'agent'])
             ->withCount([
                 'reviews',

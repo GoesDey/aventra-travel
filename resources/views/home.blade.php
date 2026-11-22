@@ -124,7 +124,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-12">
                 @php
-                    $popularPackages = \App\Models\Package::withCount('reviews')->take(4)->get();
+                    $popularPackages = \App\Models\Package::where('is_active', true)->withCount('reviews')->take(4)->get();
                 @endphp
                 
                 @foreach($popularPackages as $package)
