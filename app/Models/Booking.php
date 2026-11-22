@@ -11,6 +11,27 @@ class Booking extends Model
 {
     use HasFactory;
 
+    public const STATUS_LABELS = [
+        'menunggu_pembayaran' => 'Awaiting Payment',
+        'dibayar'             => 'Paid',
+        'berjalan'            => 'Ongoing',
+        'selesai'             => 'Completed',
+        'dibatalkan'          => 'Cancelled',
+        'kedaluwarsa'         => 'Expired',
+        'perlu_refund'        => 'Refund Needed',
+    ];
+
+    public static function statusLabel(?string $status): string
+    {
+        if (!$status) {
+            return __('Unknown');
+        }
+
+        $label = self::STATUS_LABELS[$status] ?? ucfirst(str_replace('_', ' ', $status));
+
+        return __($label);
+    }
+
     protected $fillable = [
         'booking_code',
         'user_id',
@@ -139,7 +160,9 @@ class Booking extends Model
         $currentStatus = $this->status;
 
         if (!isset($allowedTransitions[$currentStatus]) || !in_array($targetStatus, $allowedTransitions[$currentStatus], true)) {
-            throw new \DomainException("Transisi status tidak diizinkan. Agen hanya boleh mengubah status dari 'dibayar' -> 'berjalan' -> 'selesai'. Status booking saat ini: '{$currentStatus}', target: '{$targetStatus}'.");
+            $currentLabel = self::statusLabel($currentStatus);
+            $targetLabel  = self::statusLabel($targetStatus);
+            throw new \DomainException("Status transition is not allowed. Agents can only transition bookings from Paid to Ongoing to Completed. Current status: '{$currentLabel}', target: '{$targetLabel}'.");
         }
 
         $this->update(['status' => $targetStatus]);

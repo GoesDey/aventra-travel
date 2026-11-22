@@ -35,11 +35,15 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 class="font-headline-md text-headline-md text-oceanic-deep">{{ $package->name }}</h1>
                 <div class="flex items-center space-x-3">
-                    <span class="text-on-surface-variant">{{ $package->reviews->count() }} reviews</span>
-                    <div class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded flex items-center space-x-1">
-                        <span class="material-symbols-outlined fill text-sm">star</span>
-                        <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 0) }}</span>
-                    </div>
+                    @if($package->reviews->count() > 0 && (float) $package->avg_rating > 0)
+                        <span class="text-on-surface-variant">{{ $package->reviews->count() }} {{ Str::plural('review', $package->reviews->count()) }}</span>
+                        <div class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded flex items-center space-x-1">
+                            <span class="material-symbols-outlined fill text-sm">star</span>
+                            <span class="font-label-bold text-label-bold">{{ number_format($package->avg_rating, 1) }}</span>
+                        </div>
+                    @else
+                        <span class="text-xs font-bold text-tropical-teal bg-tropical-teal/10 px-3 py-1 rounded-full">No reviews yet</span>
+                    @endif
                 </div>
             </div>
 

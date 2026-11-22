@@ -63,23 +63,25 @@ class PaymentController extends Controller
             ]);
 
             return redirect()->route('history')
-                ->with('error', 'Failed to process payment via Midtrans. Please try again shortly.');
+                ->with('error', __('Failed to process payment via Midtrans. Please try again shortly.'));
         }
 
         if (!$payment) {
             $latest = Booking::where('id', $booking->id)->first();
             if ($latest?->status === 'dibayar') {
                 return redirect()->route('history')
-                    ->with('success', 'This booking has already been paid successfully!');
+                    ->with('success', __('This booking has already been paid successfully!'));
             }
 
             if ($latest?->isExpired() || in_array($latest?->status, ['kedaluwarsa', 'dibatalkan'])) {
                 return redirect()->route('history')
-                    ->with('error', 'The payment time limit for this booking has expired.');
+                    ->with('error', __('The payment time limit for this booking has expired.'));
             }
 
+            $statusLabel = Booking::statusLabel($latest?->status);
+
             return redirect()->route('history')
-                ->with('error', "Booking status has changed ({$latest?->status}).");
+                ->with('error', __('Booking status has changed (:status).', ['status' => $statusLabel]));
         }
 
         $clientKey = config('midtrans.client_key');

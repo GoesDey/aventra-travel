@@ -11,14 +11,14 @@
                         1
                     </span>
                     <div>
-                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Step 1</span>
+                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">{{ __('Step 1') }}</span>
                         <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">
-                            Choose Your Bali Region
+                            {{ __('Choose Your Bali Region') }}
                         </h2>
                     </div>
                 </div>
                 <p class="text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                    Select the Bali geographical territory you want to explore. Only destinations and partner tour operators operating within this region will be presented.
+                    {{ __('Select the Bali geographical territory you want to explore. Only destinations and partner tour operators operating within this region will be presented.') }}
                 </p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
@@ -35,8 +35,8 @@
                                         <span class="material-symbols-outlined text-lg">{{ $reg['icon'] }}</span>
                                     </div>
                                     <div>
-                                        <h3 class="font-bold text-sm text-oceanic-deep">{{ $reg['name'] }}</h3>
-                                        <span class="text-[11px] text-outline block">{{ $reg['badge'] }}</span>
+                                        <h3 class="font-bold text-sm text-oceanic-deep">{{ __($reg['name']) }}</h3>
+                                        <span class="text-[11px] text-outline block">{{ __($reg['badge']) }}</span>
                                     </div>
                                 </div>
                                 <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center {{ $isSelected ? 'border-tropical-teal bg-tropical-teal text-white' : 'border-outline-variant' }}">
@@ -46,7 +46,7 @@
                                 </span>
                             </div>
                             <p class="text-xs text-on-surface-variant leading-relaxed">
-                                {{ $reg['description'] }}
+                                {{ __($reg['description']) }}
                             </p>
                         </label>
                     @endforeach
@@ -63,19 +63,19 @@
                         2
                     </span>
                     <div>
-                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Step 2</span>
+                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">{{ __('Step 2') }}</span>
                         <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">
-                            Select Verified Partner Agent in {{ $regions[$selectedRegion]['name'] }}
+                            {{ __('Select Verified Partner Agent in') }} {{ __($regions[$selectedRegion]['name']) }}
                         </h2>
                     </div>
                 </div>
                 <p class="text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                    Choose one of our licensed travel operators. Your driver and charter vehicle will be dispatched directly by this agent.
+                    {{ __('Choose one of our licensed travel operators. Your driver and charter vehicle will be dispatched directly by this agent.') }}
                 </p>
 
                 @if($availableAgents->isEmpty())
                     <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs">
-                        No active tour agent found in this region. Please select another region.
+                        {{ __('No active tour agent found in this region. Please select another region.') }}
                     </div>
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
@@ -94,7 +94,7 @@
                                             <h3 class="font-bold text-sm text-oceanic-deep truncate">{{ $ag->agent_name }}</h3>
                                             <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
                                                 <span class="material-symbols-outlined text-[12px]">verified</span>
-                                                <span>Verified</span>
+                                                <span>{{ __('Verified') }}</span>
                                             </span>
                                         </div>
                                         <p class="text-xs text-outline mt-1 line-clamp-2">
@@ -109,8 +109,8 @@
                                     </span>
                                 </div>
                                 <div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs">
-                                    <span class="text-outline">Fleet: <strong>{{ $ag->vehicle_count }} Vehicles</strong></span>
-                                    <span class="font-bold text-tropical-teal">Rp {{ number_format($price, 0, ',', '.') }}/pax</span>
+                                    <span class="text-outline">{{ __('Fleet:') }} <strong>{{ $ag->vehicle_count }} {{ __('Vehicles') }}</strong></span>
+                                    <span class="font-bold text-tropical-teal">Rp {{ number_format($price, 0, ',', '.') }}/{{ __('pax') }}</span>
                                 </div>
                             </label>
                         @endforeach
@@ -128,9 +128,9 @@
                         3
                     </span>
                     <div>
-                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Step 3</span>
+                        <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">{{ __('Step 3') }}</span>
                         <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">
-                            Departure Point &amp; Travel Schedule
+                            {{ __('Departure Point & Travel Schedule') }}
                         </h2>
                     </div>
                 </div>
@@ -140,20 +140,20 @@
                     <div class="md:col-span-2 space-y-1.5">
                         <div class="flex items-center justify-between">
                             <label for="startPoint" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                                Starting Point / Pick-Up Location <span class="text-error">*</span>
+                                {{ __('Starting Point / Pick-Up Location') }} <span class="text-error">*</span>
                             </label>
                             <span class="text-[11px] text-tropical-teal font-semibold">
-                                Defaults to Partner Agent Office
+                                {{ __('Defaults to Partner Agent Office') }}
                             </span>
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-tropical-teal text-lg">flag</span>
                             <input type="text" id="startPoint" wire:model.live.debounce.500ms="startPoint"
-                                   placeholder="e.g. Hotel Mulia Nusa Dua or Agency Office"
+                                   placeholder="{{ __('e.g. Hotel Mulia Nusa Dua or Agency Office') }}"
                                    class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl pl-10 pr-4 py-3 text-sm font-medium text-on-surface focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('startPoint') border-error @enderror">
                         </div>
                         <p class="text-[11px] text-outline">
-                            Our chauffeur will pick you up at this starting address. If staying at a resort or villa, please enter your hotel name or address above.
+                            {{ __('Our chauffeur will pick you up at this starting address. If staying at a resort or villa, please enter your hotel name or address above.') }}
                         </p>
                         @error('startPoint')
                             <span class="text-error text-xs block font-medium">{{ $message }}</span>
@@ -163,7 +163,7 @@
                     <!-- Travel Date -->
                     <div class="space-y-1.5">
                         <label for="travelDate" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                            Travel Date (D-3 Rule) <span class="text-error">*</span>
+                            {{ __('Travel Date (D-3 Rule)') }} <span class="text-error">*</span>
                         </label>
                         <input type="date" id="travelDate" wire:model.live="travelDate" min="{{ $minDate }}"
                                class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm font-medium text-on-surface focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('travelDate') border-error @enderror">
@@ -175,7 +175,7 @@
                     <!-- Guest Count -->
                     <div class="space-y-1.5">
                         <label for="guestCount" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                            Number of Guests <span class="text-error">*</span>
+                            {{ __('Number of Guests') }} <span class="text-error">*</span>
                         </label>
                         <input type="number" id="guestCount" wire:model.live="guestCount" min="1" max="{{ $maxGuests }}"
                                class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm font-medium text-on-surface focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('guestCount') border-error @enderror">
@@ -194,35 +194,35 @@
                             4
                         </span>
                         <div>
-                            <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Step 4</span>
+                            <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">{{ __('Step 4') }}</span>
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep">
-                                Select Destinations in {{ $regions[$selectedRegion]['name'] }}
+                                {{ __('Select Destinations in') }} {{ __($regions[$selectedRegion]['name']) }}
                             </h2>
                         </div>
                     </div>
                     <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-tropical-teal bg-tropical-teal/10 px-3 py-1.5 rounded-full">
                         <span class="material-symbols-outlined text-sm">pin_drop</span>
-                        <span>{{ count($stops) }} {{ Str::plural('Stop', count($stops)) }} Configured</span>
+                        <span>{{ count($stops) }} {{ count($stops) > 1 ? __('Stops') : __('Stop') }} {{ __('Configured') }}</span>
                     </span>
                 </div>
 
                 <p class="text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                    Choose multiple sights and customize how many hours you want to spend at each spot. Driving distance and travel duration are calculated automatically from your Start Point through each stop.
+                    {{ __('Choose multiple sights and customize how many hours you want to spend at each spot. Driving distance and travel duration are calculated automatically from your Start Point through each stop.') }}
                 </p>
 
                 <!-- Destination Selector Dropdown & Quick Add -->
                 <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 space-y-3">
                     <div class="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
                         <div class="flex-1">
-                            <label for="addDestSelect" class="sr-only">Choose a destination to add</label>
+                            <label for="addDestSelect" class="sr-only">{{ __('Choose a destination to add') }}</label>
                             <select id="addDestSelect" class="w-full bg-surface-white border border-outline-variant/40 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium text-on-surface focus:ring-2 focus:ring-tropical-teal focus:outline-none">
-                                <option value="">-- Choose destination in {{ $regions[$selectedRegion]['name'] }} --</option>
+                                <option value="">-- {{ __('Choose destination in') }} {{ __($regions[$selectedRegion]['name']) }} --</option>
                                 @foreach($availableDestinations as $dest)
                                     @php
                                         $alreadyInStops = collect($stops)->contains('id', $dest->id);
                                     @endphp
                                     <option value="{{ $dest->id }}" {{ $alreadyInStops ? 'disabled' : '' }}>
-                                        {{ $dest->name }} ({{ $dest->location }}) {{ $alreadyInStops ? '— [Already in route]' : '' }}
+                                        {{ $dest->name }} ({{ $dest->location }}) {{ $alreadyInStops ? '— [' . __('Already in route') . ']' : '' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -231,7 +231,7 @@
                                 onclick="const sel = document.getElementById('addDestSelect'); if(sel.value) { @this.addDestination(parseInt(sel.value)); sel.value = ''; }"
                                 class="inline-flex items-center justify-center gap-1.5 bg-tropical-teal hover:bg-secondary text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer">
                             <span class="material-symbols-outlined text-base">add</span>
-                            <span>Add to Route</span>
+                            <span>{{ __('Add to Route') }}</span>
                         </button>
                     </div>
 
@@ -256,9 +256,9 @@
                     <div class="flex items-center justify-between text-xs text-outline">
                         <span class="font-semibold flex items-center gap-1 text-oceanic-deep">
                             <span class="material-symbols-outlined text-sm text-tropical-teal">route</span>
-                            <span>Interactive Route Map</span>
+                            <span>{{ __('Interactive Route Map') }}</span>
                         </span>
-                        <span>Red marker = Start Point &bull; Teal markers = Sequential Stops</span>
+                        <span>{{ __('Red marker = Start Point • Teal markers = Sequential Stops') }}</span>
                     </div>
                     <div id="customItineraryMap" wire:ignore wire:key="custom-itinerary-map-container" class="w-full h-80 rounded-2xl border border-outline-variant/30 shadow-sm z-0 relative"></div>
                 </div>
@@ -266,7 +266,7 @@
                 <!-- Sequence of Stops List -->
                 <div class="space-y-3 pt-2">
                     <span class="text-xs font-bold text-on-surface uppercase tracking-wider block">
-                        Sequential Route &amp; Stop Details
+                        {{ __('Sequential Route & Stop Details') }}
                     </span>
 
                     <!-- Start Point Indicator -->
@@ -275,7 +275,7 @@
                             <span class="material-symbols-outlined text-sm">flag</span>
                         </span>
                         <div class="min-w-0 flex-1">
-                            <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wider block">Origin / Start Point</span>
+                            <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wider block">{{ __('Origin / Start Point') }}</span>
                             <span class="text-xs font-semibold text-oceanic-deep truncate block">{{ $startPoint }}</span>
                         </div>
                     </div>
@@ -298,8 +298,8 @@
                                         <div class="mt-1 flex items-center gap-2 text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md w-fit">
                                             <span class="material-symbols-outlined text-xs">directions_car</span>
                                             <span>
-                                                Drive from {{ $idx === 0 ? 'Start' : 'Stop ' . $idx }}:
-                                                ~{{ round($stop['leg_travel_hours'] * 60) }} mins ({{ $stop['leg_distance_km'] }} km)
+                                                {{ __('Drive from') }} {{ $idx === 0 ? __('Start') : __('Stop') . ' ' . $idx }}:
+                                                ~{{ round($stop['leg_travel_hours'] * 60) }} {{ __('mins') }} ({{ $stop['leg_distance_km'] }} km)
                                             </span>
                                         </div>
                                     </div>
@@ -309,17 +309,17 @@
                                 <div class="flex items-center gap-1 shrink-0">
                                     <button type="button" wire:click="moveStopUp({{ $idx }})" {{ $idx === 0 ? 'disabled' : '' }}
                                             class="p-1.5 rounded-lg border border-outline-variant/30 hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed text-outline hover:text-oceanic-deep"
-                                            title="Move Up">
+                                            title="{{ __('Move Up') }}">
                                         <span class="material-symbols-outlined text-sm">arrow_upward</span>
                                     </button>
                                     <button type="button" wire:click="moveStopDown({{ $idx }})" {{ $idx === count($stops) - 1 ? 'disabled' : '' }}
                                             class="p-1.5 rounded-lg border border-outline-variant/30 hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed text-outline hover:text-oceanic-deep"
-                                            title="Move Down">
+                                            title="{{ __('Move Down') }}">
                                         <span class="material-symbols-outlined text-sm">arrow_downward</span>
                                     </button>
                                     <button type="button" wire:click="removeStop({{ $idx }})" {{ count($stops) <= 1 ? 'disabled' : '' }}
                                             class="p-1.5 rounded-lg border border-outline-variant/30 hover:bg-rose-50 text-outline hover:text-error disabled:opacity-30 disabled:cursor-not-allowed"
-                                            title="Remove Stop">
+                                            title="{{ __('Remove Stop') }}">
                                         <span class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </div>
@@ -327,13 +327,13 @@
 
                             <!-- Duration Input for this Stop -->
                             <div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 text-xs">
-                                <label class="font-medium text-on-surface-variant">Stay Duration at {{ $stop['name'] }}:</label>
+                                <label class="font-medium text-on-surface-variant">{{ __('Stay Duration at') }} {{ $stop['name'] }}:</label>
                                 <div class="flex items-center gap-2">
                                     <input type="number" step="0.5" min="0.5" max="12"
                                            value="{{ $stop['stay_hours'] }}"
                                            wire:change="updateStayHours({{ $idx }}, $event.target.value)"
                                            class="w-20 bg-surface-white border border-outline-variant/40 rounded-lg px-2.5 py-1 text-center font-bold text-oceanic-deep focus:ring-1 focus:ring-tropical-teal focus:outline-none">
-                                    <span class="text-outline font-medium">hours</span>
+                                    <span class="text-outline font-medium">{{ __('hours') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -346,10 +346,10 @@
                 <!-- Special Requests -->
                 <div class="space-y-1.5 pt-2">
                     <label for="specialRequests" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                        Special Requests or Route Preferences (Optional)
+                        {{ __('Special Requests or Route Preferences (Optional)') }}
                     </label>
                     <textarea id="specialRequests" wire:model.defer="specialRequests" rows="3"
-                              placeholder="e.g. Vegetarian dining stops, infant car seat, specific photo spots..."
+                              placeholder="{{ __('e.g. Vegetarian dining stops, infant car seat, specific photo spots...') }}"
                               class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl p-3.5 text-xs sm:text-sm font-medium text-on-surface focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow"></textarea>
                 </div>
             </div>
@@ -362,12 +362,12 @@
             <div class="bg-surface-white rounded-3xl p-6 md:p-8 shadow-xl border border-outline-variant/30 space-y-6">
 
                 <div>
-                    <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">Trip Summary</span>
+                    <span class="text-xs font-bold text-tropical-teal uppercase tracking-wider">{{ __('Trip Summary') }}</span>
                     <h3 class="font-display-lg text-xl font-bold text-oceanic-deep mt-0.5">
-                        {{ $regions[$selectedRegion]['name'] }} Custom Tour
+                        {{ __($regions[$selectedRegion]['name']) }} {{ __('Custom Tour') }}
                     </h3>
                     <p class="text-xs text-outline mt-1">
-                        Operated by: <strong class="text-oceanic-deep">{{ $selectedAgent->agent_name ?? 'Official Partner Agent' }}</strong>
+                        {{ __('Operated by:') }} <strong class="text-oceanic-deep">{{ $selectedAgent->agent_name ?? __('Official Partner Agent') }}</strong>
                     </p>
                 </div>
 
@@ -376,22 +376,22 @@
                     <div class="flex items-center justify-between text-xs">
                         <span class="text-outline flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-sm">directions_car</span>
-                            <span>Est. Road Travel</span>
+                            <span>{{ __('Est. Road Travel') }}</span>
                         </span>
-                        <span class="font-bold text-oceanic-deep">{{ $totalTravelTime }} hrs (~{{ $totalDistanceKm }} km)</span>
+                        <span class="font-bold text-oceanic-deep">{{ $totalTravelTime }} {{ __('hrs') }} (~{{ $totalDistanceKm }} km)</span>
                     </div>
 
                     <div class="flex items-center justify-between text-xs">
                         <span class="text-outline flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-sm">hourglass_bottom</span>
-                            <span>Destination Stays</span>
+                            <span>{{ __('Destination Stays') }}</span>
                         </span>
-                        <span class="font-bold text-oceanic-deep">{{ $totalStayTime }} hrs</span>
+                        <span class="font-bold text-oceanic-deep">{{ $totalStayTime }} {{ __('hrs') }}</span>
                     </div>
 
                     <div class="pt-2 border-t border-dashed border-outline-variant/40 flex items-center justify-between text-sm">
-                        <span class="font-bold text-oceanic-deep">Total Tour Duration</span>
-                        <span class="font-display-lg text-base font-bold text-tropical-teal">{{ $totalHours }} hrs</span>
+                        <span class="font-bold text-oceanic-deep">{{ __('Total Tour Duration') }}</span>
+                        <span class="font-display-lg text-base font-bold text-tropical-teal">{{ $totalHours }} {{ __('hrs') }}</span>
                     </div>
 
                     <!-- Overtime Status Indicator -->
@@ -400,16 +400,16 @@
                             <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2">
                                 <span class="material-symbols-outlined text-amber-600 text-sm">warning</span>
                                 <div>
-                                    <span class="font-bold">Overtime: +{{ $overtimeCalc['overtime_hours'] }} {{ Str::plural('hour', $overtimeCalc['overtime_hours']) }}</span>
+                                    <span class="font-bold">{{ __('Overtime:') }} +{{ $overtimeCalc['overtime_hours'] }} {{ $overtimeCalc['overtime_hours'] > 1 ? __('hours') : __('hour') }}</span>
                                     <div class="text-[11px] text-amber-800">
-                                        Exceeds {{ $baseHours }}h base charter (+Rp {{ number_format($overtimeCalc['overtime_charge'], 0, ',', '.') }})
+                                        {{ __('Exceeds :hours h base charter', ['hours' => $baseHours]) }} (+Rp {{ number_format($overtimeCalc['overtime_charge'], 0, ',', '.') }})
                                     </div>
                                 </div>
                             </div>
                         @else
                             <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span>
-                                <span>Within Base {{ $baseHours }}-Hour Limit (No Overtime Charge)</span>
+                                <span>{{ __('Within Base :hours-Hour Limit (No Overtime Charge)', ['hours' => $baseHours]) }}</span>
                             </div>
                         @endif
                     </div>
@@ -418,20 +418,20 @@
                 <!-- Price Breakdown -->
                 <div class="space-y-2 text-xs">
                     <div class="flex justify-between items-center text-outline">
-                        <span>Base Rate per Pax</span>
+                        <span>{{ __('Base Rate per Pax') }}</span>
                         <span class="font-semibold text-oceanic-deep">Rp {{ number_format($basePricePerPax, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between items-center text-outline">
-                        <span>Number of Travelers</span>
-                        <span class="font-semibold text-oceanic-deep">{{ $guestCount }} Pax</span>
+                        <span>{{ __('Number of Travelers') }}</span>
+                        <span class="font-semibold text-oceanic-deep">{{ $guestCount }} {{ __('Pax') }}</span>
                     </div>
                     <div class="flex justify-between items-center text-outline">
-                        <span>Base Tour Subtotal</span>
+                        <span>{{ __('Base Tour Subtotal') }}</span>
                         <span class="font-semibold text-oceanic-deep">Rp {{ number_format($baseTourCost, 0, ',', '.') }}</span>
                     </div>
                     @if($overtimeCharge > 0)
                         <div class="flex justify-between items-center text-amber-700 font-semibold">
-                            <span>Overtime Charge ({{ $overtimeCalc['overtime_hours'] }} hrs)</span>
+                            <span>{{ __('Overtime Charge') }} ({{ $overtimeCalc['overtime_hours'] }} {{ __('hrs') }})</span>
                             <span>+Rp {{ number_format($overtimeCharge, 0, ',', '.') }}</span>
                         </div>
                     @endif
@@ -439,13 +439,13 @@
 
                 <!-- Grand Total -->
                 <div class="pt-4 border-t border-outline-variant/30">
-                    <span class="text-xs text-outline block">Total Payable:</span>
+                    <span class="text-xs text-outline block">{{ __('Total Payable:') }}</span>
                     <div class="flex items-baseline gap-1 mt-1">
                         <span class="font-display-lg text-2xl md:text-3xl font-bold text-tropical-teal">
                             Rp {{ number_format($grandTotal, 0, ',', '.') }}
                         </span>
                     </div>
-                    <span class="text-[11px] text-outline mt-1 block">Includes vehicle, driver, fuel, &amp; insurance</span>
+                    <span class="text-[11px] text-outline mt-1 block">{{ __('Includes vehicle, driver, fuel, & insurance') }}</span>
                 </div>
 
                 <!-- Booking Action Button -->
@@ -453,12 +453,12 @@
                         class="w-full bg-tropical-teal hover:bg-secondary text-white font-label-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98 cursor-pointer disabled:opacity-50">
                     <span wire:loading.remove wire:target="submitBooking" class="material-symbols-outlined text-lg">check_circle</span>
                     <span wire:loading wire:target="submitBooking" class="material-symbols-outlined text-lg animate-spin">refresh</span>
-                    <span wire:loading.remove wire:target="submitBooking">Confirm &amp; Proceed to Payment</span>
-                    <span wire:loading wire:target="submitBooking">Processing Booking...</span>
+                    <span wire:loading.remove wire:target="submitBooking">{{ __('Confirm & Proceed to Payment') }}</span>
+                    <span wire:loading wire:target="submitBooking">{{ __('Processing Booking...') }}</span>
                 </button>
 
                 <p class="text-[11px] text-outline text-center leading-relaxed">
-                    By confirming, you will be redirected to secure Midtrans payment. Reservation is held for {{ config('trihita.booking_expiry_minutes', 60) }} minutes.
+                    {{ __('By confirming, you will be redirected to secure Midtrans payment. Reservation is held for :minutes minutes.', ['minutes' => config('trihita.booking_expiry_minutes', 60)]) }}
                 </p>
 
             </div>

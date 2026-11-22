@@ -11,8 +11,8 @@
             <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
 
-        <h2 class="font-headline-md text-2xl text-oceanic-deep mb-2">How was your trip?</h2>
-        <p class="font-body-md text-on-surface-variant text-sm mb-8">Share your experience to help other travelers.</p>
+        <h2 class="font-headline-md text-2xl text-oceanic-deep mb-2">{{ __('How was your trip?') }}</h2>
+        <p class="font-body-md text-on-surface-variant text-sm mb-8">{{ __('Share your experience to help other travelers.') }}</p>
 
         <form wire:submit.prevent="submitReview" class="space-y-6">
             
@@ -28,14 +28,14 @@
 
             <!-- Review Text -->
             <div>
-                <label class="block font-label-bold text-sm mb-2 text-oceanic-deep">Your Review</label>
-                <textarea wire:model="comment" rows="4" class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-1 focus:ring-tropical-teal text-on-surface resize-none font-body-md text-sm placeholder:text-outline/70" placeholder="What did you love about this package? The accommodations? The tour guides?" required></textarea>
+                <label class="block font-label-bold text-sm mb-2 text-oceanic-deep">{{ __('Your Review') }}</label>
+                <textarea wire:model="comment" rows="4" class="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-1 focus:ring-tropical-teal text-on-surface resize-none font-body-md text-sm placeholder:text-outline/70" placeholder="{{ __('What did you love about this package? The accommodations? The tour guides?') }}" required></textarea>
                 @error('comment') <span class="text-error font-caption text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Submit -->
             <button type="submit" class="w-full bg-tropical-teal hover:bg-oceanic-deep text-surface-white font-label-bold text-label-bold py-3.5 rounded-full transition-colors shadow-sm mt-4">
-                Submit Review
+                {{ __('Submit Review') }}
             </button>
         </form>
     </div>

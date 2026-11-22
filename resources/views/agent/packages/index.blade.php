@@ -51,13 +51,13 @@
                                     <!-- Name & Cover -->
                                     <td class="py-4 px-6">
                                         <div class="flex items-center gap-3">
-                                            @php
-                                                $coverUrl = 'https://placehold.co/400x400/00327D/ffffff?text=' . urlencode($package->name);
-                                                if ($package->cover_image) {
-                                                    $coverUrl = str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image);
-                                                }
-                                            @endphp
-                                            <img src="{{ $coverUrl }}" alt="{{ $package->name }}" class="w-14 h-14 rounded-xl object-cover border border-outline-variant/30 shrink-0">
+                                            @if($package->cover_image_url)
+                                                <img src="{{ $package->cover_image_url }}" alt="{{ $package->name }}" class="w-14 h-14 rounded-xl object-cover border border-outline-variant/30 shrink-0">
+                                            @else
+                                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br {{ $package->region_gradient }} text-white flex items-center justify-center border border-outline-variant/30 shrink-0">
+                                                    <span class="material-symbols-outlined text-xl">{{ $package->region_icon }}</span>
+                                                </div>
+                                            @endif
                                             <div>
                                                 <div class="font-bold text-oceanic-deep line-clamp-1">{{ $package->name }}</div>
                                                 <div class="text-xs text-outline font-mono mt-0.5">/packages/{{ $package->slug }}</div>

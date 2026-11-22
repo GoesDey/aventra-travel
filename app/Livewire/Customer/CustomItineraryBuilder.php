@@ -65,18 +65,21 @@ class CustomItineraryBuilder extends Component
         ];
     }
 
-    protected $messages = [
-        'selectedRegion.required'    => 'Please select a Bali region for your custom tour.',
-        'selectedAgentId.required'   => 'Please select an authorized travel agent operating in this region.',
-        'startPoint.required'        => 'Please provide a pick-up / starting address.',
-        'travelDate.required'        => 'Please choose your travel date.',
-        'travelDate.after_or_equal'  => 'Custom trip reservations must be made at least 3 days prior to departure (D-3).',
-        'guestCount.required'        => 'Please enter the number of guests.',
-        'guestCount.min'             => 'Guest count must be at least 1 person.',
-        'stops.required'             => 'Please select at least one destination to visit.',
-        'stops.min'                  => 'Please select at least one destination to visit.',
-        'stops.*.stay_hours.min'     => 'Minimum stay duration is 0.5 hours per destination.',
-    ];
+    protected function messages(): array
+    {
+        return [
+            'selectedRegion.required'   => __('Please select a Bali region for your custom tour.'),
+            'selectedAgentId.required'  => __('Please select an authorized travel agent operating in this region.'),
+            'startPoint.required'       => __('Please provide a pick-up / starting address.'),
+            'travelDate.required'       => __('Please choose your travel date.'),
+            'travelDate.after_or_equal' => __('Custom trip reservations must be made at least 3 days prior to departure (D-3).'),
+            'guestCount.required'       => __('Please enter the number of guests.'),
+            'guestCount.min'            => __('Guest count must be at least 1 person.'),
+            'stops.required'            => __('Please select at least one destination to visit.'),
+            'stops.min'                 => __('Please select at least one destination to visit.'),
+            'stops.*.stay_hours.min'    => __('Minimum stay duration is 0.5 hours per destination.'),
+        ];
+    }
 
     public function mount(?string $initialRegion = null, ?int $initialPackageId = null): void
     {

@@ -34,13 +34,15 @@ class AgentBookingController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
+        $statusLabel = Booking::statusLabel($validated['status']);
+
         if ($request->wantsJson()) {
             return response()->json([
-                'message' => "Booking status successfully updated to {$validated['status']}.",
+                'message' => __('Booking status successfully updated to :status.', ['status' => $statusLabel]),
                 'booking' => $booking->fresh(),
             ]);
         }
 
-        return back()->with('success', "Booking status successfully updated to {$validated['status']}.");
+        return back()->with('success', __('Booking status successfully updated to :status.', ['status' => $statusLabel]));
     }
 }

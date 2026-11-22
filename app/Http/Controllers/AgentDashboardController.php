@@ -16,7 +16,7 @@ class AgentDashboardController extends Controller
 
         // Keamanan: Pastikan profil agen tersedia
         if (!$agent) {
-            abort(403, 'Akses ditolak. Akun Anda belum memiliki profil agen yang aktif.');
+            abort(403, 'Access denied. Your account does not have an active agent profile.');
         }
 
         // Definisi status transaksi

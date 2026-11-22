@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Package extends Model
 {
@@ -38,7 +39,9 @@ class Package extends Model
      */
     public static function formatRegion(?string $region): string
     {
-        return self::REGIONS[$region] ?? ucfirst((string) $region);
+        $label = self::REGIONS[$region] ?? ucfirst((string) $region);
+
+        return __($label);
     }
 
     /**
@@ -94,6 +97,59 @@ class Package extends Model
         'avg_rating'    => 'decimal:2',
         'is_active'     => 'boolean',
     ];
+
+    /**
+     * Resolve cover image URL if the file exists (supports external URL, public/images/..., or storage/...).
+     * Returns null when no image is set or the referenced local file is missing.
+     */
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        if (!$this->cover_image) {
+            return null;
+        }
+
+        if (str_starts_with($this->cover_image, 'http://') || str_starts_with($this->cover_image, 'https://')) {
+            return $this->cover_image;
+        }
+
+        if (str_starts_with($this->cover_image, 'images/')) {
+            return file_exists(public_path($this->cover_image))
+                ? asset($this->cover_image)
+                : null;
+        }
+
+        return Storage::disk('public')->exists($this->cover_image)
+            ? asset('storage/' . $this->cover_image)
+            : null;
+    }
+
+    /**
+     * Gradient background class for fallback cover cards based on Bali region.
+     */
+    public function getRegionGradientAttribute(): string
+    {
+        return match ($this->region) {
+            'utara'   => 'from-oceanic-deep via-cyan-800 to-tropical-teal',
+            'selatan' => 'from-oceanic-deep via-sky-800 to-teal-600',
+            'timur'   => 'from-indigo-950 via-oceanic-deep to-tropical-teal',
+            'barat'   => 'from-emerald-950 via-teal-800 to-tropical-teal',
+            default   => 'from-oceanic-deep via-tropical-teal to-secondary',
+        };
+    }
+
+    /**
+     * Material Symbol icon name for fallback cover cards based on Bali region.
+     */
+    public function getRegionIconAttribute(): string
+    {
+        return match ($this->region) {
+            'utara'   => 'landscape',
+            'selatan' => 'waves',
+            'timur'   => 'temple_hindu',
+            'barat'   => 'forest',
+            default   => 'travel_explore',
+        };
+    }
 
     /**
      * Relasi ke model Agent.

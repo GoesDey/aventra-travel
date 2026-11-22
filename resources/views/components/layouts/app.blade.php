@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,42 +39,44 @@
             <!-- Desktop Navigation Links (Role-Based Minimalist) -->
             <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                    Home
+                    {{ __('Home') }}
                 </a>
 
                 <a href="{{ route('packages.index') }}" class="{{ request()->routeIs('packages.*') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                    Packages
+                    {{ __('Packages') }}
                 </a>
 
                 <a href="{{ route('custom-itinerary.create') }}" class="{{ request()->routeIs('*custom-itinerary*') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                    Custom Trip
+                    {{ __('Custom Trip') }}
                 </a>
 
                 @auth
                     @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('super-admin.dashboard') }}" class="{{ request()->routeIs('super-admin.*') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                            Admin Dashboard
+                            {{ __('Admin Dashboard') }}
                         </a>
                     @elseif(auth()->user()->isAgent())
                         <a href="{{ route('agent.dashboard') }}" class="{{ request()->routeIs('agent.*') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                            Agent Dashboard
+                            {{ __('Agent Dashboard') }}
                         </a>
                     @else
                         <a href="{{ route('history') }}" class="{{ request()->routeIs('history') ? 'text-tropical-teal font-semibold' : 'text-on-surface-variant hover:text-tropical-teal transition-colors' }}">
-                            History
+                            {{ __('History') }}
                         </a>
                     @endif
                 @endauth
             </div>
 
-            <!-- Right Side: Guest Actions or Auth Profile Dropdown -->
+            <!-- Right Side: Language Switcher + Guest Actions or Auth Profile Dropdown -->
             <div class="hidden md:flex items-center space-x-4">
+                <x-language-switcher />
+
                 @guest
                     <a href="{{ route('login') }}" class="text-on-surface-variant hover:text-tropical-teal font-semibold text-sm px-3 py-2 transition-colors">
-                        Login
+                        {{ __('Login') }}
                     </a>
                     <a href="{{ route('register') }}" class="bg-tropical-teal hover:bg-secondary text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-all shadow-sm hover:shadow active:scale-95">
-                        Register
+                        {{ __('Register') }}
                     </a>
                 @else
                     <!-- Profile Dropdown (Alpine.js) -->
@@ -106,18 +108,17 @@
                              class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-outline-variant/30 py-2 z-50">
                             
                             <!-- User Info in Dropdown -->
-                            <!-- User Info in Dropdown -->
                             <div class="px-4 py-2.5 border-b border-outline-variant/20">
-                                <p class="text-xs text-outline font-medium">Signed in as</p>
+                                <p class="text-xs text-outline font-medium">{{ __('Signed in as') }}</p>
                                 <p class="text-sm font-bold text-on-surface truncate">{{ auth()->user()->name }}</p>
                                 <p class="text-xs text-on-surface-variant truncate">{{ auth()->user()->email }}</p>
                                 <div class="mt-1.5">
                                     @if(auth()->user()->isSuperAdmin())
-                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700">Super Admin</span>
+                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700">{{ __('Super Admin') }}</span>
                                     @elseif(auth()->user()->isAgent())
-                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700">Partner Agent</span>
+                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700">{{ __('Partner Agent') }}</span>
                                     @else
-                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-100 text-sky-700">Traveler</span>
+                                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-100 text-sky-700">{{ __('Traveler') }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -127,29 +128,29 @@
                                 @if(auth()->user()->isSuperAdmin())
                                     <a href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-purple-600">admin_panel_settings</span>
-                                        <span>Admin Dashboard</span>
+                                        <span>{{ __('Admin Dashboard') }}</span>
                                     </a>
                                     <a href="{{ route('admin.bookings') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-oceanic-deep">receipt_long</span>
-                                        <span>Booking Management</span>
+                                        <span>{{ __('Booking Management') }}</span>
                                     </a>
                                 @elseif(auth()->user()->isAgent())
                                     <a href="{{ route('agent.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-tropical-teal">dashboard</span>
-                                        <span>Agent Dashboard</span>
+                                        <span>{{ __('Agent Dashboard') }}</span>
                                     </a>
                                     <a href="{{ route('agent.packages.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-tropical-teal">tour</span>
-                                        <span>Manage Packages</span>
+                                        <span>{{ __('Manage Packages') }}</span>
                                     </a>
                                 @else
                                     <a href="{{ route('packages.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-tropical-teal">travel_explore</span>
-                                        <span>Tour Packages</span>
+                                        <span>{{ __('Tour Packages') }}</span>
                                     </a>
                                     <a href="{{ route('history') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
                                         <span class="material-symbols-outlined text-base text-tropical-teal">receipt_long</span>
-                                        <span>Booking History</span>
+                                        <span>{{ __('Booking History') }}</span>
                                     </a>
                                 @endif
                             </div>
@@ -160,7 +161,7 @@
                                     @csrf
                                     <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-error hover:bg-error-container/30 transition-colors text-left cursor-pointer">
                                         <span class="material-symbols-outlined text-base">logout</span>
-                                        <span>Logout</span>
+                                        <span>{{ __('Logout') }}</span>
                                     </button>
                                 </form>
                             </div>
@@ -177,31 +178,36 @@
 
         <!-- Mobile Drawer Navigation -->
         <div id="mobileMenu" class="hidden md:hidden border-t border-outline-variant/30 bg-white/95 backdrop-blur-xl px-6 py-5 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                <span class="text-xs font-bold uppercase tracking-wider text-outline">{{ __('Language') }}</span>
+                <x-language-switcher />
+            </div>
+
             <div class="space-y-1">
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('home') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                    Home
+                    {{ __('Home') }}
                 </a>
 
                 <a href="{{ route('packages.index') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('packages.*') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                    Packages
+                    {{ __('Packages') }}
                 </a>
 
                 <a href="{{ route('custom-itinerary.create') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('*custom-itinerary*') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                    Custom Trip
+                    {{ __('Custom Trip') }}
                 </a>
 
                 @auth
                     @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('super-admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('super-admin.*') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                            Admin Dashboard
+                            {{ __('Admin Dashboard') }}
                         </a>
                     @elseif(auth()->user()->isAgent())
                         <a href="{{ route('agent.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('agent.*') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                            Agent Dashboard
+                            {{ __('Agent Dashboard') }}
                         </a>
                     @else
                         <a href="{{ route('history') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold {{ request()->routeIs('history') ? 'bg-tropical-teal/10 text-tropical-teal' : 'text-on-surface hover:bg-surface-container-low' }}">
-                            History
+                            {{ __('History') }}
                         </a>
                     @endif
                 @endauth
@@ -217,11 +223,11 @@
                             <span class="text-xs font-bold text-on-surface">{{ auth()->user()->name }}</span>
                         </div>
                         @if(auth()->user()->isSuperAdmin())
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-100 text-purple-800">Super Admin</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-100 text-purple-800">{{ __('Super Admin') }}</span>
                         @elseif(auth()->user()->isAgent())
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800">Partner Agent</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800">{{ __('Partner Agent') }}</span>
                         @else
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-sky-100 text-sky-800">Traveler</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-sky-100 text-sky-800">{{ __('Traveler') }}</span>
                         @endif
                     </div>
 
@@ -229,14 +235,14 @@
                         @csrf
                         <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-error bg-error-container/20 font-bold text-sm">
                             <span class="material-symbols-outlined text-sm">logout</span>
-                            <span>Logout</span>
+                            <span>{{ __('Logout') }}</span>
                         </button>
                     </form>
                 </div>
             @else
                 <div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-2">
-                    <a href="{{ route('login') }}" class="text-center py-2.5 rounded-xl text-oceanic-deep font-bold text-sm border border-outline-variant/50">Login</a>
-                    <a href="{{ route('register') }}" class="text-center py-2.5 rounded-xl bg-tropical-teal text-white font-bold text-sm shadow">Register</a>
+                    <a href="{{ route('login') }}" class="text-center py-2.5 rounded-xl text-oceanic-deep font-bold text-sm border border-outline-variant/50">{{ __('Login') }}</a>
+                    <a href="{{ route('register') }}" class="text-center py-2.5 rounded-xl bg-tropical-teal text-white font-bold text-sm shadow">{{ __('Register') }}</a>
                 </div>
             @endauth
         </div>
@@ -255,7 +261,7 @@
                     <span class="material-symbols-outlined text-tropical-teal text-4xl">travel_explore</span>
                     <span>TriHitaTour</span>
                 </a>
-                <p class="font-body-md text-body-md text-surface-variant">Modern travel solutions combining luxury, comfort, and security for unforgettable experiences.</p>
+                <p class="font-body-md text-body-md text-surface-variant">{{ __('Modern travel solutions combining luxury, comfort, and security for unforgettable experiences.') }}</p>
                 <div class="flex space-x-4">
                     <a class="w-10 h-10 rounded-full bg-surface-white/10 flex items-center justify-center hover:bg-tropical-teal transition-colors" href="#">
                         <span class="material-symbols-outlined text-sm">public</span>
@@ -270,26 +276,26 @@
             </div>
             <!-- Company Links -->
             <div class="flex flex-col space-y-4">
-                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">COMPANY</h4>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="{{ route('home') }}">About Us</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="{{ route('packages.index') }}">Tour Packages</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">Careers</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">Partnerships</a>
+                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">{{ __('COMPANY') }}</h4>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="{{ route('home') }}">{{ __('About Us') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="{{ route('packages.index') }}">{{ __('Tour Packages') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">{{ __('Careers') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">{{ __('Partnerships') }}</a>
             </div>
             <!-- Help Links -->
             <div class="flex flex-col space-y-4">
-                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">HELP & SUPPORT</h4>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="mailto:support@trihitatour.com">Help Center</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">Terms of Service</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">Privacy Policy</a>
-                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">Refund &amp; Cancellation</a>
+                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">{{ __('HELP & SUPPORT') }}</h4>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="mailto:support@trihitatour.com">{{ __('Help Center') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">{{ __('Terms of Service') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">{{ __('Privacy Policy') }}</a>
+                <a class="font-body-md text-body-md text-surface-variant hover:text-soft-coral transition-colors" href="#">{{ __('Refund & Cancellation') }}</a>
             </div>
             <!-- Newsletter -->
             <div class="flex flex-col space-y-4">
-                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">NEWSLETTER</h4>
-                <p class="font-body-md text-body-md text-surface-variant">Get the latest travel deals and Bali updates delivered directly to your inbox.</p>
+                <h4 class="font-label-bold text-label-bold uppercase tracking-wider text-surface-variant mb-2">{{ __('NEWSLETTER') }}</h4>
+                <p class="font-body-md text-body-md text-surface-variant">{{ __('Get the latest travel deals and Bali updates delivered directly to your inbox.') }}</p>
                 <div class="flex mt-2">
-                    <input class="bg-surface-white/10 border-none rounded-l-md px-4 py-2 text-surface-white placeholder-surface-variant/50 focus:ring-1 focus:ring-tropical-teal w-full font-body-md text-body-md" placeholder="Enter your email" type="email">
+                    <input class="bg-surface-white/10 border-none rounded-l-md px-4 py-2 text-surface-white placeholder-surface-variant/50 focus:ring-1 focus:ring-tropical-teal w-full font-body-md text-body-md" placeholder="{{ __('Enter your email') }}" type="email">
                     <button class="bg-tropical-teal hover:bg-secondary text-surface-white px-4 py-2 rounded-r-md transition-colors flex items-center justify-center">
                         <span class="material-symbols-outlined text-sm">send</span>
                     </button>
@@ -300,7 +306,7 @@
         <div class="border-t border-surface-white/10">
             <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-6 text-center">
                 <p class="font-caption text-caption text-surface-variant/70">
-                    © {{ date('Y') }} TriHitaTour. The Sophisticated Explorer's Choice. All rights reserved.
+                    © {{ date('Y') }} TriHitaTour. {{ __('All rights reserved.') }}
                 </p>
             </div>
         </div>

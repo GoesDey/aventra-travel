@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,36 +28,36 @@
             <span class="font-display-lg text-[24px] font-bold text-oceanic-deep tracking-wide">TRIHITATOUR</span>
         </div>
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-            <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">Overview</div>
+            <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">{{ __('Overview') }}</div>
             @if(auth()->user()?->isSuperAdmin())
             <a href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('super-admin.dashboard') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('super-admin.dashboard') ? 'fill' : '' }}">admin_panel_settings</span>
-                <span class="font-label-bold text-sm">Super Admin</span>
+                <span class="font-label-bold text-sm">{{ __('Super Admin') }}</span>
             </a>
             @endif
             <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.finance') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.finance') ? 'fill' : '' }}">dashboard</span>
-                <span class="font-label-bold text-sm">Finance</span>
+                <span class="font-label-bold text-sm">{{ __('Finance') }}</span>
             </a>
             <a href="{{ route('admin.bookings') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.bookings') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.bookings') ? 'fill' : '' }}">receipt_long</span>
-                <span class="font-label-bold text-sm">Bookings</span>
+                <span class="font-label-bold text-sm">{{ __('Bookings') }}</span>
             </a>
             
-            <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">Management</div>
+            <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">{{ __('Management') }}</div>
             <a href="{{ route('admin.destinations') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.destinations') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.destinations') ? 'fill' : '' }}">location_on</span>
-                <span class="font-label-bold text-sm">Destinations</span>
+                <span class="font-label-bold text-sm">{{ __('Destinations') }}</span>
             </a>
             <a href="{{ route('admin.packages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.packages') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.packages') ? 'fill' : '' }}">tour</span>
-                <span class="font-label-bold text-sm">Packages</span>
+                <span class="font-label-bold text-sm">{{ __('Packages') }}</span>
             </a>
 
-            <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">Website</div>
+            <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">{{ __('Website') }}</div>
             <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 <span class="material-symbols-outlined">public</span>
-                <span class="font-label-bold text-sm">View Website</span>
+                <span class="font-label-bold text-sm">{{ __('View Website') }}</span>
             </a>
         </nav>
         <div class="p-4 border-t border-outline-variant/30">
@@ -65,7 +65,7 @@
                 @csrf
                 <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-error hover:bg-error-container/50 transition-colors">
                     <span class="material-symbols-outlined">logout</span>
-                    <span class="font-label-bold text-sm">Logout</span>
+                    <span class="font-label-bold text-sm">{{ __('Logout') }}</span>
                 </button>
             </form>
         </div>
@@ -75,15 +75,15 @@
     <main class="flex-1 flex flex-col min-h-screen min-w-0 bg-surface-container-lowest">
         
         @php
-            $pageTitle = 'Dashboard';
-            if(request()->routeIs('admin.finance')) $pageTitle = 'Financial Overview';
-            if(request()->routeIs('admin.destinations')) $pageTitle = 'Destination Management';
-            if(request()->routeIs('admin.packages')) $pageTitle = 'Package Management';
-            if(request()->routeIs('admin.bookings')) $pageTitle = 'Booking Management';
+            $pageTitle = __('Dashboard');
+            if(request()->routeIs('admin.finance')) $pageTitle = __('Financial Overview');
+            if(request()->routeIs('admin.destinations')) $pageTitle = __('Destination Management');
+            if(request()->routeIs('admin.packages')) $pageTitle = __('Package Management');
+            if(request()->routeIs('admin.bookings')) $pageTitle = __('Booking Management');
         @endphp
 
         <!-- Top Navigation Bar -->
-        <header class="h-[84.8px] py-6 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between px-8 flex-shrink-0 z-10 shadow-sm sticky top-0">
+        <header class="h-[84.8px] py-6 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between px-6 md:px-8 flex-shrink-0 z-10 shadow-sm sticky top-0">
             <div class="flex items-center gap-4">
                 <button class="md:hidden text-on-surface-variant">
                     <span class="material-symbols-outlined">menu</span>
@@ -91,10 +91,12 @@
                 <h1 class="font-headline-md text-[24px] text-oceanic-deep hidden md:block">{{ $pageTitle }}</h1>
             </div>
             
-            <div class="flex items-center gap-4">
-                <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <x-language-switcher />
+
+                <a href="{{ route('home') }}" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
                     <span class="material-symbols-outlined text-sm">open_in_new</span>
-                    <span>View Website</span>
+                    <span>{{ __('View Website') }}</span>
                 </a>
                 
                 <!-- Admin Profile -->

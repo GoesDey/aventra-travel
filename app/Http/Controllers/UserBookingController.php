@@ -21,10 +21,13 @@ class UserBookingController extends Controller
         // Tampilkan semua paket wisata (aktif maupun belum aktif) beserta gambarnya
         $query = Package::query()
             ->with(['destinations', 'agent'])
-            ->withCount(['schedules' => function ($q) {
-                $q->where('quota', '>', 0)
-                  ->whereDate('start_date', '>=', now()->addDays(3)->toDateString());
-            }]);
+            ->withCount([
+                'reviews',
+                'schedules' => function ($q) {
+                    $q->where('quota', '>', 0)
+                      ->whereDate('start_date', '>=', now()->addDays(3)->toDateString());
+                },
+            ]);
 
         // Filter region (filter kategori sudah dihapus dari katalog publik)
         // Hanya terima region resmi (utara, selatan, timur, barat); nilai lain diabaikan
@@ -86,6 +89,7 @@ class UserBookingController extends Controller
     {
         $package = Package::where('slug', $slug)
             ->with(['destinations', 'agent'])
+            ->withCount('reviews')
             ->firstOrFail();
 
         // Validasi H-3: ambil jadwal dengan start_date >= 3 hari dari sekarang dan kuota > 0
@@ -111,12 +115,12 @@ class UserBookingController extends Controller
             'package_schedule_id' => 'required|exists:package_schedules,id',
             'guest_count'         => "required|integer|min:1|max:{$maxConfig}",
         ], [
-            'package_schedule_id.required' => 'Please select an available departure schedule.',
-            'package_schedule_id.exists'   => 'Invalid travel schedule selected.',
-            'guest_count.required'         => 'Guest count is required.',
-            'guest_count.integer'          => 'Guest count must be an integer.',
-            'guest_count.min'              => 'Guest count must be at least 1 person.',
-            'guest_count.max'              => "Maximum guest count is {$maxConfig} guests.",
+            'package_schedule_id.required' => __('Please select an available departure schedule.'),
+            'package_schedule_id.exists'   => __('Invalid travel schedule selected.'),
+            'guest_count.required'         => __('Guest count is required.'),
+            'guest_count.integer'          => __('Guest count must be an integer.'),
+            'guest_count.min'              => __('Guest count must be at least 1 person.'),
+            'guest_count.max'              => __('Maximum guest count is :max guests.', ['max' => $maxConfig]),
         ]);
 
         $guestCount = (int) $request->guest_count;
@@ -231,6 +235,6 @@ class UserBookingController extends Controller
         }, 3);
 
         return redirect()->route('payments.show', $booking->booking_code)
-            ->with('success', 'Booking successfully created! Please complete payment before the expiration time.');
+            ->with('success', __('Booking successfully created! Please complete payment before the expiration time.'));
     }
 }

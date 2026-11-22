@@ -204,41 +204,41 @@
                                     @if($booking->status === 'dibayar')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            <span>Paid</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'berjalan')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 animate-pulse">
                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                            <span>Ongoing</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'selesai')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                                            <span>Completed</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'menunggu_pembayaran')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            <span>Waiting for Payment</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'dibatalkan')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                            <span>Cancelled</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'kedaluwarsa')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                                            <span>Expired</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @elseif($booking->status === 'perlu_refund')
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                            <span>Refund Needed</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800">
-                                            <span>{{ ucfirst(str_replace('_', ' ', $booking->status)) }}</span>
+                                            <span>{{ \App\Models\Booking::statusLabel($booking->status) }}</span>
                                         </span>
                                     @endif
                                 </td>

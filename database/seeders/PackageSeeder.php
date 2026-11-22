@@ -14,13 +14,12 @@ class PackageSeeder extends Seeder
         $packages = [
             [
                 'name'          => 'Ubud Cultural Tour',
-                'description'   => 'Jelajahi keindahan budaya Ubud selama 1 hari penuh, termasuk Monkey Forest, Tirta Empul, dan Tegalalang Rice Terrace.',
+                'description'   => 'Explore the cultural heart of Ubud in one full day, visiting the Sacred Monkey Forest, Tegalalang Rice Terrace, and Tirta Empul Temple.',
                 'category'      => 'reguler',
-                'region'        => 'timur',
+                'region'        => 'selatan',
                 'price_per_pax' => 350000,
                 'duration_days' => 1,
                 'max_guests'    => 15,
-                'cover_image'   => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Monkey Forest Ubud',
@@ -30,13 +29,12 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'Nusa Penida Island Hopping',
-                'description'   => 'Nikmati keindahan Kelingking Beach, Diamond Beach, dan snorkeling di Crystal Bay selama satu hari.',
+                'description'   => 'Discover the iconic cliffs of Kelingking Beach, the white sands of Diamond Beach, and vibrant snorkeling at Crystal Bay in one unforgettable day.',
                 'category'      => 'reguler',
                 'region'        => 'timur',
                 'price_per_pax' => 750000,
                 'duration_days' => 1,
                 'max_guests'    => 10,
-                'cover_image'   => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Kelingking Beach Nusa Penida',
@@ -46,13 +44,12 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'Mount Batur Sunrise Trekking',
-                'description'   => 'Mendaki Gunung Batur dan nikmati pemandangan matahari terbit terbaik di Bali, dilanjutkan berendam di pemandian air panas Kintamani.',
+                'description'   => 'Hike Mount Batur before dawn for a breathtaking sunrise above the clouds, followed by a relaxing soak at Kintamani Natural Hot Spring.',
                 'category'      => 'reguler',
-                'region'        => 'timur',
+                'region'        => 'utara',
                 'price_per_pax' => 450000,
                 'duration_days' => 1,
                 'max_guests'    => 20,
-                'cover_image'   => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Mount Batur Caldera',
@@ -61,29 +58,27 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'East Bali Heritage & Water Palace',
-                'description'   => 'Jelajahi kemegahan Pura Agung Besakih di lereng Gunung Agung, keindahan Tirta Gangga, dan gerbang surga Pura Lempuyang.',
+                'description'   => 'Journey through East Bali’s sacred landmarks: Besakih Mother Temple on Mount Agung, Tirta Gangga Water Palace, and the Gates of Heaven at Lempuyang Temple.',
                 'category'      => 'reguler',
                 'region'        => 'timur',
                 'price_per_pax' => 650000,
                 'duration_days' => 1,
                 'max_guests'    => 15,
-                'cover_image'   => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
-                    'Pura Besakih',
-                    'Tirta Gangga',
-                    'Pura Lempuyang',
+                    'Besakih Mother Temple',
+                    'Tirta Gangga Water Palace',
+                    'Lempuyang Temple',
                 ],
             ],
             [
                 'name'          => 'Bali Waterfall Explorer',
-                'description'   => 'Petualangan mencari air terjun tersembunyi di Bali utara seperti Sekumpul dan Gitgit.',
+                'description'   => 'Chase North Bali’s most spectacular hidden waterfalls, trekking through lush valleys to Gitgit Waterfall and the towering twin cascades of Sekumpul.',
                 'category'      => 'reguler',
-                'region'        => 'barat',
+                'region'        => 'utara',
                 'price_per_pax' => 500000,
                 'duration_days' => 1,
                 'max_guests'    => 8,
-                'cover_image'   => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Gitgit Waterfall',
@@ -92,13 +87,12 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'Uluwatu Temple & Kecak Dance',
-                'description'   => 'Kunjungi Pura Uluwatu di tebing laut dan nikmati pertunjukan Tari Kecak dengan latar sunset serta makan malam di Jimbaran.',
+                'description'   => 'Visit the clifftop Uluwatu Temple overlooking the Indian Ocean, watch the traditional sunset Kecak fire dance, and enjoy a beachfront seafood dinner in Jimbaran.',
                 'category'      => 'reguler',
-                'region'        => 'barat',
+                'region'        => 'selatan',
                 'price_per_pax' => 400000,
                 'duration_days' => 1,
                 'max_guests'    => 30,
-                'cover_image'   => 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Uluwatu Cliff & Temple',
@@ -107,29 +101,27 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'North Bali Dolphin & Hot Springs',
-                'description'   => 'Saksikan lumba-lumba liar di Pantai Lovina saat fajar, segarnya Air Terjun Gitgit, dan relaksasi di pemandian air panas Banjar.',
+                'description'   => 'Spot wild dolphins at sunrise off Lovina Beach, cool off at Gitgit Waterfall, and unwind in the volcanic pools of Banjar Hot Springs.',
                 'category'      => 'custom',
                 'region'        => 'utara',
                 'price_per_pax' => 550000,
                 'duration_days' => 1,
                 'max_guests'    => 10,
-                'cover_image'   => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
-                    'Pantai Lovina',
+                    'Lovina Beach',
                     'Gitgit Waterfall',
                     'Banjar Hot Springs',
                 ],
             ],
             [
                 'name'          => 'Bali Safari & Marine Park',
-                'description'   => 'Paket keluarga 1 hari penuh menikmati berbagai satwa liar di habitat alaminya.',
+                'description'   => 'A full-day family adventure encountering exotic wildlife up close in open natural habitats with interactive safari tram rides and cultural shows.',
                 'category'      => 'reguler',
-                'region'        => 'timur',
+                'region'        => 'selatan',
                 'price_per_pax' => 850000,
                 'duration_days' => 1,
                 'max_guests'    => 50,
-                'cover_image'   => 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Bali Safari & Marine Park',
@@ -137,13 +129,12 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'Kintamani Cycling Tour',
-                'description'   => 'Bersepeda menuruni bukit Kintamani melewati pedesaan, persawahan Tegalalang, dan Pura Tirta Empul.',
+                'description'   => 'Coast downhill by bicycle from the Kintamani highlands through quiet Balinese villages, Tegalalang rice paddies, and Tirta Empul Temple.',
                 'category'      => 'reguler',
-                'region'        => 'timur',
+                'region'        => 'utara',
                 'price_per_pax' => 420000,
                 'duration_days' => 1,
                 'max_guests'    => 15,
-                'cover_image'   => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'Mount Batur Caldera',
@@ -153,69 +144,49 @@ class PackageSeeder extends Seeder
             ],
             [
                 'name'          => 'Seminyak Luxury Sunset Cruise',
-                'description'   => 'Berlayar menikmati sunset Bali dari Pelabuhan Benoa dilanjutkan makan malam mewah di tepi Pantai Jimbaran.',
+                'description'   => 'Sail into the golden Bali sunset departing from Benoa Harbor, followed by an elegant beachfront dining experience along Jimbaran Bay.',
                 'category'      => 'custom',
-                'region'        => 'barat',
+                'region'        => 'selatan',
                 'price_per_pax' => 1250000,
                 'duration_days' => 1,
                 'max_guests'    => 25,
-                'cover_image'   => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
-                    'Pelabuhan Benoa Sunset Harbor',
+                    'Benoa Sunset Harbor',
                     'Jimbaran Bay Seafood Beach',
                 ],
             ],
             [
                 'name'          => 'South Bali Sunset & Cultural Highlights',
-                'description'   => 'Eksplorasi Bali Selatan: kemegahan patung Garuda Wisnu Kencana, birunya Pantai Melasti, dan sunset dramatis di tebing Pura Uluwatu.',
+                'description'   => 'Experience the best of South Bali: the monumental Garuda Wisnu Kencana Cultural Park, the turquoise cliffs of Melasti Beach, and sunset at Uluwatu Temple.',
                 'category'      => 'custom',
                 'region'        => 'selatan',
                 'price_per_pax' => 500000,
                 'duration_days' => 1,
                 'max_guests'    => 20,
-                'cover_image'   => 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=800&auto=format&fit=crop',
                 'is_active'     => true,
                 'destinations'  => [
                     'GWK Cultural Park',
-                    'Pantai Melasti',
+                    'Melasti Beach',
                     'Uluwatu Cliff & Temple',
                 ],
             ],
-        ];
-
-        // Pemetaan region resmi (utara, selatan, timur, barat) berdasarkan lokasi paket
-        $regionMap = [
-            'ubud-cultural-tour'                    => 'selatan',
-            'nusa-penida-island-hopping'            => 'timur',
-            'mount-batur-sunrise-trekking'          => 'utara',
-            'east-bali-heritage-water-palace'       => 'timur',
-            'bali-waterfall-explorer'               => 'utara',
-            'uluwatu-temple-kecak-dance'            => 'selatan',
-            'north-bali-dolphin-hot-springs'        => 'utara',
-            'bali-safari-marine-park'               => 'selatan',
-            'kintamani-cycling-tour'                => 'utara',
-            'seminyak-luxury-sunset-cruise'         => 'selatan',
-            'south-bali-sunset-cultural-highlights' => 'selatan',
         ];
 
         foreach ($packages as $pkgData) {
             $destinationNames = $pkgData['destinations'] ?? [];
             unset($pkgData['destinations']);
 
-            $pkgData['slug'] = Str::slug($pkgData['name']);
-            $pkgData['region'] = $regionMap[$pkgData['slug']] ?? ($pkgData['region'] ?? 'selatan');
-            if ($pkgData['region'] === 'lainnya') {
-                $pkgData['region'] = 'selatan';
-            }
-            $pkgData['avg_rating'] = rand(44, 50) / 10;
+            $slug = Str::slug($pkgData['name']);
+            $pkgData['slug']        = $slug;
+            $pkgData['cover_image'] = "images/packages/{$slug}.jpg";
+            $pkgData['avg_rating']  = 0;
 
             $package = Package::updateOrCreate(
-                ['slug' => $pkgData['slug']],
+                ['slug' => $slug],
                 $pkgData
             );
 
-            // Pemetaan statis berdasarkan urutan kunjungan (visit_order)
             $syncData = [];
             foreach ($destinationNames as $index => $destName) {
                 $dest = Destination::where('slug', Str::slug($destName))->first();

@@ -11,6 +11,12 @@ use App\Livewire\Admin\BookingManager;
 
 use App\Http\Controllers\UserBookingController;
 
+Route::get('/locale/{locale}', function (string $locale) {
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->whereIn('locale', ['en', 'id'])->name('locale.switch');
+
 Route::view('/', 'home')->name('home');
 Route::get('/packages', [UserBookingController::class, 'index'])->name('packages.index');
 Route::get('/packages/{slug}', [UserBookingController::class, 'show'])->name('packages.show');

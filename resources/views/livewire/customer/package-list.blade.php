@@ -95,17 +95,24 @@
                     <article class="bg-surface-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,35,102,0.06)] hover:shadow-[0_10px_30px_rgba(0,35,102,0.12)] transition-shadow duration-300 group border border-outline-variant/10 flex flex-col h-full min-h-full">
                         <a href="{{ route('packages.show', $package->slug) }}" class="block">
                             <div class="relative h-64 overflow-hidden">
-                                @php
-                                    $coverUrl = 'https://placehold.co/800x600/00327D/ffffff?text=' . urlencode($package->name);
-                                    if ($package->cover_image) {
-                                        $coverUrl = str_starts_with($package->cover_image, 'http') ? $package->cover_image : asset('storage/' . $package->cover_image);
-                                    }
-                                @endphp
-                                <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style="background-image: url('{{ $coverUrl }}');"></div>
-                                <div class="absolute top-4 right-4 bg-sand-beige text-on-tertiary-fixed font-caption px-2 py-1 rounded flex items-center gap-1 shadow-sm">
-                                    <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span class="font-bold">{{ number_format($package->avg_rating, 0) }}</span>
-                                </div>
+                                @if($package->cover_image_url)
+                                    <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style="background-image: url('{{ $package->cover_image_url }}');"></div>
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br {{ $package->region_gradient }} flex flex-col items-center justify-center text-white p-6 text-center group-hover:scale-105 transition-transform duration-700">
+                                        <span class="material-symbols-outlined text-3xl mb-1">{{ $package->region_icon }}</span>
+                                        <span class="text-[11px] font-bold uppercase tracking-widest opacity-85">{{ $package->region_label }}</span>
+                                    </div>
+                                @endif
+                                @if((float) $package->avg_rating > 0)
+                                    <div class="absolute top-4 right-4 bg-sand-beige text-on-tertiary-fixed font-caption px-2 py-1 rounded flex items-center gap-1 shadow-sm">
+                                        <span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        <span class="font-bold">{{ number_format($package->avg_rating, 1) }}</span>
+                                    </div>
+                                @else
+                                    <div class="absolute top-4 right-4 bg-white/95 text-tropical-teal font-caption px-2.5 py-1 rounded font-bold text-xs shadow-sm">
+                                        New
+                                    </div>
+                                @endif
                             </div>
                         </a>
                         <div class="p-5 flex flex-col flex-grow">

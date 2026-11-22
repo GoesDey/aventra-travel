@@ -10,7 +10,7 @@
         <!-- Brand / Header -->
         <div class="text-center mb-8">
             <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-oceanic-deep mb-2">TriHitaTour</h1>
-            <p class="font-body-md text-body-md text-on-surface-variant">Welcome back. Your next adventure awaits.</p>
+            <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Welcome back. Your next adventure awaits.') }}</p>
         </div>
         
         <!-- Login Form -->
@@ -23,7 +23,7 @@
 
             <!-- Email Input -->
             <div class="space-y-2">
-                <label class="font-label-bold text-label-bold text-on-surface block" for="email">Email Address</label>
+                <label class="font-label-bold text-label-bold text-on-surface block" for="email">{{ __('Email Address') }}</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline">@</span>
                     <input wire:model="email" class="w-full bg-surface-container-low border-none rounded-lg pl-12 pr-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-shadow" id="email" placeholder="explorer@example.com" required type="email">
@@ -34,7 +34,7 @@
             <!-- Password Input -->
             <div class="space-y-2" x-data="{ showPassword: false }">
                 <div class="flex justify-between items-center">
-                    <label class="font-label-bold text-label-bold text-on-surface block" for="password">Password</label>
+                    <label class="font-label-bold text-label-bold text-on-surface block" for="password">{{ __('Password') }}</label>
                 </div>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline">#</span>
@@ -47,8 +47,8 @@
                     <button type="button" 
                             @click="showPassword = !showPassword" 
                             class="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-oceanic-deep transition-colors p-1 rounded-md focus:outline-none flex items-center justify-center cursor-pointer"
-                            :title="showPassword ? 'Hide password' : 'Show password'"
-                            aria-label="Show or hide password">
+                            :title="showPassword ? '{{ __('Hide password') }}' : '{{ __('Show password') }}'"
+                            aria-label="{{ __('Show or hide password') }}">
                         <span class="material-symbols-outlined text-[20px] select-none" x-text="showPassword ? 'visibility_off' : 'visibility'">
                             visibility
                         </span>
@@ -59,14 +59,14 @@
             
             <!-- Primary Action -->
             <button class="w-full bg-tropical-teal hover:bg-secondary text-on-primary font-label-bold text-label-bold py-4 rounded-full transition-all duration-300 transform active:scale-[0.98] ambient-shadow flex items-center justify-center gap-2" type="submit">
-                Sign In
+                {{ __('Sign In') }}
             </button>
         </form>
 
         <!-- Sign Up Link -->
         <p class="text-center mt-6 font-body-md text-body-md text-on-surface-variant">
-            Don't have an account? 
-            <a class="text-tropical-teal font-label-bold text-label-bold hover:underline underline-offset-4 ml-1" href="{{ route('register') }}">Sign up</a>
+            {{ __("Don't have an account?") }}
+            <a class="text-tropical-teal font-label-bold text-label-bold hover:underline underline-offset-4 ml-1" href="{{ route('register') }}">{{ __('Sign up') }}</a>
         </p>
     </main>
 </div>

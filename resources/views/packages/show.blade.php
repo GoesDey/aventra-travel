@@ -12,14 +12,8 @@
     </style>
 
     @php
-        $coverUrl = 'https://placehold.co/1200x600/00327D/ffffff?text=' . urlencode($package->name);
-        if ($package->cover_image) {
-            if (str_starts_with($package->cover_image, 'http')) {
-                $coverUrl = $package->cover_image;
-            } else {
-                $coverUrl = asset('storage/' . $package->cover_image);
-            }
-        }
+        $coverUrl = $package->cover_image_url;
+        $hasReviews = ($package->reviews_count ?? $package->reviews()->count()) > 0 && (float) $package->avg_rating > 0;
     @endphp
 
     <div class="bg-surface-container-lowest min-h-screen pt-24 pb-16 px-margin-mobile md:px-margin-desktop">
@@ -27,9 +21,9 @@
 
             <!-- Breadcrumb Navigation -->
             <nav class="flex items-center gap-2 text-xs md:text-sm text-outline">
-                <a href="{{ route('home') }}" class="hover:text-tropical-teal transition-colors">Home</a>
+                <a href="{{ route('home') }}" class="hover:text-tropical-teal transition-colors">{{ __('Home') }}</a>
                 <span>/</span>
-                <a href="{{ route('packages.index') }}" class="hover:text-tropical-teal transition-colors">Tour Packages</a>
+                <a href="{{ route('packages.index') }}" class="hover:text-tropical-teal transition-colors">{{ __('Tour Packages') }}</a>
                 <span>/</span>
                 <span class="text-on-surface font-semibold truncate max-w-xs md:max-w-md">{{ $package->name }}</span>
             </nav>
@@ -53,8 +47,8 @@
                 <div class="bg-amber-50 border border-amber-300 text-amber-900 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
                     <span class="material-symbols-outlined text-amber-600 text-2xl">pause_circle</span>
                     <div>
-                        <div class="font-bold text-sm">Tour Package Currently Inactive</div>
-                        <div class="text-xs text-amber-800">This package is currently being prepared or temporarily paused by the agent and cannot be reserved yet.</div>
+                        <div class="font-bold text-sm">{{ __('Tour Package Currently Inactive') }}</div>
+                        <div class="text-xs text-amber-800">{{ __('This package is currently being prepared or temporarily paused by the agent and cannot be reserved yet.') }}</div>
                     </div>
                 </div>
             @endif
@@ -67,27 +61,45 @@
                     
                     <!-- Cover Image Banner -->
                     <div class="relative h-72 md:h-[420px] rounded-3xl overflow-hidden shadow-lg border border-outline-variant/30 bg-surface-container">
-                        <img src="{{ $coverUrl }}" alt="{{ $package->name }}" class="w-full h-full object-cover">
+                        @if($coverUrl)
+                            <img src="{{ $coverUrl }}" alt="{{ $package->name }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gradient-to-br {{ $package->region_gradient }} relative flex flex-col items-center justify-center text-white p-8 text-center select-none">
+                                <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+                                <div class="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-tropical-teal/25 blur-3xl pointer-events-none"></div>
+                                <div class="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center mb-3 shadow-md">
+                                    <span class="material-symbols-outlined text-4xl text-white">{{ $package->region_icon }}</span>
+                                </div>
+                                <span class="text-xs font-bold uppercase tracking-widest text-white/80">{{ $package->region_label }}</span>
+                            </div>
+                        @endif
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                         
                         <!-- Top Badges -->
                         <div class="absolute top-4 left-4 flex gap-2">
                             <span class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-md {{ $package->category === 'custom' ? 'bg-purple-600' : 'bg-oceanic-deep' }}">
-                                {{ ucfirst($package->category) }}
+                                {{ $package->category === 'custom' ? __('Custom') : __('Regular') }}
                             </span>
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/90 text-oceanic-deep shadow-md">
-                                {{ \App\Models\Package::REGIONS[$package->region] ?? ucfirst($package->region) . ' Bali' }}
+                                {{ $package->region_label }}
                             </span>
                         </div>
 
                         <!-- Bottom Overlaid Content -->
                         <div class="absolute bottom-6 left-6 right-6 text-white space-y-2">
                             <div class="flex items-center gap-2">
-                                <div class="bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 shadow">
-                                    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                                    <span>{{ number_format($package->avg_rating, 1) }}</span>
-                                </div>
-                                <span class="text-xs text-white/80">Operated by: {{ $package->agent->agent_name ?? 'Official Partner Agent' }}</span>
+                                @if($hasReviews)
+                                    <div class="bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 shadow">
+                                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        <span>{{ number_format($package->avg_rating, 1) }}</span>
+                                    </div>
+                                @else
+                                    <div class="bg-tropical-teal text-white px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 shadow">
+                                        <span class="material-symbols-outlined text-sm">new_releases</span>
+                                        <span>{{ __('No reviews yet') }}</span>
+                                    </div>
+                                @endif
+                                <span class="text-xs text-white/80">{{ __('Operated by:') }} {{ $package->agent->agent_name ?? __('Official Partner Agent') }}</span>
                             </div>
                             <h1 class="font-display-lg text-2xl md:text-4xl font-bold tracking-tight text-shadow-subtle">
                                 {{ $package->name }}
@@ -102,8 +114,8 @@
                                 <span class="material-symbols-outlined">schedule</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Duration</span>
-                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->duration_days }} {{ $package->duration_days > 1 ? 'Days' : 'Day' }}</span>
+                                <span class="text-[11px] text-outline block">{{ __('Duration') }}</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->duration_days }} {{ $package->duration_days > 1 ? __('Days') : __('Day') }}</span>
                             </div>
                         </div>
 
@@ -112,8 +124,8 @@
                                 <span class="material-symbols-outlined">group</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Max Capacity</span>
-                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->max_guests }} Guests</span>
+                                <span class="text-[11px] text-outline block">{{ __('Max Capacity') }}</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ $package->max_guests }} {{ __('Guests') }}</span>
                             </div>
                         </div>
 
@@ -122,8 +134,8 @@
                                 <span class="material-symbols-outlined">event_available</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">D-3+ Schedules</span>
-                                <span class="text-sm font-bold text-emerald-600">{{ $availableSchedules->count() }} Available</span>
+                                <span class="text-[11px] text-outline block">{{ __('D-3+ Schedules') }}</span>
+                                <span class="text-sm font-bold text-emerald-600">{{ $availableSchedules->count() }} {{ __('Available') }}</span>
                             </div>
                         </div>
 
@@ -132,8 +144,8 @@
                                 <span class="material-symbols-outlined">verified</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">Tour Guide</span>
-                                <span class="text-sm font-bold text-oceanic-deep">Certified</span>
+                                <span class="text-[11px] text-outline block">{{ __('Tour Guide') }}</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ __('Certified') }}</span>
                             </div>
                         </div>
                     </div>
@@ -142,7 +154,7 @@
                     <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                         <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                             <span class="material-symbols-outlined text-tropical-teal">description</span>
-                            <span>About This Package</span>
+                            <span>{{ __('About This Package') }}</span>
                         </h2>
                         <div class="text-sm md:text-base text-on-surface-variant leading-relaxed whitespace-pre-line">
                             {{ $package->description }}
@@ -165,16 +177,16 @@
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                                 <span class="material-symbols-outlined text-tropical-teal">route</span>
-                                <span>Location &amp; Travel Route</span>
+                                <span>{{ __('Location & Travel Route') }}</span>
                             </h2>
                             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-tropical-teal bg-tropical-teal/10 px-3 py-1 rounded-full w-fit">
                                 <span class="material-symbols-outlined text-sm">pin_drop</span>
-                                <span>{{ $package->destinations->count() }} {{ Str::plural('Stop', $package->destinations->count()) }}</span>
+                                <span>{{ $package->destinations->count() }} {{ $package->destinations->count() > 1 ? __('Stops') : __('Stop') }}</span>
                             </span>
                         </div>
 
                         <p class="text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                            This interactive map displays destination waypoints and sequential driving routes for this tour package. Click on any marker to view destination details.
+                            {{ __('This interactive map displays destination waypoints and sequential driving routes for this tour package. Click on any marker to view destination details.') }}
                         </p>
 
                         <!-- Leaflet Interactive Map Canvas -->
@@ -183,7 +195,7 @@
                         <!-- Route Sequence Order -->
                         @if($package->destinations->isNotEmpty())
                             <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-3">
-                                <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">Tour Route Order</span>
+                                <span class="text-[11px] font-bold text-outline uppercase tracking-wider block">{{ __('Tour Route Order') }}</span>
                                 <ol class="space-y-2.5">
                                     @foreach($package->destinations as $idx => $dest)
                                         <li class="flex items-start gap-3 text-xs md:text-sm">
@@ -194,11 +206,11 @@
                                                 <span class="font-bold text-oceanic-deep">{{ $dest->name }}</span>
                                                 <span class="text-outline"> — {{ $dest->location }}</span>
                                                 @if($loop->first && $package->destinations->count() > 1)
-                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-tropical-teal/10 text-tropical-teal rounded-full">Starting Point</span>
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-tropical-teal/10 text-tropical-teal rounded-full">{{ __('Starting Point') }}</span>
                                                 @elseif($loop->last && $package->destinations->count() > 1)
-                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-bold bg-oceanic-deep/10 text-oceanic-deep rounded-full">Final Stop</span>
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-bold bg-oceanic-deep/10 text-oceanic-deep rounded-full">{{ __('Final Stop') }}</span>
                                                 @elseif($package->destinations->count() > 2)
-                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-700 rounded-full">Stop {{ $idx + 1 }}</span>
+                                                    <span class="ml-1.5 inline-block px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-700 rounded-full">{{ __('Stop') }} {{ $idx + 1 }}</span>
                                                 @endif
                                             </div>
                                         </li>
@@ -213,7 +225,7 @@
                         <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                                 <span class="material-symbols-outlined text-tropical-teal">map</span>
-                                <span>Destinations Visited</span>
+                                <span>{{ __('Destinations Visited') }}</span>
                             </h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 @foreach($package->destinations as $dest)
@@ -243,7 +255,7 @@
                         <div class="bg-surface-white p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm space-y-4">
                             <h2 class="font-display-lg text-lg md:text-xl font-bold text-oceanic-deep flex items-center gap-2">
                                 <span class="material-symbols-outlined text-tropical-teal">business_center</span>
-                                <span>Tour Operator</span>
+                                <span>{{ __('Tour Operator') }}</span>
                             </h2>
                             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="w-14 h-14 rounded-2xl bg-tropical-teal text-white flex items-center justify-center font-bold text-xl shadow">
@@ -255,7 +267,7 @@
                                     <div class="flex items-center gap-4 text-xs text-outline pt-1">
                                         <span>NIB: {{ $package->agent->nib_number ?? '-' }}</span>
                                         <span>•</span>
-                                        <span>Fleet: {{ $package->agent->vehicle_count }} Vehicles</span>
+                                        <span>{{ __('Fleet:') }} {{ $package->agent->vehicle_count }} {{ __('Vehicles') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -269,12 +281,12 @@
                         
                         <!-- Price Header -->
                         <div class="border-b border-outline-variant/30 pb-4">
-                            <span class="text-xs text-outline block">Official Rate per Person</span>
+                            <span class="text-xs text-outline block">{{ __('Official Rate per Person') }}</span>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span class="font-display-lg text-3xl font-bold text-oceanic-deep" id="priceDisplay">
                                     Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}
                                 </span>
-                                <span class="text-xs text-outline">/pax</span>
+                                <span class="text-xs text-outline">/{{ __('pax') }}</span>
                             </div>
                         </div>
 
@@ -285,7 +297,7 @@
                             <!-- Section: Departure Schedule (D-3 Rule) -->
                             <div class="space-y-2">
                                 <label for="package_schedule_id" class="block font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                                    Select Departure Schedule <span class="text-error">*</span>
+                                    {{ __('Select Departure Schedule') }} <span class="text-error">*</span>
                                 </label>
 
                                 @if($availableSchedules->isEmpty())
@@ -293,10 +305,10 @@
                                     <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 space-y-2">
                                         <div class="flex items-center gap-2 font-bold text-xs">
                                             <span class="material-symbols-outlined text-amber-600 text-lg">event_busy</span>
-                                            <span>No Schedules Available</span>
+                                            <span>{{ __('No Schedules Available') }}</span>
                                         </div>
                                         <p class="text-xs leading-relaxed">
-                                            Currently there are no departure schedules available for booking. Reservations must be made at least 3 days prior to departure (D-3 rule) and subject to remaining quota.
+                                            {{ __('Currently there are no departure schedules available for booking. Reservations must be made at least 3 days prior to departure (D-3 rule) and subject to remaining quota.') }}
                                         </p>
                                     </div>
                                 @else
@@ -313,11 +325,11 @@
                                                         class="mt-1 text-tropical-teal focus:ring-tropical-teal schedule-radio">
                                                     <div class="flex-1 text-xs">
                                                         <div class="font-bold text-oceanic-deep">
-                                                            {{ $sch->start_date->format('d M Y') }} - {{ $sch->end_date->format('d M Y') }}
+                                                            {{ $sch->start_date->translatedFormat('d M Y') }} - {{ $sch->end_date->translatedFormat('d M Y') }}
                                                         </div>
                                                         <div class="flex items-center justify-between text-[11px] text-outline mt-1">
-                                                            <span class="text-emerald-700 font-semibold">Seats Left: {{ $sch->quota }}</span>
-                                                            <span class="text-amber-800 font-medium">D-{{ $daysLeft }}</span>
+                                                            <span class="text-emerald-700 font-semibold">{{ __('Seats Left:') }} {{ $sch->quota }}</span>
+                                                            <span class="text-amber-800 font-medium">{{ __('D-') }}{{ $daysLeft }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -334,9 +346,9 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <label for="guest_count" class="font-label-bold text-xs text-on-surface uppercase tracking-wider">
-                                        Number of Guests (Pax) <span class="text-error">*</span>
+                                        {{ __('Number of Guests (Pax)') }} <span class="text-error">*</span>
                                     </label>
-                                    <span class="text-[11px] text-outline">Max. {{ $package->max_guests }} pax</span>
+                                    <span class="text-[11px] text-outline">{{ __('Max.') }} {{ $package->max_guests }} {{ __('pax') }}</span>
                                 </div>
                                 
                                 <input type="number" name="guest_count" id="guest_count" value="{{ old('guest_count', 1) }}" min="1" max="{{ $package->max_guests }}" required
@@ -351,11 +363,11 @@
                             <!-- Total Price Calculation -->
                             <div class="bg-surface-container-low p-4 rounded-xl space-y-1">
                                 <div class="flex justify-between items-center text-xs text-outline">
-                                    <span>Estimated Breakdown:</span>
-                                    <span id="paxCountInfo">1 Pax × Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}</span>
+                                    <span>{{ __('Estimated Breakdown:') }}</span>
+                                    <span id="paxCountInfo">1 {{ __('Pax') }} × Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="font-bold text-sm text-oceanic-deep">Total Payable:</span>
+                                    <span class="font-bold text-sm text-oceanic-deep">{{ __('Total Payable:') }}</span>
                                     <span class="font-display-lg text-xl font-bold text-tropical-teal" id="totalPriceDisplay">
                                         Rp {{ number_format($package->price_per_pax, 0, ',', '.') }}
                                     </span>
@@ -366,38 +378,38 @@
                             @guest
                                 <a href="{{ route('login') }}" class="w-full bg-oceanic-deep hover:bg-primary-container text-white font-label-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-colors">
                                     <span class="material-symbols-outlined text-lg">login</span>
-                                    <span>Login to Book</span>
+                                    <span>{{ __('Login to Book') }}</span>
                                 </a>
                                 <p class="text-[11px] text-outline text-center">
-                                    Don't have an account? <a href="{{ route('register') }}" class="text-tropical-teal underline font-medium">Register now</a>
+                                    {{ __("Don't have an account?") }} <a href="{{ route('register') }}" class="text-tropical-teal underline font-medium">{{ __('Register now') }}</a>
                                 </p>
                             @else
                                 @if(!$package->is_active)
                                     <div class="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs space-y-1 text-center">
-                                        <div class="font-bold">Package Inactive</div>
-                                        <p class="text-[11px]">This tour package is currently not open for bookings by the partner agent.</p>
+                                        <div class="font-bold">{{ __('Package Inactive') }}</div>
+                                        <p class="text-[11px]">{{ __('This tour package is currently not open for bookings by the partner agent.') }}</p>
                                     </div>
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-lg">pause_circle</span>
-                                        <span>Package Inactive</span>
+                                        <span>{{ __('Package Inactive') }}</span>
                                     </button>
                                 @elseif(auth()->user()->role !== 'user')
                                     <div class="p-3 bg-blue-50 border border-blue-200 text-blue-900 rounded-xl text-xs space-y-1 text-center">
-                                        <div class="font-bold">Account Role: {{ ucfirst(auth()->user()->role) }}</div>
-                                        <p class="text-[11px]">Tour bookings can only be made by Traveler accounts (role: user).</p>
+                                        <div class="font-bold">{{ __('Account Role:') }} {{ ucfirst(auth()->user()->role) }}</div>
+                                        <p class="text-[11px]">{{ __('Tour bookings can only be made by Traveler accounts (role: user).') }}</p>
                                     </div>
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed">
-                                        Access Denied (Travelers Only)
+                                        {{ __('Access Denied (Travelers Only)') }}
                                     </button>
                                 @elseif($availableSchedules->isEmpty())
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-lg">block</span>
-                                        <span>No Schedules Available</span>
+                                        <span>{{ __('No Schedules Available') }}</span>
                                     </button>
                                 @else
                                     <button type="submit" class="w-full bg-tropical-teal hover:bg-secondary text-white font-label-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98">
                                         <span class="material-symbols-outlined text-lg">check_circle</span>
-                                        <span>Book Tour Now</span>
+                                        <span>{{ __('Book Tour Now') }}</span>
                                     </button>
                                 @endif
                             @endguest
@@ -535,8 +547,8 @@
                             .addTo(map)
                             .bindPopup(
                                 `<div class="text-xs">
-                                    <div class="font-bold text-rose-600">Lokasi Anda Saat Ini</div>
-                                    <div class="text-slate-500 mt-0.5">Titik awal keberangkatan</div>
+                                    <div class="font-bold text-rose-600">Your Current Location</div>
+                                    <div class="text-slate-500 mt-0.5">Starting point</div>
                                 </div>`
                             );
 

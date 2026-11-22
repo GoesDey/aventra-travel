@@ -29,12 +29,14 @@ class PreferenceController extends Controller
             'preferred_categories'   => ['required', 'array', 'min:1'],
             'preferred_categories.*' => ['string', 'in:reguler,custom'],
             'preferred_regions'      => ['required', 'array', 'min:1'],
-            'preferred_regions.*'    => ['string', 'in:timur,barat,lainnya'],
+            'preferred_regions.*'    => ['string', 'in:utara,selatan,timur,barat,lainnya'],
             'budget_max'             => ['required', 'numeric', 'min:0'],
         ], [
-            'preferred_categories.required' => 'Pilih minimal satu kategori paket.',
-            'preferred_regions.required'    => 'Pilih minimal satu wilayah.',
-            'budget_max.required'           => 'Masukkan budget maksimal per orang.',
+            'preferred_categories.required' => __('Please select at least one package type.'),
+            'preferred_regions.required'    => __('Please select at least one Bali region.'),
+            'budget_max.required'           => __('Please enter your maximum budget per person.'),
+            'budget_max.numeric'            => __('Maximum budget must be a valid number.'),
+            'budget_max.min'                => __('Maximum budget cannot be negative.'),
         ]);
 
         $request->user()->userPreference()->updateOrCreate(
@@ -47,7 +49,7 @@ class PreferenceController extends Controller
         );
 
         return redirect()->route('packages.index')
-            ->with('success', 'Preferensi wisata Anda berhasil disimpan! Paket yang cocok kini ditampilkan lebih dulu.');
+            ->with('success', __('Your travel preferences have been saved! Matching tour packages are now shown first.'));
     }
 }
 

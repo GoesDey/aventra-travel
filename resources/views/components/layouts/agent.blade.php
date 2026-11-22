@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,26 +26,26 @@
             <span class="material-symbols-outlined fill text-tropical-teal text-3xl">travel_explore</span>
             <div>
                 <span class="font-display-lg text-[20px] font-bold text-oceanic-deep tracking-wide block leading-tight">TRIHITATOUR</span>
-                <span class="text-[11px] font-bold text-tropical-teal uppercase tracking-widest">Agent Portal</span>
+                <span class="text-[11px] font-bold text-tropical-teal uppercase tracking-widest">{{ __('Agent Portal') }}</span>
             </div>
         </div>
 
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-            <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">Agent Menu</div>
+            <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">{{ __('Agent Menu') }}</div>
             
             <a href="{{ route('agent.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('agent.dashboard') ? 'bg-tropical-teal/10 text-tropical-teal font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('agent.dashboard') ? 'fill' : '' }}">dashboard</span>
-                <span class="font-label-bold text-sm">Dashboard</span>
+                <span class="font-label-bold text-sm">{{ __('Dashboard') }}</span>
             </a>
 
             <a href="{{ route('agent.packages.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('agent.packages.*') ? 'bg-tropical-teal/10 text-tropical-teal font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('agent.packages.*') ? 'fill' : '' }}">tour</span>
-                <span class="font-label-bold text-sm">Manage Packages</span>
+                <span class="font-label-bold text-sm">{{ __('Manage Packages') }}</span>
             </a>
 
             <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
                 <span class="material-symbols-outlined">public</span>
-                <span class="font-label-bold text-sm">View Website</span>
+                <span class="font-label-bold text-sm">{{ __('View Website') }}</span>
             </a>
         </nav>
 
@@ -54,7 +54,7 @@
                 @csrf
                 <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-error hover:bg-error-container/50 transition-colors">
                     <span class="material-symbols-outlined">logout</span>
-                    <span class="font-label-bold text-sm">Logout</span>
+                    <span class="font-label-bold text-sm">{{ __('Logout') }}</span>
                 </button>
             </form>
         </div>
@@ -68,17 +68,19 @@
             <div class="flex items-center gap-4">
                 <a href="{{ route('agent.packages.index') }}" class="md:hidden text-tropical-teal flex items-center gap-2">
                     <span class="material-symbols-outlined fill text-2xl">travel_explore</span>
-                    <span class="font-bold text-sm">Agent Portal</span>
+                    <span class="font-bold text-sm">{{ __('Agent Portal') }}</span>
                 </a>
                 <h1 class="font-headline-md text-[22px] font-bold text-oceanic-deep hidden md:block">
-                    {{ $title ?? 'Agent Dashboard' }}
+                    {{ $title ?? __('Agent Dashboard') }}
                 </h1>
             </div>
             
-            <div class="flex items-center gap-4">
-                <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <x-language-switcher />
+
+                <a href="{{ route('home') }}" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
                     <span class="material-symbols-outlined text-sm">open_in_new</span>
-                    <span>View Website</span>
+                    <span>{{ __('View Website') }}</span>
                 </a>
 
                 <!-- Agent Profile -->
