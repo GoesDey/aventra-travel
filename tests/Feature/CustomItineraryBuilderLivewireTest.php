@@ -106,6 +106,75 @@ class CustomItineraryBuilderLivewireTest extends TestCase
         $this->assertSame('The St. Regis Bali Resort, Nusa Dua', $component->get('startPoint'));
     }
 
+    public function test_updating_start_coordinates_recalculates_route_and_dispatches_map_event(): void
+    {
+        $traveler = User::factory()->create([
+            'role'   => 'user',
+            'status' => 'active',
+        ]);
+
+        $component = Livewire::actingAs($traveler)->test(CustomItineraryBuilder::class);
+
+        $initialTravelTime = (float) $component->get('totalTravelTime');
+        $initialTotalHours = (float) $component->get('totalHours');
+
+        // Move starting point to a far location (e.g. Gilimanuk in West Bali)
+        $component->call('updateStartCoordinates', -8.1587000, 114.4368000, 'Gilimanuk Ferry Port');
+
+        $this->assertEquals(-8.1587000, $component->get('startLat'));
+        $this->assertEquals(114.4368000, $component->get('startLng'));
+        $this->assertSame('Gilimanuk Ferry Port', $component->get('startPoint'));
+
+        // Route metrics must recalculate
+        $newTravelTime = (float) $component->get('totalTravelTime');
+        $newTotalHours = (float) $component->get('totalHours');
+
+        $this->assertNotEquals($initialTravelTime, $newTravelTime);
+        $this->assertNotEquals($initialTotalHours, $newTotalHours);
+
+        // Also test setting startLat and startLng directly via $wire.set()
+        $component->set('startLat', -8.8482000);
+        $component->set('startLng', 115.1601000);
+
+        $this->assertEquals(-8.8482000, $component->get('startLat'));
+        $this->assertEquals(115.1601000, $component->get('startLng'));
+    }
+
+    public function test_selecting_agent_via_select_agent_method_updates_origin_and_dispatches(): void
+    {
+        $agentUser = User::factory()->create([
+            'role'   => 'agent',
+            'status' => 'active',
+        ]);
+
+        $agent = Agent::create([
+            'user_id'           => $agentUser->id,
+            'agent_name'        => 'Uluwatu Luxury Tours ' . uniqid(),
+            'phone_number'      => '081234567899',
+            'address'           => 'Jl. Pantai Suluban No. 10, Pecatu, Bali',
+            'vehicle_count'     => 6,
+            'operating_regions' => ['utara', 'selatan', 'timur', 'barat'],
+            'latitude'          => -8.8104000,
+            'longitude'         => 115.1676000,
+        ]);
+
+        $traveler = User::factory()->create([
+            'role'   => 'user',
+            'status' => 'active',
+        ]);
+
+        $component = Livewire::actingAs($traveler)->test(CustomItineraryBuilder::class);
+
+        $component->call('selectAgent', $agent->id);
+
+        $this->assertSame($agent->id, $component->get('selectedAgentId'));
+        $this->assertSame('Jl. Pantai Suluban No. 10, Pecatu, Bali', $component->get('startPoint'));
+        $this->assertEquals(-8.8104000, $component->get('startLat'));
+        $this->assertEquals(115.1676000, $component->get('startLng'));
+
+        $component->assertDispatched('itinerary-map-updated');
+    }
+
     public function test_overtime_calculation_when_total_hours_exceeds_base_hours(): void
     {
         $traveler = User::factory()->create([

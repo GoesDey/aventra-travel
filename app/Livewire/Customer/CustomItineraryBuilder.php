@@ -152,6 +152,15 @@ class CustomItineraryBuilder extends Component
     }
 
     /**
+     * Pilih agen travel secara eksplisit.
+     */
+    public function selectAgent(int $agentId): void
+    {
+        $this->selectedAgentId = $agentId;
+        $this->updatedSelectedAgentId($agentId);
+    }
+
+    /**
      * Ketika user mengganti agen travel.
      */
     public function updatedSelectedAgentId($agentId): void
@@ -159,11 +168,42 @@ class CustomItineraryBuilder extends Component
         $agent = Agent::find((int) $agentId);
         if ($agent) {
             $this->startPoint = $agent->address;
-            $this->startLat   = $agent->latitude ?? -8.670458;
-            $this->startLng   = $agent->longitude ?? 115.262512;
+            $this->startLat   = (float) ($agent->latitude ?? -8.670458);
+            $this->startLng   = (float) ($agent->longitude ?? 115.262512);
             $this->recalculateRoute();
             $this->dispatchMapUpdate();
         }
+    }
+
+    /**
+     * Reaktivitas koordinat titik awal (Origin) dari interaksi peta atau Livewire $wire.set().
+     */
+    public function updatedStartLat(): void
+    {
+        $this->recalculateRoute();
+    }
+
+    public function updatedStartLng(): void
+    {
+        $this->recalculateRoute();
+    }
+
+    public function updatedStartPoint(): void
+    {
+        $this->dispatchMapUpdate();
+    }
+
+    /**
+     * Update titik koordinat awal secara atomik saat marker di-drag di peta Leaflet.
+     */
+    public function updateStartCoordinates(float $lat, float $lng, ?string $address = null): void
+    {
+        $this->startLat = $lat;
+        $this->startLng = $lng;
+        if ($address) {
+            $this->startPoint = $address;
+        }
+        $this->recalculateRoute();
     }
 
     /**

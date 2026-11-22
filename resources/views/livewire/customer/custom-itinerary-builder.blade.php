@@ -85,7 +85,7 @@
                                 $agPkg = $ag->packages->where('region', $selectedRegion)->first() ?? $ag->packages->first();
                                 $price = $agPkg ? (int) $agPkg->price_per_pax : 350000;
                             @endphp
-                            <label wire:click="$set('selectedAgentId', {{ $ag->id }})"
+                            <label wire:click="selectAgent({{ $ag->id }})"
                                    class="relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 flex flex-col justify-between gap-3 text-left
                                           {{ $isAgSelected ? 'border-tropical-teal bg-tropical-teal/5 ring-1 ring-tropical-teal shadow-sm' : 'border-outline-variant/30 hover:border-tropical-teal/50 bg-surface-container-low/40' }}">
                                 <div class="flex items-start justify-between gap-2">
@@ -260,7 +260,7 @@
                         </span>
                         <span>Red marker = Start Point &bull; Teal markers = Sequential Stops</span>
                     </div>
-                    <div id="customItineraryMap" wire:ignore class="w-full h-80 rounded-2xl border border-outline-variant/30 shadow-sm z-0 relative"></div>
+                    <div id="customItineraryMap" wire:ignore wire:key="custom-itinerary-map-container" class="w-full h-80 rounded-2xl border border-outline-variant/30 shadow-sm z-0 relative"></div>
                 </div>
 
                 <!-- Sequence of Stops List -->
@@ -468,72 +468,267 @@
     </div>
 
     <!-- Leaflet & Leaflet Routing Machine Assets & Map Initialization -->
+    @assets
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @endassets
 
+    @script
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let map = null;
-            let markersLayer = null;
-            let routePolyline = null;
+        const DEFAULT_ORIGIN_LAT = -8.670458; // Denpasar / Sanur
+        const DEFAULT_ORIGIN_LNG = 115.262512;
+        const DEFAULT_ORIGIN_NAME = 'Denpasar / Sanur Starting Point';
 
-            function initMap() {
-                const mapEl = document.getElementById('customItineraryMap');
-                if (!mapEl || map) return;
+        let map = null;
+        let originLayerGroup = null; // Independent layer: holds ONLY the Origin Marker
+        let stopsLayerGroup = null;  // Independent layer: holds destination stop markers
+        let routeLayerGroup = null;  // Independent layer: holds OSRM GeoJSON / polyline routes
+        let originMarker = null;     // Direct persistent reference to the Origin marker
+        let currentRenderRequestId = 0;
 
-                map = L.map('customItineraryMap').setView([-8.5069, 115.2625], 11);
+        function sanitizeStartPoint(sp) {
+            let lat = sp && sp.lat !== undefined && sp.lat !== null ? parseFloat(sp.lat) : NaN;
+            let lng = sp && sp.lng !== undefined && sp.lng !== null ? parseFloat(sp.lng) : NaN;
+            let name = (sp && sp.name) ? String(sp.name) : '';
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap'
-                }).addTo(map);
-
-                markersLayer = L.layerGroup().addTo(map);
-
-                // Initial render from Livewire state
-                renderRouteOnMap(@json($stops), {
-                    name: @json($startPoint),
-                    lat: @json($startLat ?? -8.670458),
-                    lng: @json($startLng ?? 115.262512)
-                });
+            if (isNaN(lat) || lat === 0) {
+                lat = (typeof $wire !== 'undefined' && $wire.startLat) ? parseFloat($wire.startLat) : NaN;
+            }
+            if (isNaN(lng) || lng === 0) {
+                lng = (typeof $wire !== 'undefined' && $wire.startLng) ? parseFloat($wire.startLng) : NaN;
+            }
+            if (!name && typeof $wire !== 'undefined' && $wire.startPoint) {
+                name = $wire.startPoint;
             }
 
-            function renderRouteOnMap(stops, startPoint) {
-                if (!map || !markersLayer) return;
+            // Safe fallback coordinates (Denpasar) if null or NaN
+            if (isNaN(lat)) lat = DEFAULT_ORIGIN_LAT;
+            if (isNaN(lng)) lng = DEFAULT_ORIGIN_LNG;
+            if (!name) name = DEFAULT_ORIGIN_NAME;
 
-                markersLayer.clearLayers();
-                if (routePolyline) {
-                    map.removeLayer(routePolyline);
-                    routePolyline = null;
+            return { lat, lng, name };
+        }
+
+        function initMap() {
+            const mapEl = document.getElementById('customItineraryMap');
+            if (!mapEl) return;
+
+            // Safe cleanup if existing map instance exists
+            if (map) {
+                try {
+                    map.remove();
+                } catch (e) {}
+                map = null;
+                originMarker = null;
+            }
+
+            if (mapEl._leaflet_id) {
+                delete mapEl._leaflet_id;
+            }
+
+            // Initial view centered on Bali
+            map = L.map('customItineraryMap').setView([DEFAULT_ORIGIN_LAT, DEFAULT_ORIGIN_LNG], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Separate Layer Groups:
+            // 1. routeLayerGroup: cleared & redrawn on route changes
+            // 2. stopsLayerGroup: destination markers
+            // 3. originLayerGroup: persists the starting point marker
+            routeLayerGroup = L.layerGroup().addTo(map);
+            stopsLayerGroup = L.layerGroup().addTo(map);
+            originLayerGroup = L.layerGroup().addTo(map);
+
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 250);
+
+            // Initial state from Livewire with safe fallbacks
+            const safeStart = sanitizeStartPoint({
+                name: typeof $wire !== 'undefined' ? $wire.startPoint : @json($startPoint),
+                lat: typeof $wire !== 'undefined' ? $wire.startLat : @json($startLat),
+                lng: typeof $wire !== 'undefined' ? $wire.startLng : @json($startLng)
+            });
+
+            const safeStops = (typeof $wire !== 'undefined' && $wire.stops) ? $wire.stops : @json($stops);
+
+            // Ensure Origin Marker is placed on the map
+            ensureOriginMarker(safeStart, safeStops);
+
+            // Render destinations and OSRM route
+            renderRouteAndStops(safeStops, safeStart, false);
+        }
+
+        function ensureOriginMarker(startPoint, currentStops) {
+            if (!map || !originLayerGroup) return null;
+
+            const safe = sanitizeStartPoint(startPoint);
+            const startLatLng = L.latLng(safe.lat, safe.lng);
+
+            const popupHtml = `
+                <div style="font-size:12px; line-height:1.4;">
+                    <strong style="color:#ef4444;">🚩 Origin / Starting Point</strong><br>
+                    <span>${safe.name || 'Custom Pick-Up'}</span>
+                    <div style="margin-top:4px; font-size:10px; color:#6b7280;">💡 Drag marker anywhere to adjust pick-up spot</div>
+                </div>
+            `;
+
+            // If Origin Marker already exists, update position without re-creating or clearing layers
+            if (originMarker) {
+                originMarker.setLatLng(startLatLng);
+                originMarker.setPopupContent(popupHtml);
+                return originMarker;
+            }
+
+            const startIcon = L.divIcon({
+                className: 'start-marker',
+                html: `<div style="background-color:#ef4444; color:#fff; width:28px; height:28px; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; border:2px solid #fff; box-shadow:0 3px 6px rgba(0,0,0,0.35); cursor:grab;">🚩</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14],
+                popupAnchor: [0, -14]
+            });
+
+            originMarker = L.marker(startLatLng, {
+                icon: startIcon,
+                draggable: true,
+                title: 'Pick-Up Location / Origin (Drag to change)'
+            }).addTo(originLayerGroup);
+
+            originMarker.bindPopup(popupHtml);
+
+            // Capture dragend event
+            originMarker.on('dragend', function (e) {
+                const newPos = e.target.getLatLng();
+                const newLat = Number(newPos.lat.toFixed(7));
+                const newLng = Number(newPos.lng.toFixed(7));
+
+                const updatedStart = {
+                    name: safe.name,
+                    lat: newLat,
+                    lng: newLng
+                };
+
+                // 1. Immediately redraw OSRM route on map (do NOT touch or destroy origin marker)
+                const stopsToUse = (typeof $wire !== 'undefined' && $wire.stops) ? $wire.stops : (currentStops || []);
+                renderRouteAndStops(stopsToUse, updatedStart, false);
+
+                // 2. Synchronize with Livewire using deferred set (false) to avoid full DOM re-render
+                if (typeof $wire !== 'undefined' && $wire) {
+                    try {
+                        $wire.set('startLat', newLat, false);
+                        $wire.set('startLng', newLng, false);
+                    } catch (err) {
+                        $wire.set('startLat', newLat);
+                        $wire.set('startLng', newLng);
+                    }
+                    if (typeof $wire.updateStartCoordinates === 'function') {
+                        $wire.updateStartCoordinates(newLat, newLng);
+                    }
+                }
+            });
+
+            return originMarker;
+        }
+
+        async function drawSegmentRoute(p1, p2, targetLayerGroup, requestId) {
+            const lon1 = p1.lng;
+            const lat1 = p1.lat;
+            const lon2 = p2.lng;
+            const lat2 = p2.lat;
+
+            // OSRM Driving Route API
+            const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`;
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
                 }
 
-                const latLngs = [];
-                const bounds = L.latLngBounds();
+                const data = await response.json();
 
-                // 1. Add Start Point Marker
-                if (startPoint && startPoint.lat && startPoint.lng) {
-                    const startLatLng = L.latLng(startPoint.lat, startPoint.lng);
-                    latLngs.push(startLatLng);
-                    bounds.extend(startLatLng);
+                // Check if request is still current (not superseded by newer user interaction)
+                if (requestId !== currentRenderRequestId) return;
 
-                    const startIcon = L.divIcon({
-                        className: 'start-marker',
-                        html: `<div style="background-color:#ef4444; color:#fff; width:26px; height:26px; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.3);">🚩</div>`,
-                        iconSize: [26, 26],
-                        iconAnchor: [13, 13],
-                        popupAnchor: [0, -14]
-                    });
-
-                    L.marker(startLatLng, { icon: startIcon })
-                        .addTo(markersLayer)
-                        .bindPopup(`<strong>Origin / Starting Point</strong><br><span style="font-size:11px;">${startPoint.name}</span>`);
+                if (data && data.code === 'Ok' && Array.isArray(data.routes) && data.routes.length > 0 && data.routes[0].geometry) {
+                    // Draw realistic driving route via GeoJSON
+                    L.geoJSON(data.routes[0].geometry, {
+                        style: {
+                            color: '#006A6A',
+                            weight: 4,
+                            opacity: 0.85,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        }
+                    }).addTo(targetLayerGroup);
+                    return;
                 }
 
-                // 2. Add Stop Markers
+                // No valid driving route (e.g. crossing sea / NoRoute)
+                throw new Error(data ? (data.message || data.code) : 'No route returned');
+            } catch (err) {
+                // Fallback System: draw straight polyline if OSRM fails or has no driving route
+                if (requestId !== currentRenderRequestId) return;
+
+                L.polyline([[lat1, lon1], [lat2, lon2]], {
+                    color: '#006A6A',
+                    weight: 4,
+                    opacity: 0.85,
+                    dashArray: '6, 8',
+                    lineCap: 'round'
+                }).addTo(targetLayerGroup);
+            }
+        }
+
+        function renderRouteAndStops(stops, startPoint, updateMarker = true) {
+            if (!map || !routeLayerGroup || !stopsLayerGroup) return;
+
+            const safeStart = sanitizeStartPoint(startPoint);
+
+            if (updateMarker) {
+                ensureOriginMarker(safeStart, stops);
+            }
+
+            const requestId = ++currentRenderRequestId;
+
+            // ISOLATED CLEAR: ONLY clear route lines and stop markers!
+            // originLayerGroup is NEVER cleared here, keeping Origin marker always visible!
+            stopsLayerGroup.clearLayers();
+            routeLayerGroup.clearLayers();
+
+            const points = [];
+            const bounds = L.latLngBounds();
+
+            // 1. Add Start Point to bounds and routing coordinates
+            const startLatLng = L.latLng(safeStart.lat, safeStart.lng);
+            points.push({
+                lat: safeStart.lat,
+                lng: safeStart.lng,
+                name: safeStart.name,
+                isStart: true
+            });
+            bounds.extend(startLatLng);
+
+            // 2. Add Stop Markers to stopsLayerGroup (NOT originLayerGroup)
+            if (Array.isArray(stops)) {
                 stops.forEach((stop, index) => {
                     if (stop.latitude && stop.longitude) {
-                        const pt = L.latLng(stop.latitude, stop.longitude);
-                        latLngs.push(pt);
+                        const pt = L.latLng(Number(stop.latitude), Number(stop.longitude));
+                        points.push({
+                            lat: Number(stop.latitude),
+                            lng: Number(stop.longitude),
+                            name: stop.name,
+                            location: stop.location,
+                            stay_hours: stop.stay_hours
+                        });
                         bounds.extend(pt);
 
                         const stopIcon = L.divIcon({
@@ -545,39 +740,66 @@
                         });
 
                         L.marker(pt, { icon: stopIcon })
-                            .addTo(markersLayer)
-                            .bindPopup(`<strong>Stop ${index + 1}: ${stop.name}</strong><br><span style="font-size:11px;">${stop.location} (Stay: ${stop.stay_hours}h)</span>`);
+                            .addTo(stopsLayerGroup)
+                            .bindPopup(`<strong>Stop ${index + 1}: ${stop.name}</strong><br><span style="font-size:11px;">${stop.location || ''} (Stay: ${stop.stay_hours || 2}h)</span>`);
                     }
                 });
-
-                // 3. Draw Sequential Route Polyline
-                if (latLngs.length > 1) {
-                    routePolyline = L.polyline(latLngs, {
-                        color: '#006A6A',
-                        weight: 4,
-                        opacity: 0.85,
-                        dashArray: '6, 8',
-                        lineCap: 'round'
-                    }).addTo(map);
-
-                    map.fitBounds(bounds, { padding: [40, 40] });
-                } else if (latLngs.length === 1) {
-                    map.setView(latLngs[0], 12);
-                }
             }
 
-            // Init map on load
-            setTimeout(initMap, 200);
+            // 3. Draw Sequential Route via OSRM Driving Roads (with Fallback to Polyline)
+            if (points.length > 1) {
+                map.fitBounds(bounds, { padding: [40, 40] });
 
-            // Listen for Livewire updates
-            window.addEventListener('itinerary-map-updated', function (event) {
-                const data = event.detail ? (event.detail[0] || event.detail) : {};
-                if (!map) {
-                    initMap();
+                for (let i = 0; i < points.length - 1; i++) {
+                    drawSegmentRoute(points[i], points[i + 1], routeLayerGroup, requestId);
                 }
-                renderRouteOnMap(data.stops || [], data.startPoint || null);
-            });
+            } else if (points.length === 1) {
+                map.setView([points[0].lat, points[0].lng], 12);
+            }
+        }
+
+        function handleMapUpdate(payload) {
+            if (Array.isArray(payload)) {
+                payload = payload[0] || {};
+            } else if (payload && typeof payload === 'object' && payload[0]) {
+                payload = payload[0];
+            }
+            payload = payload || {};
+
+            const stops = payload.stops || (typeof $wire !== 'undefined' ? $wire.stops : []) || [];
+            const startPoint = payload.startPoint || {
+                name: typeof $wire !== 'undefined' ? $wire.startPoint : '',
+                lat: typeof $wire !== 'undefined' ? $wire.startLat : DEFAULT_ORIGIN_LAT,
+                lng: typeof $wire !== 'undefined' ? $wire.startLng : DEFAULT_ORIGIN_LNG
+            };
+
+            if (!map) {
+                tryInitMap();
+                return;
+            }
+
+            // Move Origin marker to new coordinates & redraw route
+            renderRouteAndStops(stops, startPoint, true);
+        }
+
+        function tryInitMap() {
+            if (typeof L === 'undefined') {
+                setTimeout(tryInitMap, 50);
+                return;
+            }
+            initMap();
+        }
+
+        tryInitMap();
+
+        // Listen for Livewire events (changing agent, changing region, adding/removing/reordering stops)
+        if (typeof $wire !== 'undefined' && $wire) {
+            $wire.on('itinerary-map-updated', (data) => handleMapUpdate(data));
+        }
+        window.addEventListener('itinerary-map-updated', (event) => {
+            handleMapUpdate(event.detail);
         });
     </script>
+    @endscript
 </div>
 
