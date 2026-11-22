@@ -19,10 +19,10 @@ class AgentBookingController extends Controller
         }
 
         $validated = $request->validate([
-            'status' => 'required|string|in:berjalan,selesai',
+            'status' => 'required|string|in:berjalan,selesai,dibatalkan',
         ], [
-            'status.required' => 'Target status is required.',
-            'status.in'       => 'Agents are only permitted to change status to ongoing or completed.',
+            'status.required' => __('Target status is required.'),
+            'status.in'       => __('Agents are only permitted to change status to ongoing, completed, or cancelled.'),
         ]);
 
         try {

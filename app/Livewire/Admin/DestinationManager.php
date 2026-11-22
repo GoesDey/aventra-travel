@@ -33,8 +33,21 @@ class DestinationManager extends Component
         ];
     }
 
+    public function mount(): void
+    {
+        $this->authorizeSuperAdmin();
+    }
+
+    private function authorizeSuperAdmin(): void
+    {
+        if (!auth()->user()?->isSuperAdmin()) {
+            abort(403, __('Access denied. Only Super Admin can manage destinations.'));
+        }
+    }
+
     public function openCreate(): void
     {
+        $this->authorizeSuperAdmin();
         $this->reset(['name', 'description', 'location', 'image', 'editing']);
         $this->iteration++;
         $this->showModal = true;
@@ -42,6 +55,7 @@ class DestinationManager extends Component
 
     public function openEdit(Destination $destination): void
     {
+        $this->authorizeSuperAdmin();
         $this->reset('image');
         $this->iteration++;
         $this->editing = $destination;
@@ -53,6 +67,7 @@ class DestinationManager extends Component
 
     public function save(): void
     {
+        $this->authorizeSuperAdmin();
         $validated = $this->validate();
         $validated['slug'] = Str::slug($validated['name']);
          
@@ -69,13 +84,14 @@ class DestinationManager extends Component
 
         $this->showModal = false;
         $this->reset(['name', 'description', 'location', 'image', 'editing']);
-        session()->flash('success', $isEditing ? 'Destination updated successfully' : 'Destination added successfully');
+        session()->flash('success', $isEditing ? __('Destination updated successfully') : __('Destination added successfully'));
     }
 
     public function delete(Destination $destination): void
     {
+        $this->authorizeSuperAdmin();
         $destination->delete();
-        session()->flash('success', 'Destination deleted successfully');
+        session()->flash('success', __('Destination deleted successfully'));
     }
 
     public function render()

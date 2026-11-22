@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('bookings:expire-pending')->everyMinute();
+Schedule::command('bookings:sync-trip-status')
+    ->everyTenMinutes()
+    ->timezone(config('app.timezone', 'Asia/Makassar'));

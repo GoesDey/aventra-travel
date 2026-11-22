@@ -238,4 +238,20 @@ class UserBookingController extends Controller
         return redirect()->route('payments.show', $booking->booking_code)
             ->with('success', __('Booking successfully created! Please complete payment before the expiration time.'));
     }
+
+    /**
+     * Menampilkan halaman detail pesanan (read-only) untuk pemilik booking.
+     */
+    public function historyShow(string $booking_code)
+    {
+        $booking = Booking::where('booking_code', $booking_code)
+            ->with(['package.agent', 'schedule', 'payment'])
+            ->firstOrFail();
+
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, __('Access denied. This booking does not belong to your account.'));
+        }
+
+        return view('history.show', compact('booking'));
+    }
 }

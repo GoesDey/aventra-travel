@@ -22,7 +22,7 @@
 <body class="font-body-md bg-surface-container-lowest text-on-surface min-h-screen flex antialiased">
     
     <!-- Sidebar -->
-    <aside class="hidden md:flex flex-col w-64 bg-surface-white border-r border-outline-variant/30 shrink-0 h-screen sticky top-0 z-20">
+    <aside class="hidden md:flex flex-col w-64 bg-surface-white border-r border-outline-variant/30 shrink-0 h-screen sticky top-0 z-40">
         <div class="p-6 border-b border-outline-variant/30 flex items-center gap-3">
             <span class="material-symbols-outlined fill text-oceanic-deep text-3xl">travel_explore</span>
             <span class="font-display-lg text-[24px] font-bold text-oceanic-deep tracking-wide">TRIHITATOUR</span>
@@ -45,10 +45,12 @@
             </a>
             
             <div class="text-xs font-bold text-outline uppercase tracking-wider mt-6 mb-2 px-3">{{ __('Management') }}</div>
+            @if(auth()->user()?->isSuperAdmin())
             <a href="{{ route('admin.destinations') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.destinations') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.destinations') ? 'fill' : '' }}">location_on</span>
                 <span class="font-label-bold text-sm">{{ __('Destinations') }}</span>
             </a>
+            @endif
             <a href="{{ route('admin.packages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.packages') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('admin.packages') ? 'fill' : '' }}">tour</span>
                 <span class="font-label-bold text-sm">{{ __('Packages') }}</span>
@@ -76,6 +78,7 @@
         
         @php
             $pageTitle = __('Dashboard');
+            if(request()->routeIs('super-admin.dashboard')) $pageTitle = __('Super Admin Dashboard');
             if(request()->routeIs('admin.finance')) $pageTitle = __('Financial Overview');
             if(request()->routeIs('admin.destinations')) $pageTitle = __('Destination Management');
             if(request()->routeIs('admin.packages')) $pageTitle = __('Package Management');
@@ -83,30 +86,30 @@
         @endphp
 
         <!-- Top Navigation Bar -->
-        <header class="h-[84.8px] py-6 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between px-6 md:px-8 flex-shrink-0 z-10 shadow-sm sticky top-0">
-            <div class="flex items-center gap-4">
-                <button class="md:hidden text-on-surface-variant">
+        <header class="min-h-[76px] py-4 bg-surface-white border-b border-outline-variant/30 flex items-center justify-between gap-4 px-6 md:px-8 flex-shrink-0 z-30 shadow-sm sticky top-0">
+            <div class="flex items-center gap-4 min-w-0">
+                <button class="md:hidden text-on-surface-variant shrink-0">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h1 class="font-headline-md text-[24px] text-oceanic-deep hidden md:block">{{ $pageTitle }}</h1>
+                <h1 class="font-headline-md text-xl lg:text-[24px] text-oceanic-deep hidden md:block truncate">{{ $pageTitle }}</h1>
             </div>
             
-            <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
                 <x-language-switcher />
 
-                <a href="{{ route('home') }}" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low">
+                <a href="{{ route('home') }}" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-oceanic-deep hover:text-tropical-teal transition-colors px-3 py-1.5 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low whitespace-nowrap">
                     <span class="material-symbols-outlined text-sm">open_in_new</span>
                     <span>{{ __('View Website') }}</span>
                 </a>
                 
                 <!-- Admin Profile -->
-                <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-4 sm:pl-6 group">
-                    <div class="w-10 h-10 rounded-full bg-oceanic-deep text-surface-white flex items-center justify-center font-bold shadow-sm">
+                <div class="flex items-center gap-3 border-l border-outline-variant/30 pl-4 sm:pl-6 group shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-oceanic-deep text-surface-white flex items-center justify-center font-bold shadow-sm shrink-0">
                         {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
                     </div>
-                    <div class="flex flex-col hidden sm:flex">
-                        <span class="font-label-bold text-sm text-on-surface group-hover:text-oceanic-deep transition-colors">{{ auth()->user()->name ?? 'Admin' }}</span>
-                        <span class="font-caption text-[11px] text-outline">{{ auth()->user()->email ?? 'admin@trihitatour.com' }}</span>
+                    <div class="hidden sm:flex flex-col max-w-[180px] min-w-0">
+                        <span class="font-label-bold text-sm text-on-surface group-hover:text-oceanic-deep transition-colors truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
+                        <span class="font-caption text-[11px] text-outline truncate">{{ auth()->user()->email ?? 'admin@trihitatour.com' }}</span>
                     </div>
                 </div>
             </div>

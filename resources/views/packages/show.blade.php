@@ -316,7 +316,7 @@
                                         @foreach($availableSchedules as $sch)
                                             @php
                                                 $scheduleDate = \Carbon\Carbon::parse($sch->start_date)->startOfDay();
-                                                $daysLeft = (int) round($scheduleDate->diffInDays(now()->startOfDay()));
+                                                $daysLeft = max(0, (int) now()->startOfDay()->diffInDays($scheduleDate, false));
                                             @endphp
                                             <label class="block p-3 rounded-xl border border-outline-variant/40 hover:border-tropical-teal cursor-pointer transition-all has-[:checked]:border-tropical-teal has-[:checked]:bg-tropical-teal/5 bg-surface-container-lowest">
                                                 <div class="flex items-start gap-3">

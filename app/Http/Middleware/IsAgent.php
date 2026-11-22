@@ -17,8 +17,8 @@ class IsAgent
             return redirect()->route('login');
         }
 
-        if ($request->user()->role !== 'agent') {
-            abort(403, 'Akses ditolak. Halaman ini khusus untuk Agen.');
+        if ($request->user()->role !== 'agent' || $request->user()->status !== 'active') {
+            abort(403, __('Access denied. This page is restricted to active Partner Agents.'));
         }
 
         return $next($request);

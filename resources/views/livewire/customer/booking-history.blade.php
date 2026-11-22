@@ -100,12 +100,23 @@
                         </a>
                     @endif
 
-                    @if($booking->package)
-                        <a href="{{ route('packages.show', $booking->package->slug) }}" 
-                           class="px-6 py-2.5 border border-outline-variant/50 text-oceanic-deep hover:bg-surface-container-low rounded-full font-label-bold text-sm text-center transition-colors">
-                            {{ __('View Package') }}
-                        </a>
+                    {{-- Fallback Action: Check payment status via Midtrans Status API --}}
+                    @if(in_array($booking->status, ['menunggu_pembayaran', 'kedaluwarsa']))
+                        <form method="POST" action="{{ route('payments.sync', $booking->booking_code) }}">
+                            @csrf
+                            <button type="submit"
+                                class="w-full px-6 py-2.5 bg-surface-container-low hover:bg-surface-container border border-outline-variant/50 text-oceanic-deep rounded-full font-label-bold text-sm text-center transition-colors flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">sync</span>
+                                {{ __('Check payment status') }}
+                            </button>
+                        </form>
                     @endif
+
+                    <a href="{{ route('history.show', $booking->booking_code) }}" 
+                       class="px-6 py-2.5 border border-outline-variant/50 text-oceanic-deep hover:bg-surface-container-low rounded-full font-label-bold text-sm text-center transition-colors flex items-center justify-center gap-1.5">
+                        <span class="material-symbols-outlined text-base">receipt_long</span>
+                        {{ __('View Details') }}
+                    </a>
                     
                     {{-- Review Action: Only for 'selesai' status --}}
                     @if($booking->status === 'selesai' && !$booking->review)

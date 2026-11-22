@@ -23,8 +23,14 @@ class SuperAdminDashboardController extends Controller
         // 2. Total Volume Transaksi Sukses
         $total_successful_transactions = Booking::whereIn('status', $validStatuses)->count();
 
-        // 3. Jumlah Mitra Agen Aktif
-        $total_active_agents = User::where('role', 'agent')->where('status', 'active')->count();
+        // 3. Jumlah Mitra Agen Aktif (hanya agen yang sudah disetujui dan berstatus aktif)
+        $total_active_agents = User::where('role', 'agent')
+            ->where('status', 'active')
+            ->whereHas('agent')
+            ->whereDoesntHave('partnerApplication', function ($q) {
+                $q->whereIn('status', ['pending', 'rejected']);
+            })
+            ->count();
 
         // 4. Kueri Top 5 Agen berdasarkan kontribusi pendapatan/komisi
         $top_agents = Agent::with('user')

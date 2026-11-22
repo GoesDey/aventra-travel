@@ -111,4 +111,69 @@ class PaymentController extends Controller
             'is_expired'     => $booking->isExpired() || in_array($booking->status, ['kedaluwarsa', 'dibatalkan']),
         ]);
     }
+
+    /**
+     * Cadangan pengecekan status langsung ke Midtrans Status API (\Midtrans\Transaction::status)
+     * dan sinkronisasi status booking menggunakan logika yang sama dengan webhook.
+     */
+    public function syncStatus(Request $request, string $booking_code, MidtransService $midtrans)
+    {
+        $booking = Booking::where('booking_code', $booking_code)
+            ->with('payment')
+            ->firstOrFail();
+
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, __('Access denied. This booking does not belong to your account.'));
+        }
+
+        try {
+            $result = $midtrans->syncTransactionStatus($booking);
+            $booking = $result['booking'];
+            $statusLabel = Booking::statusLabel($booking->status);
+
+            $feedbackMessage = $booking->status === 'dibayar'
+                ? __('Payment confirmed! Booking status is now :status.', ['status' => $statusLabel])
+                : __('Current payment status: :status.', ['status' => $statusLabel]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok'                   => true,
+                    'booking_code'         => $booking->booking_code,
+                    'booking_status'       => $booking->status,
+                    'booking_status_label' => $statusLabel,
+                    'payment_status'       => $booking->payment?->payment_status ?? 'pending',
+                    'is_paid'              => $booking->status === 'dibayar',
+                    'is_expired'           => $booking->isExpired() || in_array($booking->status, ['kedaluwarsa', 'dibatalkan']),
+                    'message'              => $feedbackMessage,
+                ]);
+            }
+
+            return redirect()->back()->with('success', $feedbackMessage);
+        } catch (\Throwable $e) {
+            $isNotFound = str_contains($e->getMessage(), '404') || str_contains(strtolower($e->getMessage()), "doesn't exist");
+
+            \Illuminate\Support\Facades\Log::warning('Midtrans Status Sync error: ' . $e->getMessage(), [
+                'booking_code' => $booking_code,
+                'code'         => $e->getCode(),
+            ]);
+
+            $errorMessage = $isNotFound
+                ? __('Transaction has not been completed at Midtrans yet. Please complete payment first.')
+                : __('Unable to check payment status with Midtrans right now. Please try again shortly.');
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok'                   => false,
+                    'booking_code'         => $booking->booking_code,
+                    'booking_status'       => $booking->status,
+                    'booking_status_label' => Booking::statusLabel($booking->status),
+                    'is_paid'              => $booking->status === 'dibayar',
+                    'is_expired'           => $booking->isExpired() || in_array($booking->status, ['kedaluwarsa', 'dibatalkan']),
+                    'message'              => $errorMessage,
+                ], $isNotFound ? 200 : 502);
+            }
+
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
 }

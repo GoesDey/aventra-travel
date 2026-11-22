@@ -1,9 +1,9 @@
 <x-layouts.admin title="Super Admin Financial Dashboard">
     <div class="space-y-8">
         <!-- Hero Header Banner -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-oceanic-deep via-oceanic-deep/95 to-tropical-teal p-8 text-white shadow-xl">
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div class="space-y-2">
+        <div class="relative z-0 overflow-hidden rounded-3xl bg-gradient-to-r from-oceanic-deep via-oceanic-deep/95 to-tropical-teal p-6 lg:p-8 text-white shadow-xl">
+            <div class="relative z-[1] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="space-y-2 min-w-0 flex-1">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur-md text-tropical-teal border border-white/20">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>Financial Settlement &amp; Monitoring Engine</span>
@@ -16,17 +16,17 @@
                     </p>
                 </div>
                 
-                <div class="flex items-center gap-3 self-start md:self-auto">
-                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-right">
-                        <span class="text-xs text-slate-300 block font-medium">Platform Commission</span>
+                <div class="flex items-center gap-3 self-start lg:self-auto shrink-0">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4 text-left lg:text-right">
+                        <span class="text-xs text-slate-300 block font-medium whitespace-nowrap">{{ __('Platform Commission') }}</span>
                         <span class="text-xl font-extrabold text-tropical-teal">10%</span>
-                        <span class="text-[11px] text-slate-300 block">TriHita Standard Rate</span>
+                        <span class="text-[11px] text-slate-300 block whitespace-nowrap">{{ __('TriHita Standard Rate') }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- Background Decorative Shape -->
-            <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
+            <div class="absolute z-0 -right-10 -bottom-10 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
         </div>
 
         <!-- 3 Key Financial Metrics Cards -->
@@ -126,7 +126,7 @@
                             <th class="py-4 px-6 text-center w-16">Rank</th>
                             <th class="py-4 px-6">Partner Agent</th>
                             <th class="py-4 px-6 text-center">Fleet</th>
-                            <th class="py-4 px-6 text-center">Completed Bookings</th>
+                            <th class="py-4 px-6 text-center">{{ __('Successful Bookings') }}</th>
                             <th class="py-4 px-6 text-right">Gross Sales</th>
                             <th class="py-4 px-6 text-right">Platform Share (10%)</th>
                             <th class="py-4 px-6 text-right">Agent Payout (90%)</th>
@@ -139,7 +139,7 @@
                                 $turnover = (int) ($topAgent->total_turnover ?? 0);
                                 $comm = (int) ($topAgent->total_commission ?? 0);
                                 $earning = (int) ($topAgent->total_agent_earning ?? 0);
-                                $bookingsCount = (int) ($topAgent->successful_bookings_count ?? 0);
+                                $bookingsCount = (int) ($topAgent->total_transactions ?? $topAgent->successful_bookings_count ?? 0);
                             @endphp
                             <tr class="hover:bg-surface-container-lowest/80 transition-colors">
                                 <!-- Rank Medal -->

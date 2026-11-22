@@ -56,8 +56,10 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/history', BookingHistory::class)->name('history');
+    Route::get('/history/{booking_code}', [UserBookingController::class, 'historyShow'])->name('history.show');
     Route::get('/payments/{booking_code}', [PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
+    Route::post('/payments/{booking_code}/sync', [PaymentController::class, 'syncStatus'])->name('payments.sync');
 
     // Custom Itinerary
     Route::get('/custom-itinerary', [CustomItineraryController::class, 'create'])->name('custom-itinerary.create');
@@ -75,7 +77,9 @@ Route::get('/super-admin/dashboard', [SuperAdminDashboardController::class, 'ind
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/finance', FinanceDashboard::class)->name('admin.finance');
-    Route::get('/destinations', DestinationManager::class)->name('admin.destinations');
+    Route::get('/destinations', DestinationManager::class)
+        ->middleware('is_super_admin')
+        ->name('admin.destinations');
     Route::get('/packages', PackageManager::class)->name('admin.packages');
     Route::get('/bookings', BookingManager::class)->name('admin.bookings');
 });

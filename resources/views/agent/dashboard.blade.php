@@ -246,29 +246,51 @@
                                 <!-- Agent Status Transition Action -->
                                 <td class="py-4 px-6 text-center">
                                     @if($booking->status === 'dibayar')
-                                        <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm('Start trip for booking {{ $booking->booking_code }}?')">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="berjalan">
-                                            <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all duration-150 active:scale-95">
-                                                <span class="material-symbols-outlined text-sm">play_arrow</span>
-                                                <span>Start Trip</span>
-                                            </button>
-                                        </form>
+                                        <div class="inline-flex flex-wrap items-center justify-center gap-1.5">
+                                            <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm(@js(__('Start trip for booking :code?', ['code' => $booking->booking_code])))">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="berjalan">
+                                                <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all duration-150 active:scale-95">
+                                                    <span class="material-symbols-outlined text-sm">play_arrow</span>
+                                                    <span>{{ __('Start Trip') }}</span>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm(@js(__('Cancel booking :code?', ['code' => $booking->booking_code])))">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="dibatalkan">
+                                                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-all duration-150 active:scale-95">
+                                                    <span class="material-symbols-outlined text-sm">cancel</span>
+                                                    <span>{{ __('Cancel') }}</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     @elseif($booking->status === 'berjalan')
-                                        <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm('Mark trip {{ $booking->booking_code }} as completed?')">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="selesai">
-                                            <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all duration-150 active:scale-95">
-                                                <span class="material-symbols-outlined text-sm">task_alt</span>
-                                                <span>Complete Trip</span>
-                                            </button>
-                                        </form>
+                                        <div class="inline-flex flex-wrap items-center justify-center gap-1.5">
+                                            <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm(@js(__('Mark trip :code as completed?', ['code' => $booking->booking_code])))">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="selesai">
+                                                <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all duration-150 active:scale-95">
+                                                    <span class="material-symbols-outlined text-sm">task_alt</span>
+                                                    <span>{{ __('Complete Trip') }}</span>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('agent.bookings.update-status', $booking) }}" onsubmit="return confirm(@js(__('Cancel booking :code?', ['code' => $booking->booking_code])))">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="dibatalkan">
+                                                <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-all duration-150 active:scale-95">
+                                                    <span class="material-symbols-outlined text-sm">cancel</span>
+                                                    <span>{{ __('Cancel') }}</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     @elseif($booking->status === 'selesai')
                                         <span class="text-xs font-semibold text-emerald-600 inline-flex items-center gap-1">
                                             <span class="material-symbols-outlined text-sm">check</span>
-                                            <span>Trip Completed</span>
+                                            <span>{{ __('Trip Completed') }}</span>
                                         </span>
                                     @else
                                         <span class="text-xs text-outline italic">-</span>

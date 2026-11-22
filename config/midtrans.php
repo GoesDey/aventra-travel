@@ -21,6 +21,11 @@ return [
     'expiry_duration' => (int) env('MIDTRANS_EXPIRY_DURATION', 60),
 
     /*
+    | Override Notification URL (opsional, berguna untuk ngrok / staging).
+    */
+    'notification_url' => env('MIDTRANS_NOTIFICATION_URL', ''),
+
+    /*
     | URL JS Snap (Sandbox vs Production)
     */
     'snap_url' => env('MIDTRANS_IS_PRODUCTION', false)

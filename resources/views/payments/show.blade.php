@@ -126,6 +126,14 @@
                         <span id="payButtonText">{{ __('Pay Now with Midtrans') }}</span>
                     </button>
 
+                    <button type="button" id="syncStatusButton"
+                        class="w-full bg-surface-container-low hover:bg-surface-container text-oceanic-deep border border-outline-variant/40 font-label-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 transition-all duration-200">
+                        <span class="material-symbols-outlined text-lg">sync</span>
+                        <span id="syncStatusButtonText">{{ __('Check payment status') }}</span>
+                    </button>
+
+                    <div id="syncStatusFeedback" class="hidden text-center text-xs font-medium px-4 py-2.5 rounded-xl"></div>
+
                     <p class="text-center text-xs text-outline">
                         {{ __('Secure automated payment methods: QRIS, Virtual Accounts (BCA, Mandiri, BNI, BRI), GoPay, ShopeePay, Credit Card, etc.') }}
                     </p>
@@ -151,8 +159,104 @@
             const snapToken = "{{ $payment->snap_token }}";
             const payButton = document.getElementById('payButton');
             const payButtonText = document.getElementById('payButtonText');
+            const syncStatusButton = document.getElementById('syncStatusButton');
+            const syncStatusButtonText = document.getElementById('syncStatusButtonText');
+            const syncStatusFeedback = document.getElementById('syncStatusFeedback');
             const bookingCode = "{{ $booking->booking_code }}";
+            const syncUrl = "{{ route('payments.sync', $booking->booking_code) }}";
+            const csrfToken = "{{ csrf_token() }}";
             const expiresAtTimestamp = {{ $booking->expires_at ? $booking->expires_at->timestamp * 1000 : 0 }};
+
+            const i18n = {
+                checkStatus: @json(__('Check payment status')),
+                checkingStatus: @json(__('Checking status...')),
+                paidLabel: @json(\App\Models\Booking::statusLabel('dibayar')),
+                paidVerified: @json(__('Paid (Verified)')),
+                syncError: @json(__('Unable to check payment status with Midtrans right now. Please try again shortly.')),
+            };
+
+            function showSyncFeedback(message, isError = false) {
+                if (!syncStatusFeedback) return;
+                syncStatusFeedback.textContent = message;
+                syncStatusFeedback.className = isError
+                    ? 'text-center text-xs font-medium px-4 py-2.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-200'
+                    : 'text-center text-xs font-medium px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200';
+                syncStatusFeedback.classList.remove('hidden');
+            }
+
+            function markAsPaid(statusLabel) {
+                document.getElementById('paymentSuccessBanner').classList.remove('hidden');
+                document.getElementById('bookingStatusBadge').className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
+                document.getElementById('bookingStatusBadge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>${statusLabel || i18n.paidLabel}</span>`;
+                if (payButton) {
+                    payButton.disabled = true;
+                    payButton.className = 'w-full bg-emerald-600 text-white font-bold text-base py-4 rounded-2xl flex items-center justify-center gap-2 cursor-default';
+                    payButtonText.textContent = i18n.paidVerified;
+                }
+                if (syncStatusButton) {
+                    syncStatusButton.classList.add('hidden');
+                }
+                setTimeout(() => {
+                    window.location.href = "{{ route('history') }}";
+                }, 2000);
+            }
+
+            async function syncPaymentStatusWithMidtrans(reloadAfter = false) {
+                if (syncStatusButton) {
+                    syncStatusButton.disabled = true;
+                    syncStatusButton.classList.add('opacity-60', 'cursor-wait');
+                    syncStatusButtonText.textContent = i18n.checkingStatus;
+                }
+
+                try {
+                    const response = await fetch(syncUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.is_paid) {
+                        showSyncFeedback(data.message || i18n.paidVerified, false);
+                        markAsPaid(data.booking_status_label);
+                        return;
+                    }
+
+                    if (data.message) {
+                        showSyncFeedback(data.message, !data.ok);
+                    }
+
+                    if (data.is_expired || reloadAfter) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                    }
+                } catch (err) {
+                    console.error('Midtrans status sync failed:', err);
+                    showSyncFeedback(i18n.syncError, true);
+                    if (reloadAfter) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                } finally {
+                    if (syncStatusButton && !syncStatusButton.classList.contains('hidden')) {
+                        syncStatusButton.disabled = false;
+                        syncStatusButton.classList.remove('opacity-60', 'cursor-wait');
+                        syncStatusButtonText.textContent = i18n.checkStatus;
+                    }
+                }
+            }
+
+            if (syncStatusButton) {
+                syncStatusButton.addEventListener('click', function () {
+                    syncPaymentStatusWithMidtrans(false);
+                });
+            }
 
             // 1. Countdown Timer
             const countdownEl = document.getElementById('countdownTimer');
@@ -195,10 +299,10 @@
 
                 window.snap.pay(snapToken, {
                     onSuccess: function (result) {
-                        window.location.reload();
+                        syncPaymentStatusWithMidtrans(true);
                     },
                     onPending: function (result) {
-                        window.location.reload();
+                        syncPaymentStatusWithMidtrans(true);
                     },
                     onError: function (result) {
                         alert('An error occurred during payment transaction. Please try again.');
@@ -221,19 +325,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.is_paid) {
-                        document.getElementById('paymentSuccessBanner').classList.remove('hidden');
-                        document.getElementById('bookingStatusBadge').className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
-                        document.getElementById('bookingStatusBadge').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Paid</span>';
-                        if (payButton) {
-                            payButton.disabled = true;
-                            payButton.className = 'w-full bg-emerald-600 text-white font-bold text-base py-4 rounded-2xl flex items-center justify-center gap-2 cursor-default';
-                            payButtonText.textContent = "Paid (Verified)";
-                        }
-
-                        // Redirect to history after 2 seconds
-                        setTimeout(() => {
-                            window.location.href = "{{ route('history') }}";
-                        }, 2000);
+                        markAsPaid();
                     } else if (data.is_expired) {
                         countdownEl.textContent = "Expired";
                         payButton.disabled = true;

@@ -143,18 +143,18 @@ class Booking extends Model
 
     /**
      * Guard transisi status oleh agen.
-     * Agen HANYA diizinkan mengubah status:
-     * - 'dibayar' -> 'berjalan'
-     * - 'berjalan' -> 'selesai'
-     * Semua transisi lainnya (misal: menunggu_pembayaran -> selesai) ditolak di backend.
+     * Agen diizinkan mengubah status:
+     * - 'dibayar' -> 'berjalan' atau 'dibatalkan'
+     * - 'berjalan' -> 'selesai' atau 'dibatalkan'
+     * Semua transisi lainnya ditolak di backend.
      *
      * @throws \DomainException
      */
     public function transitionStatusByAgent(string $targetStatus): void
     {
         $allowedTransitions = [
-            'dibayar'  => ['berjalan'],
-            'berjalan' => ['selesai'],
+            'dibayar'  => ['berjalan', 'dibatalkan'],
+            'berjalan' => ['selesai', 'dibatalkan'],
         ];
 
         $currentStatus = $this->status;
@@ -162,7 +162,14 @@ class Booking extends Model
         if (!isset($allowedTransitions[$currentStatus]) || !in_array($targetStatus, $allowedTransitions[$currentStatus], true)) {
             $currentLabel = self::statusLabel($currentStatus);
             $targetLabel  = self::statusLabel($targetStatus);
-            throw new \DomainException("Status transition is not allowed. Agents can only transition bookings from Paid to Ongoing to Completed. Current status: '{$currentLabel}', target: '{$targetLabel}'.");
+            throw new \DomainException(__("Status transition is not allowed. Current status: ':current', target: ':target'.", [
+                'current' => $currentLabel,
+                'target'  => $targetLabel,
+            ]));
+        }
+
+        if ($targetStatus === 'dibatalkan' && $currentStatus === 'dibayar' && $this->package_schedule_id) {
+            PackageSchedule::where('id', $this->package_schedule_id)->increment('quota', $this->guest_count);
         }
 
         $this->update(['status' => $targetStatus]);

@@ -36,6 +36,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Pengajuan mitra travel terbaru milik user.
+     */
+    public function partnerApplication(): HasOne
+    {
+        return $this->hasOne(PartnerApplication::class)->latestOfMany();
+    }
+
+    public function partnerApplications(): HasMany
+    {
+        return $this->hasMany(PartnerApplication::class);
+    }
+
+    /**
      * Relasi One-to-One ke model UserPreference.
      */
     public function userPreference(): HasOne
