@@ -291,7 +291,15 @@
                                         {{ $idx + 1 }}
                                     </span>
                                     <div class="min-w-0 flex-1">
-                                        <h4 class="font-bold text-sm text-oceanic-deep">{{ $stop['name'] }}</h4>
+                                        <div class="flex flex-wrap items-center gap-1.5">
+                                            <h4 class="font-bold text-sm text-oceanic-deep">{{ $stop['name'] }}</h4>
+                                            @if(!empty($stop['requires_sea_crossing']))
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                                                    <span class="material-symbols-outlined text-[12px]">sailing</span>
+                                                    <span>{{ __('Requires sea crossing') }}</span>
+                                                </span>
+                                            @endif
+                                        </div>
                                         <span class="text-xs text-outline">{{ $stop['location'] }}</span>
 
                                         <!-- Driving metric from previous point -->
@@ -393,6 +401,13 @@
                         <span class="font-bold text-oceanic-deep">{{ __('Total Tour Duration') }}</span>
                         <span class="font-display-lg text-base font-bold text-tropical-teal">{{ $totalHours }} {{ __('hrs') }}</span>
                     </div>
+
+                    @if($hasSeaCrossing)
+                        <div class="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 text-xs flex items-start gap-2">
+                            <span class="material-symbols-outlined text-sky-600 text-sm shrink-0 mt-0.5">sailing</span>
+                            <span>{{ __('Sea crossing / fast boat time is not included in this estimate.') }}</span>
+                        </div>
+                    @endif
 
                     <!-- Overtime Status Indicator -->
                     <div class="pt-1">
@@ -727,7 +742,8 @@
                             lng: Number(stop.longitude),
                             name: stop.name,
                             location: stop.location,
-                            stay_hours: stop.stay_hours
+                            stay_hours: stop.stay_hours,
+                            requires_sea_crossing: Boolean(stop.requires_sea_crossing)
                         });
                         bounds.extend(pt);
 
@@ -751,7 +767,20 @@
                 map.fitBounds(bounds, { padding: [40, 40] });
 
                 for (let i = 0; i < points.length - 1; i++) {
-                    drawSegmentRoute(points[i], points[i + 1], routeLayerGroup, requestId);
+                    if (points[i].requires_sea_crossing || points[i + 1].requires_sea_crossing) {
+                        L.polyline(
+                            [[points[i].lat, points[i].lng], [points[i + 1].lat, points[i + 1].lng]],
+                            {
+                                color: '#0284c7',
+                                weight: 4,
+                                opacity: 0.9,
+                                dashArray: '8, 10',
+                                lineCap: 'round'
+                            }
+                        ).addTo(routeLayerGroup);
+                    } else {
+                        drawSegmentRoute(points[i], points[i + 1], routeLayerGroup, requestId);
+                    }
                 }
             } else if (points.length === 1) {
                 map.setView([points[0].lat, points[0].lng], 12);

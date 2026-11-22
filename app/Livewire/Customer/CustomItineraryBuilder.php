@@ -126,15 +126,17 @@ class CustomItineraryBuilder extends Component
         $this->stops = [];
 
         foreach ($availableDests->take(2) as $dest) {
+            $defaultHours = round(max(30, (int) ($dest->default_stay_minutes ?: 120)) / 60, 1);
             $this->stops[] = [
-                'id'               => $dest->id,
-                'name'             => $dest->name,
-                'location'         => $dest->location,
-                'latitude'         => (float) $dest->latitude,
-                'longitude'        => (float) $dest->longitude,
-                'stay_hours'       => 2.0,
-                'leg_distance_km'  => 0.0,
-                'leg_travel_hours' => 0.0,
+                'id'                    => $dest->id,
+                'name'                  => $dest->name,
+                'location'              => $dest->location,
+                'latitude'              => (float) $dest->latitude,
+                'longitude'             => (float) $dest->longitude,
+                'stay_hours'            => $defaultHours,
+                'requires_sea_crossing' => (bool) $dest->requires_sea_crossing,
+                'leg_distance_km'       => 0.0,
+                'leg_travel_hours'      => 0.0,
             ];
         }
 
@@ -214,7 +216,11 @@ class CustomItineraryBuilder extends Component
      */
     public function addDestination(int $destId): void
     {
-        $dest = Destination::where('region', $this->selectedRegion)->find($destId);
+        $dest = Destination::where('region', $this->selectedRegion)
+            ->where('is_active', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->find($destId);
         if (!$dest) {
             return;
         }
@@ -225,15 +231,18 @@ class CustomItineraryBuilder extends Component
             return;
         }
 
+        $defaultHours = round(max(30, (int) ($dest->default_stay_minutes ?: 120)) / 60, 1);
+
         $this->stops[] = [
-            'id'               => $dest->id,
-            'name'             => $dest->name,
-            'location'         => $dest->location,
-            'latitude'         => (float) $dest->latitude,
-            'longitude'        => (float) $dest->longitude,
-            'stay_hours'       => 2.0,
-            'leg_distance_km'  => 0.0,
-            'leg_travel_hours' => 0.0,
+            'id'                    => $dest->id,
+            'name'                  => $dest->name,
+            'location'              => $dest->location,
+            'latitude'              => (float) $dest->latitude,
+            'longitude'             => (float) $dest->longitude,
+            'stay_hours'            => $defaultHours,
+            'requires_sea_crossing' => (bool) $dest->requires_sea_crossing,
+            'leg_distance_km'       => 0.0,
+            'leg_travel_hours'      => 0.0,
         ];
 
         $this->recalculateRoute();
@@ -446,8 +455,16 @@ class CustomItineraryBuilder extends Component
     public function getAvailableDestinationsProperty()
     {
         return Destination::where('region', $this->selectedRegion)
+            ->where('is_active', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
             ->orderBy('name')
             ->get();
+    }
+
+    public function getHasSeaCrossingProperty(): bool
+    {
+        return collect($this->stops)->contains(fn ($stop) => !empty($stop['requires_sea_crossing']));
     }
 
     public function getSelectedAgentProperty(): ?Agent
@@ -576,6 +593,7 @@ class CustomItineraryBuilder extends Component
             'regions'               => $this->getRegionsProperty(),
             'availableAgents'       => $this->getAvailableAgentsProperty(),
             'availableDestinations' => $this->getAvailableDestinationsProperty(),
+            'hasSeaCrossing'        => $this->getHasSeaCrossingProperty(),
             'selectedAgent'         => $this->getSelectedAgentProperty(),
             'basePricePerPax'       => $this->getBasePricePerPaxProperty(),
             'overtimeCalc'          => $this->getOvertimeCalculationProperty(),
