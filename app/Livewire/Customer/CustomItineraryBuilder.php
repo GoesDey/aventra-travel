@@ -9,6 +9,7 @@ use App\Models\Package;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class CustomItineraryBuilder extends Component
@@ -56,10 +57,18 @@ class CustomItineraryBuilder extends Component
             'selectedRegion'  => 'required|in:utara,selatan,timur,barat',
             'selectedAgentId' => 'required|exists:agents,id',
             'startPoint'      => 'required|string|min:5|max:255',
+            'startLat'        => 'required|numeric|between:-8.95,-8.00',
+            'startLng'        => 'required|numeric|between:114.40,115.75',
             'travelDate'      => "required|date|after_or_equal:{$minDate}",
             'guestCount'      => "required|integer|min:1|max:{$maxGuests}",
             'stops'           => 'required|array|min:1',
-            'stops.*.id'      => 'required|exists:destinations,id',
+            'stops.*.id'      => [
+                'required',
+                Rule::exists('destinations', 'id')
+                    ->where('is_active', true)
+                    ->whereNotNull('latitude')
+                    ->whereNotNull('longitude'),
+            ],
             'stops.*.stay_hours' => 'required|numeric|min:0.5|max:12',
             'specialRequests' => 'nullable|string|max:1000',
         ];
@@ -523,7 +532,12 @@ class CustomItineraryBuilder extends Component
 
         $this->validate();
 
-        $agent = Agent::with(['packages' => fn ($p) => $p->where('is_active', true)])->findOrFail($this->selectedAgentId);
+        $agent = Agent::with(['user', 'packages' => fn ($p) => $p->where('is_active', true)])->findOrFail($this->selectedAgentId);
+
+        if (!$agent->user || $agent->user->status !== 'active') {
+            $this->addError('selectedAgentId', __('The selected travel agent is currently inactive. Please choose another partner agent.'));
+            return;
+        }
 
         // Pilih paket acuan agen untuk integritas foreign key booking
         $package = $agent->packages->where('region', $this->selectedRegion)->first()

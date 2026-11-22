@@ -3,6 +3,8 @@
 namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class LoginForm extends Component
@@ -13,7 +15,7 @@ class LoginForm extends Component
     protected function rules(): array
     {
         return [
-            'email'    => 'required|email',
+            'email'    => 'required|email|max:255',
             'password' => 'required',
         ];
     }
@@ -22,7 +24,18 @@ class LoginForm extends Component
     {
         $this->validate();
 
+        $throttleKey = Str::lower(trim($this->email)) . '|' . request()->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('email', __('Too many login attempts. Please try again in :seconds seconds.', [
+                'seconds' => $seconds,
+            ]));
+            return;
+        }
+
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
+            RateLimiter::clear($throttleKey);
             $user = Auth::user();
 
             // 1. Cek jika akun berstatus suspended
@@ -66,6 +79,7 @@ class LoginForm extends Component
             return redirect()->route('packages.index');
         }
 
+        RateLimiter::hit($throttleKey, 60);
         $this->addError('email', __('These credentials do not match our records.'));
     }
 

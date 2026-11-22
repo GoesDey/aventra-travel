@@ -285,7 +285,7 @@ class UserBookingController extends Controller
 
             $payment = \App\Models\Payment::where('booking_id', $lockedBooking->id)->lockForUpdate()->first();
             if ($payment && $payment->payment_status === 'pending') {
-                $payment->update(['payment_status' => 'cancel']);
+                $payment->update(['payment_status' => 'failed']);
             }
 
             return true;

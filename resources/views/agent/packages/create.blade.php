@@ -62,7 +62,7 @@
                         <label for="price_per_pax" class="block font-label-bold text-sm text-on-surface">Price per Person (Rp) <span class="text-error">*</span></label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-medium text-sm">Rp</span>
-                            <input type="number" name="price_per_pax" id="price_per_pax" value="{{ old('price_per_pax') }}" min="0" step="1000" placeholder="750000" required
+                            <input type="number" name="price_per_pax" id="price_per_pax" value="{{ old('price_per_pax') }}" min="10000" max="99999999" step="1000" placeholder="750000" required
                                 class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('price_per_pax') border-error @enderror">
                         </div>
                         @error('price_per_pax') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -71,7 +71,7 @@
                     <!-- Durasi Hari -->
                     <div class="space-y-1.5">
                         <label for="duration_days" class="block font-label-bold text-sm text-on-surface">Duration (Days) <span class="text-error">*</span></label>
-                        <input type="number" name="duration_days" id="duration_days" value="{{ old('duration_days', 1) }}" min="1" required
+                        <input type="number" name="duration_days" id="duration_days" value="{{ old('duration_days', 1) }}" min="1" max="30" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('duration_days') border-error @enderror">
                         @error('duration_days') <span class="text-error text-xs">{{ $message }}</span> @enderror
                     </div>
@@ -79,7 +79,7 @@
                     <!-- Maksimal Tamu / Peserta -->
                     <div class="space-y-1.5">
                         <label for="max_guests" class="block font-label-bold text-sm text-on-surface">Max Guests per Booking <span class="text-error">*</span></label>
-                        <input type="number" name="max_guests" id="max_guests" value="{{ old('max_guests', 10) }}" min="1" required
+                        <input type="number" name="max_guests" id="max_guests" value="{{ old('max_guests', 10) }}" min="1" max="100" required
                             class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none transition-shadow @error('max_guests') border-error @enderror">
                         @error('max_guests') <span class="text-error text-xs">{{ $message }}</span> @enderror
                     </div>
@@ -146,6 +146,8 @@
                     </div>
                 @enderror
 
+                <div id="scheduleInlineError" class="hidden p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium"></div>
+
                 <!-- Dynamic Container -->
                 <div id="schedulesContainer" class="space-y-4">
                     <!-- Dynamic Rows will be inserted here by JavaScript -->
@@ -169,15 +171,42 @@
         document.addEventListener('DOMContentLoaded', function () {
             const container = document.getElementById('schedulesContainer');
             const addBtn = document.getElementById('addScheduleBtn');
+            const durationInput = document.getElementById('duration_days');
+            const maxGuestsInput = document.getElementById('max_guests');
+            const inlineErrorBox = document.getElementById('scheduleInlineError');
 
-            // Default data from old input if validation failed, or at least 1 empty row
             @php
+                $minScheduleDate = now(config('app.timezone', 'Asia/Makassar'))->addDays(3)->toDateString();
                 $defaultSchedules = old('schedules', [
-                    ['start_date' => '', 'end_date' => '', 'quota' => 10],
+                    ['start_date' => $minScheduleDate, 'end_date' => $minScheduleDate, 'quota' => 10],
                 ]);
             @endphp
+            const minScheduleDate = @json($minScheduleDate);
             const oldSchedules = @json($defaultSchedules);
+            const validationErrors = @json($errors->getMessages());
+            const minOneScheduleMsg = @json(__('At least one departure schedule is required.'));
             let scheduleIndex = 0;
+
+            function showInlineWarning(msg) {
+                if (!inlineErrorBox) return;
+                inlineErrorBox.textContent = msg;
+                inlineErrorBox.classList.remove('hidden');
+            }
+
+            function computeEndDate(startDateStr) {
+                if (!startDateStr) return '';
+                const days = Math.max(1, parseInt(durationInput?.value || '1', 10) || 1);
+                const d = new Date(startDateStr + 'T00:00:00');
+                if (isNaN(d.getTime())) return '';
+                d.setDate(d.getDate() + (days - 1));
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            }
+
+            function fieldErr(index, field) {
+                const key = `schedules.${index}.${field}`;
+                return validationErrors[key] && validationErrors[key][0] ? validationErrors[key][0] : '';
+            }
 
             function createScheduleRow(index, data = {}) {
                 const row = document.createElement('div');
@@ -185,27 +214,35 @@
                 row.dataset.index = index;
 
                 const startDate = data.start_date || '';
-                const endDate = data.end_date || '';
-                const quota = data.quota || 10;
+                const endDate = data.end_date || computeEndDate(startDate);
+                const maxGuests = Math.max(1, parseInt(maxGuestsInput?.value || '10', 10) || 10);
+                const quota = data.quota || Math.min(10, maxGuests);
+
+                const startErr = fieldErr(index, 'start_date');
+                const endErr = fieldErr(index, 'end_date');
+                const quotaErr = fieldErr(index, 'quota');
 
                 row.innerHTML = `
-                    <div class="flex flex-col md:flex-row md:items-end gap-4">
+                    <div class="flex flex-col md:flex-row md:items-start gap-4">
                         <div class="flex-1 space-y-1">
                             <label class="block font-label-bold text-xs text-on-surface">Departure Date <span class="text-error">*</span></label>
-                            <input type="date" name="schedules[${index}][start_date]" value="${startDate}" required
-                                class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-start">
+                            <input type="date" name="schedules[${index}][start_date]" value="${startDate}" min="${minScheduleDate}" required
+                                class="w-full bg-surface-white border ${startErr ? 'border-error' : 'border-outline-variant/40'} rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-start">
+                            ${startErr ? `<span class="text-error text-xs block">${startErr}</span>` : ''}
                         </div>
                         <div class="flex-1 space-y-1">
                             <label class="block font-label-bold text-xs text-on-surface">Return Date <span class="text-error">*</span></label>
-                            <input type="date" name="schedules[${index}][end_date]" value="${endDate}" required
-                                class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-end">
+                            <input type="date" name="schedules[${index}][end_date]" value="${endDate}" readonly
+                                class="w-full bg-surface-container-low border ${endErr ? 'border-error' : 'border-outline-variant/40'} rounded-lg px-3 py-2 text-sm text-on-surface-variant schedule-end">
+                            ${endErr ? `<span class="text-error text-xs block">${endErr}</span>` : ''}
                         </div>
                         <div class="w-full md:w-36 space-y-1">
                             <label class="block font-label-bold text-xs text-on-surface">Quota (Seats) <span class="text-error">*</span></label>
-                            <input type="number" name="schedules[${index}][quota]" value="${quota}" min="1" required
-                                class="w-full bg-surface-white border border-outline-variant/40 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none">
+                            <input type="number" name="schedules[${index}][quota]" value="${quota}" min="1" max="${maxGuests}" required
+                                class="w-full bg-surface-white border ${quotaErr ? 'border-error' : 'border-outline-variant/40'} rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-tropical-teal focus:outline-none schedule-quota">
+                            ${quotaErr ? `<span class="text-error text-xs block">${quotaErr}</span>` : ''}
                         </div>
-                        <div class="shrink-0 flex items-center justify-end">
+                        <div class="shrink-0 flex items-center justify-end md:pt-5">
                             <button type="button" class="removeScheduleBtn p-2 text-error hover:bg-rose-100 rounded-lg transition-colors" title="Delete Schedule">
                                 <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
@@ -213,31 +250,51 @@
                     </div>
                 `;
 
-                // Add delete listener
+                const startEl = row.querySelector('.schedule-start');
+                const endEl = row.querySelector('.schedule-end');
+                startEl.addEventListener('change', function () {
+                    endEl.value = computeEndDate(startEl.value);
+                });
+
                 row.querySelector('.removeScheduleBtn').addEventListener('click', function () {
                     const totalRows = container.querySelectorAll('.schedule-row').length;
                     if (totalRows <= 1) {
-                        alert('At least one departure schedule is required.');
+                        showInlineWarning(minOneScheduleMsg);
                         return;
                     }
+                    if (inlineErrorBox) inlineErrorBox.classList.add('hidden');
                     row.remove();
                 });
 
                 container.appendChild(row);
             }
 
-            // Render initial rows
-            if (Array.isArray(oldSchedules) && oldSchedules.length > 0) {
-                oldSchedules.forEach(item => {
-                    createScheduleRow(scheduleIndex++, item);
+            if (durationInput) {
+                durationInput.addEventListener('change', function () {
+                    container.querySelectorAll('.schedule-row').forEach((row) => {
+                        const s = row.querySelector('.schedule-start');
+                        const e = row.querySelector('.schedule-end');
+                        if (s && e && s.value) e.value = computeEndDate(s.value);
+                    });
                 });
-            } else {
-                createScheduleRow(scheduleIndex++);
             }
 
-            // Add row button
+            if (maxGuestsInput) {
+                maxGuestsInput.addEventListener('change', function () {
+                    const maxG = Math.max(1, parseInt(maxGuestsInput.value || '10', 10) || 10);
+                    container.querySelectorAll('.schedule-quota').forEach((q) => { q.max = maxG; });
+                });
+            }
+
+            if (Array.isArray(oldSchedules) && oldSchedules.length > 0) {
+                oldSchedules.forEach(item => createScheduleRow(scheduleIndex++, item));
+            } else {
+                createScheduleRow(scheduleIndex++, { start_date: minScheduleDate, end_date: computeEndDate(minScheduleDate), quota: 10 });
+            }
+
             addBtn.addEventListener('click', function () {
-                createScheduleRow(scheduleIndex++);
+                if (inlineErrorBox) inlineErrorBox.classList.add('hidden');
+                createScheduleRow(scheduleIndex++, { start_date: minScheduleDate, end_date: computeEndDate(minScheduleDate) });
             });
         });
     </script>

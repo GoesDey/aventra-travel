@@ -68,11 +68,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
     Route::post('/payments/{booking_code}/sync', [PaymentController::class, 'syncStatus'])->name('payments.sync');
 
-    // Custom Itinerary
+    // Custom Itinerary (disimpan melalui Livewire CustomItineraryBuilder; route POST legacy dinonaktifkan)
     Route::get('/custom-itinerary', [CustomItineraryController::class, 'create'])->name('custom-itinerary.create');
-    Route::post('/custom-itinerary', [CustomItineraryController::class, 'store'])->name('custom-itinerary.store');
     Route::get('/user/custom-itinerary', [CustomItineraryController::class, 'create'])->name('user.custom-itinerary.create');
-    Route::post('/user/custom-itinerary', [CustomItineraryController::class, 'store'])->name('user.custom-itinerary.store');
 });
 
 use App\Livewire\Admin\FinanceDashboard;

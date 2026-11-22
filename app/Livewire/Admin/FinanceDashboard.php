@@ -44,14 +44,16 @@ class FinanceDashboard extends Component
 
     public function updatedSelectedYear()
     {
+        $this->selectedYear = (int) ($this->selectedYear ?: Carbon::now()->year);
         $this->loadChartData();
     }
 
     private function loadMetrics()
     {
-        $paidStatuses = ['completed', 'confirmed', 'dibayar', 'berjalan', 'selesai'];
-        $activeStatuses = ['pending', 'confirmed', 'menunggu_pembayaran', 'dibayar', 'berjalan'];
-        $refundStatuses = ['cancelled', 'dibatalkan', 'perlu_refund'];
+        // Status resmi sesuai enum bookings.status (konsisten dengan SuperAdminDashboardController)
+        $paidStatuses = ['dibayar', 'berjalan', 'selesai'];
+        $activeStatuses = ['menunggu_pembayaran', 'dibayar', 'berjalan'];
+        $refundStatuses = ['dibatalkan', 'perlu_refund'];
 
         // Total Revenue: sum of total_price where status is completed/paid
         $this->totalRevenue = Booking::whereIn('status', $paidStatuses)->sum('total_price');
@@ -95,10 +97,10 @@ class FinanceDashboard extends Component
 
     private function loadChartData()
     {
-        $paidStatuses = ['completed', 'confirmed', 'dibayar', 'berjalan', 'selesai'];
+        $paidStatuses = ['dibayar', 'berjalan', 'selesai'];
 
         // Monthly Revenue Trend for selected year
-        $currentYear = $this->selectedYear ?? Carbon::now()->year;
+        $currentYear = (int) ($this->selectedYear ?: Carbon::now()->year);
         
         $monthlyData = Booking::whereIn('status', $paidStatuses)
             ->whereYear('created_at', $currentYear)

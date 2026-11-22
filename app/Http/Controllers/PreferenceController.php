@@ -29,8 +29,8 @@ class PreferenceController extends Controller
             'preferred_categories'   => ['required', 'array', 'min:1'],
             'preferred_categories.*' => ['string', 'in:reguler,custom'],
             'preferred_regions'      => ['required', 'array', 'min:1'],
-            'preferred_regions.*'    => ['string', 'in:utara,selatan,timur,barat,lainnya'],
-            'budget_max'             => ['required', 'numeric', 'min:0'],
+            'preferred_regions.*'    => ['string', 'in:utara,selatan,timur,barat'],
+            'budget_max'             => ['required', 'numeric', 'min:0', 'max:9999999999'],
         ], [
             'preferred_categories.required' => __('Please select at least one package type.'),
             'preferred_regions.required'    => __('Please select at least one Bali region.'),

@@ -3,129 +3,82 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Package;
-use App\Models\Destination;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Str;
 
 class PackageManager extends Component
 {
-    use WithPagination, WithFileUploads;
-
-    public int $iteration = 0;
+    use WithPagination;
 
     public string $search = '';
-    public bool $showModal = false;
-    public ?Package $editing = null;
+    public ?int $detailPackageId = null;
 
-    public string $name = '';
-    public string $description = '';
-    public $price_per_pax = 0;
-    public $duration_days = 1;
-    public $max_guests = 10;
-    public bool $is_active = true;
-    public $image;
-    public array $selectedDestinations = [];
-
-    protected function rules(): array
+    public function updatingSearch(): void
     {
-        $editingId = $this->editing?->id;
-        return [
-            'name'          => 'required|string|max:255',
-            'description'   => 'required|string',
-            'price_per_pax' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
-            'max_guests'    => 'required|integer|min:1',
-            'is_active'     => 'boolean',
-            'image'         => 'nullable|image|max:2048',
-        ];
+        $this->resetPage();
+    }
+
+    public function showDetail(int $packageId): void
+    {
+        $this->detailPackageId = $packageId;
+    }
+
+    public function closeDetail(): void
+    {
+        $this->detailPackageId = null;
+    }
+
+    public function toggleActive(Package $package): void
+    {
+        $package->update(['is_active' => !$package->is_active]);
+        session()->flash('success', $package->is_active
+            ? __('Package has been activated.')
+            : __('Package has been deactivated.'));
     }
 
     public function openCreate(): void
     {
-        $this->reset(['name', 'description', 'price_per_pax', 'duration_days', 'max_guests', 'is_active', 'image', 'selectedDestinations', 'editing']);
-        $this->iteration++;
-        $this->duration_days = 1;
-        $this->max_guests = 10;
-        $this->is_active = true;
-        $this->showModal = true;
+        abort(403, __('Super Admin cannot create tour packages. Packages are managed by Partner Agents.'));
     }
 
     public function openEdit(Package $package): void
     {
-        $this->reset('image');
-        $this->iteration++;
-        $this->editing = $package;
-        $this->name = $package->name;
-        $this->description = $package->description;
-        $this->price_per_pax = $package->price_per_pax;
-        $this->duration_days = $package->duration_days;
-        $this->max_guests = $package->max_guests;
-        $this->is_active = (bool) $package->is_active;
-        $this->selectedDestinations = $package->destinations()->pluck('destinations.id')->map(fn ($id) => (string) $id)->toArray();
-        $this->showModal = true;
+        abort(403, __('Super Admin cannot edit partner package content. You may only view details or toggle active status.'));
     }
 
     public function save(): void
     {
-        $validated = $this->validate();
-
-        // Generate a unique slug (append suffix if duplicate)
-        $baseSlug = Str::slug($validated['name']);
-        $slug = $baseSlug;
-        $counter = 1;
-        $existingId = $this->editing?->id;
-        while (Package::where('slug', $slug)->where('id', '!=', $existingId)->exists()) {
-            $slug = $baseSlug . '-' . $counter++;
-        }
-        $validated['slug'] = $slug;
-
-        if ($this->image) {
-            $validated['cover_image'] = $this->image->store('packages', 'public');
-        }
-
-        $isEditing = (bool) $this->editing;
-
-        $package = $this->editing;
-        if ($package) {
-            $package->update($validated);
-        } else {
-            // Explicitly set is_active so new packages are always visible
-            $validated['is_active'] = $this->is_active;
-            $package = Package::create($validated);
-        }
-
-        // Cast IDs to integers for proper pivot sync
-        $syncData = collect($this->selectedDestinations)
-            ->map(fn ($id) => (int) $id)
-            ->values()
-            ->mapWithKeys(fn ($id, $order) => [$id => ['visit_order' => $order + 1]]);
-
-        $package->destinations()->sync($syncData);
-
-        $this->showModal = false;
-        $this->reset(['name', 'description', 'price_per_pax', 'duration_days', 'max_guests', 'is_active', 'image', 'selectedDestinations', 'editing']);
-        $this->duration_days = 1;
-        $this->max_guests = 10;
-        $this->is_active = true;
-        session()->flash('success', $isEditing ? 'Package updated successfully' : 'Package added successfully');
+        abort(403, __('Super Admin cannot modify partner package content.'));
     }
 
     public function delete(Package $package): void
     {
+        if (auth()->user()?->isSuperAdmin()) {
+            abort(403, __('Super Admin cannot delete partner packages. Please deactivate the package instead.'));
+        }
+
+        if ($package->bookings()->exists()) {
+            session()->flash('error', __('This package cannot be deleted because it has existing booking history. Please deactivate it instead.'));
+            return;
+        }
+
         $package->delete();
-        session()->flash('success', 'Package deleted successfully');
+        session()->flash('success', __('Package deleted successfully.'));
     }
 
     public function render()
     {
+        $detailPackage = $this->detailPackageId
+            ? Package::with(['agent.user', 'destinations', 'schedules'])->withCount('bookings')->find($this->detailPackageId)
+            : null;
+
         return view('livewire.admin.package-manager', [
-            'packages' => Package::with('destinations')
+            'packages' => Package::with(['destinations', 'agent'])
+                ->withCount(['bookings', 'schedules'])
                 ->where('name', 'like', "%{$this->search}%")
                 ->latest()
                 ->paginate(10),
-            'availableDestinations' => Destination::all(),
+            'detailPackage' => $detailPackage,
         ])->layout('components.layouts.admin');
     }
 }
