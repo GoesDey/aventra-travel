@@ -8,8 +8,10 @@ use App\Livewire\Customer\BookingHistory;
 use App\Livewire\Admin\DestinationManager;
 use App\Livewire\Admin\PackageManager;
 use App\Livewire\Admin\BookingManager;
+use App\Livewire\Admin\PartnerApplicationManager;
 
 use App\Http\Controllers\UserBookingController;
+use App\Http\Controllers\PartnerApplicationController;
 
 Route::get('/locale/{locale}', function (string $locale) {
     session(['locale' => $locale]);
@@ -52,11 +54,16 @@ Route::middleware('auth')->group(function () {
         if ($user->isAdmin()) {
             return redirect()->route('admin.bookings');
         }
+        if ($user->partnerApplication && in_array($user->partnerApplication->status, ['pending', 'rejected'], true)) {
+            return redirect()->route('partner.status');
+        }
         return redirect()->route('history');
     })->name('dashboard');
 
+    Route::get('/partner/status', [PartnerApplicationController::class, 'status'])->name('partner.status');
     Route::get('/history', BookingHistory::class)->name('history');
     Route::get('/history/{booking_code}', [UserBookingController::class, 'historyShow'])->name('history.show');
+    Route::post('/history/{booking_code}/cancel', [UserBookingController::class, 'cancel'])->name('history.cancel');
     Route::get('/payments/{booking_code}', [PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{booking_code}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
     Route::post('/payments/{booking_code}/sync', [PaymentController::class, 'syncStatus'])->name('payments.sync');
@@ -74,6 +81,10 @@ use App\Http\Controllers\SuperAdminDashboardController;
 Route::get('/super-admin/dashboard', [SuperAdminDashboardController::class, 'index'])
     ->middleware(['auth', 'is_super_admin'])
     ->name('super-admin.dashboard');
+
+Route::get('/super-admin/partner-applications', PartnerApplicationManager::class)
+    ->middleware(['auth', 'is_super_admin'])
+    ->name('super-admin.partner-applications');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/finance', FinanceDashboard::class)->name('admin.finance');

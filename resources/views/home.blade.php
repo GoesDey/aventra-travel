@@ -37,8 +37,8 @@
                     <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
                         <span class="material-symbols-outlined" data-weight="fill" style="font-size: 32px;">verified_user</span>
                     </div>
-                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">{{ __('Trusted & Certified') }}</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Thousands of travelers trust us for their Bali journeys thanks to our high safety standards, verified partners, and full transparency.') }}</p>
+                    <h3 class="font-label-bold text-label-bold text-on-surface mb-3 text-lg">{{ __('Verified Local Partners') }}</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Explore Bali with verified local travel agencies, transparent pricing, and secure online payment.') }}</p>
                 </div>
                 <!-- Value Card 2 -->
                 <div class="bg-surface-white p-8 rounded-xl shadow-sm border border-surface-container hover:shadow-md transition-shadow flex flex-col items-center text-center group">

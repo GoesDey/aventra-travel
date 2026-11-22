@@ -134,7 +134,7 @@
                                 <span class="material-symbols-outlined">event_available</span>
                             </div>
                             <div>
-                                <span class="text-[11px] text-outline block">{{ __('D-3+ Schedules') }}</span>
+                                <span class="text-[11px] text-outline block">{{ __('Available Schedules') }}</span>
                                 <span class="text-sm font-bold text-emerald-600">{{ $availableSchedules->count() }} {{ __('Available') }}</span>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                             </div>
                             <div>
                                 <span class="text-[11px] text-outline block">{{ __('Tour Guide') }}</span>
-                                <span class="text-sm font-bold text-oceanic-deep">{{ __('Certified') }}</span>
+                                <span class="text-sm font-bold text-oceanic-deep">{{ __('Local guide') }}</span>
                             </div>
                         </div>
                     </div>
@@ -396,7 +396,7 @@
                                 @elseif(auth()->user()->role !== 'user')
                                     <div class="p-3 bg-blue-50 border border-blue-200 text-blue-900 rounded-xl text-xs space-y-1 text-center">
                                         <div class="font-bold">{{ __('Account Role:') }} {{ ucfirst(auth()->user()->role) }}</div>
-                                        <p class="text-[11px]">{{ __('Tour bookings can only be made by Traveler accounts (role: user).') }}</p>
+                                        <p class="text-[11px]">{{ __('Tour bookings can only be made by Traveler accounts.') }}</p>
                                     </div>
                                     <button type="button" disabled class="w-full bg-slate-200 text-slate-400 font-bold text-sm py-4 rounded-xl cursor-not-allowed">
                                         {{ __('Access Denied (Travelers Only)') }}

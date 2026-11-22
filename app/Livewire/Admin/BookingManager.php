@@ -33,18 +33,14 @@ class BookingManager extends Component
             if ($booking->package->agent_id !== auth()->user()->agent?->id) {
                 abort(403, __('Access denied. This booking does not belong to your travel packages.'));
             }
-
-            try {
-                $booking->transitionStatusByAgent($status);
-                session()->flash('success', __('Booking status successfully updated to :status.', ['status' => Booking::statusLabel($status)]));
-            } catch (\DomainException $e) {
-                session()->flash('error', $e->getMessage());
-            }
-            return;
         }
 
-        $booking->update(['status' => $status]);
-        session()->flash('success', __('Booking status updated.'));
+        try {
+            $booking->transitionStatusByAgent($status);
+            session()->flash('success', __('Booking status successfully updated to :status.', ['status' => Booking::statusLabel($status)]));
+        } catch (\DomainException $e) {
+            session()->flash('error', $e->getMessage());
+        }
     }
 
     public function render()

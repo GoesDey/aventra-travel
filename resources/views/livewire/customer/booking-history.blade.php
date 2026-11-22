@@ -112,6 +112,36 @@
                         </form>
                     @endif
 
+                    {{-- Cancel Booking Action (awaiting payment only, in-page confirmation) --}}
+                    @if($booking->status === 'menunggu_pembayaran')
+                        <div x-data="{ confirmCancel: false }">
+                            <button type="button"
+                                x-show="!confirmCancel"
+                                @click="confirmCancel = true"
+                                class="w-full px-6 py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-full font-label-bold text-sm text-center transition-colors flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">cancel</span>
+                                {{ __('Cancel Booking') }}
+                            </button>
+
+                            <div x-show="confirmCancel" x-cloak class="p-3 rounded-2xl bg-rose-50 border border-rose-200 space-y-2 text-center">
+                                <p class="text-xs font-semibold text-rose-900">{{ __('Cancel this booking and release its seats?') }}</p>
+                                <div class="flex items-center justify-center gap-2">
+                                    <button type="button" @click="confirmCancel = false"
+                                        class="px-3 py-1.5 rounded-full bg-white border border-outline-variant/40 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low">
+                                        {{ __('Keep Booking') }}
+                                    </button>
+                                    <form method="POST" action="{{ route('history.cancel', $booking->booking_code) }}">
+                                        @csrf
+                                        <button type="submit"
+                                            class="px-3 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
+                                            {{ __('Yes, Cancel') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <a href="{{ route('history.show', $booking->booking_code) }}" 
                        class="px-6 py-2.5 border border-outline-variant/50 text-oceanic-deep hover:bg-surface-container-low rounded-full font-label-bold text-sm text-center transition-colors flex items-center justify-center gap-1.5">
                         <span class="material-symbols-outlined text-base">receipt_long</span>

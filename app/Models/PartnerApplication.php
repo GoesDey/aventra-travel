@@ -58,3 +58,4 @@ class PartnerApplication extends Model
             ->all();
     }
 }
+

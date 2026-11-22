@@ -18,20 +18,6 @@ class LoginForm extends Component
         ];
     }
 
-    public function fillCredentials(string $role): void
-    {
-        if ($role === 'super_admin') {
-            $this->email = 'admin@trihitatour.com';
-            $this->password = 'password';
-        } elseif ($role === 'agent') {
-            $this->email = 'agent@trihitatour.com';
-            $this->password = 'password';
-        } elseif ($role === 'user') {
-            $this->email = 'ardy@example.com';
-            $this->password = 'password';
-        }
-    }
-
     public function login()
     {
         $this->validate();
@@ -71,6 +57,10 @@ class LoginForm extends Component
 
             if ($user->isAdmin()) {
                 return redirect()->route('admin.bookings');
+            }
+
+            if ($user->partnerApplication && in_array($user->partnerApplication->status, ['pending', 'rejected'], true)) {
+                return redirect()->route('partner.status');
             }
 
             return redirect()->route('packages.index');

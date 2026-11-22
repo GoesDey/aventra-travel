@@ -146,7 +146,7 @@
                     <span class="material-symbols-outlined text-sm text-tropical-teal">security</span>
                     <span>{{ __('Secure Payment Information') }}</span>
                 </div>
-                <p>{{ __('Transaction status is processed in real-time via official Midtrans webhooks. If the payment popup closes, you can reopen it as long as the payment window has not expired.') }}</p>
+                <p>{{ __('Payment status is verified automatically. If the payment window closes, you can reopen it as long as the payment deadline has not expired.') }}</p>
             </div>
         </div>
     </div>
@@ -295,7 +295,7 @@
                 }
 
                 payButton.disabled = true;
-                payButtonText.textContent = "Opening Midtrans Snap...";
+                payButtonText.textContent = @json(__('Opening payment page...'));
 
                 window.snap.pay(snapToken, {
                     onSuccess: function (result) {

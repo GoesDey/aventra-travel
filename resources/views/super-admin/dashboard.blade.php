@@ -6,7 +6,7 @@
                 <div class="space-y-2 min-w-0 flex-1">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur-md text-tropical-teal border border-white/20">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Financial Settlement &amp; Monitoring Engine</span>
+                        <span>{{ __('Financial Overview') }}</span>
                     </div>
                     <h2 class="font-display-lg text-2xl md:text-3xl font-bold tracking-tight">
                         Super Admin Financial Dashboard
@@ -96,7 +96,7 @@
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
                     <span>Verified Platform Operators</span>
-                    <span class="font-bold text-purple-700">B2B Partners</span>
+                    <span class="font-bold text-purple-700">{{ __('Travel Partners') }}</span>
                 </div>
             </div>
         </div>
@@ -251,7 +251,7 @@
                         <span>Recent Verified Transactions (Cross-Agent Audit)</span>
                     </h3>
                     <p class="text-xs md:text-sm text-outline mt-1">
-                        List of the latest customer bookings with verified payment status via Midtrans Snap.
+                        {{ __('List of the latest customer bookings with verified online payment.') }}
                     </p>
                 </div>
             </div>

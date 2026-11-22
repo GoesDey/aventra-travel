@@ -142,10 +142,10 @@ class Booking extends Model
     }
 
     /**
-     * Guard transisi status oleh agen.
-     * Agen diizinkan mengubah status:
-     * - 'dibayar' -> 'berjalan' atau 'dibatalkan'
-     * - 'berjalan' -> 'selesai' atau 'dibatalkan'
+     * Guard transisi status oleh agen / admin.
+     * Urutan diizinkan:
+     * - 'dibayar' -> 'berjalan' (hanya jika tanggal mulai sudah tiba) atau 'dibatalkan'
+     * - 'berjalan' -> 'selesai' (hanya jika tanggal/durasi akhir sudah lewat) atau 'dibatalkan'
      * Semua transisi lainnya ditolak di backend.
      *
      * @throws \DomainException
@@ -168,10 +168,79 @@ class Booking extends Model
             ]));
         }
 
+        $timezone = config('app.timezone', 'Asia/Makassar');
+        $now = now($timezone);
+        $this->loadMissing(['schedule', 'package']);
+
+        if ($targetStatus === 'berjalan') {
+            $startAt = $this->resolveTripStartDateTime($timezone);
+            if ($startAt && $now->lt($startAt)) {
+                throw new \DomainException(__('Cannot start trip before the scheduled departure date (:date).', [
+                    'date' => $startAt->translatedFormat('d M Y'),
+                ]));
+            }
+        }
+
+        if ($targetStatus === 'selesai') {
+            $endAt = $this->resolveTripEndDateTime($timezone);
+            if ($endAt && $now->lte($endAt)) {
+                throw new \DomainException(__('Cannot mark trip as completed before the tour end date (:date).', [
+                    'date' => $endAt->translatedFormat('d M Y, H:i'),
+                ]));
+            }
+        }
+
         if ($targetStatus === 'dibatalkan' && $currentStatus === 'dibayar' && $this->package_schedule_id) {
             PackageSchedule::where('id', $this->package_schedule_id)->increment('quota', $this->guest_count);
         }
 
         $this->update(['status' => $targetStatus]);
+    }
+
+    public function resolveTripStartDateTime(?string $timezone = null): ?\Carbon\Carbon
+    {
+        $tz = $timezone ?? config('app.timezone', 'Asia/Makassar');
+
+        if ($this->schedule && $this->schedule->start_date) {
+            return \Carbon\Carbon::parse($this->schedule->start_date->toDateString(), $tz)->startOfDay();
+        }
+
+        if ($this->travel_date) {
+            return \Carbon\Carbon::parse($this->travel_date->toDateString(), $tz)->startOfDay();
+        }
+
+        return null;
+    }
+
+    public function resolveTripEndDateTime(?string $timezone = null): ?\Carbon\Carbon
+    {
+        $tz = $timezone ?? config('app.timezone', 'Asia/Makassar');
+
+        if ($this->is_custom) {
+            if (!$this->travel_date) {
+                return null;
+            }
+
+            $hours = (float) ($this->total_hours ?: config('trihita.custom_base_hours', 8));
+            $durationMinutes = max(60, (int) round($hours * 60));
+
+            return \Carbon\Carbon::parse($this->travel_date->toDateString(), $tz)
+                ->setTime(8, 0, 0)
+                ->addMinutes($durationMinutes);
+        }
+
+        if ($this->schedule && $this->schedule->end_date) {
+            return \Carbon\Carbon::parse($this->schedule->end_date->toDateString(), $tz)->endOfDay();
+        }
+
+        if ($this->travel_date) {
+            $durationDays = max(1, (int) ($this->package?->duration_days ?? 1));
+
+            return \Carbon\Carbon::parse($this->travel_date->toDateString(), $tz)
+                ->addDays($durationDays - 1)
+                ->endOfDay();
+        }
+
+        return null;
     }
 }

@@ -26,3 +26,4 @@ class PartnerApplicationController extends Controller
         return view('partner.status', compact('application'));
     }
 }
+

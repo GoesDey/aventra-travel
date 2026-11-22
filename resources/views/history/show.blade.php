@@ -254,25 +254,56 @@
                         </div>
                     </div>
 
-                    <!-- Actions (Pay Now & Check Payment Status if applicable) -->
+                    <!-- Actions (Pay Now, Check Payment Status & Cancel Booking if applicable) -->
                     @if(in_array($booking->status, ['menunggu_pembayaran', 'kedaluwarsa']))
-                        <div class="pt-4 border-t border-outline-variant/30 flex flex-col sm:flex-row gap-3">
-                            @if($booking->status === 'menunggu_pembayaran')
-                                <a href="{{ route('payments.show', $booking->booking_code) }}"
-                                   class="flex-1 bg-tropical-teal hover:bg-oceanic-deep text-white font-label-bold text-sm py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-colors">
-                                    <span class="material-symbols-outlined text-lg">payments</span>
-                                    <span>{{ __('Pay Now') }}</span>
-                                </a>
-                            @endif
+                        <div class="pt-4 border-t border-outline-variant/30 space-y-3" x-data="{ confirmCancel: false }">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                @if($booking->status === 'menunggu_pembayaran')
+                                    <a href="{{ route('payments.show', $booking->booking_code) }}"
+                                       class="flex-1 bg-tropical-teal hover:bg-oceanic-deep text-white font-label-bold text-sm py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-colors">
+                                        <span class="material-symbols-outlined text-lg">payments</span>
+                                        <span>{{ __('Pay Now') }}</span>
+                                    </a>
+                                @endif
 
-                            <form method="POST" action="{{ route('payments.sync', $booking->booking_code) }}" class="flex-1">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full bg-surface-container-low hover:bg-surface-container border border-outline-variant/50 text-oceanic-deep font-label-bold text-sm py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors">
-                                    <span class="material-symbols-outlined text-lg">sync</span>
-                                    <span>{{ __('Check payment status') }}</span>
-                                </button>
-                            </form>
+                                <form method="POST" action="{{ route('payments.sync', $booking->booking_code) }}" class="flex-1">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full bg-surface-container-low hover:bg-surface-container border border-outline-variant/50 text-oceanic-deep font-label-bold text-sm py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors">
+                                        <span class="material-symbols-outlined text-lg">sync</span>
+                                        <span>{{ __('Check payment status') }}</span>
+                                    </button>
+                                </form>
+                            </div>
+
+                            @if($booking->status === 'menunggu_pembayaran')
+                                <div x-show="!confirmCancel">
+                                    <button type="button" @click="confirmCancel = true"
+                                        class="w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-label-bold text-sm py-3 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors">
+                                        <span class="material-symbols-outlined text-lg">cancel</span>
+                                        <span>{{ __('Cancel Booking') }}</span>
+                                    </button>
+                                </div>
+
+                                <div x-show="confirmCancel" x-cloak class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div class="text-xs text-rose-900 font-semibold">
+                                        {{ __('Are you sure you want to cancel this booking? Reserved seats will be released immediately.') }}
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <button type="button" @click="confirmCancel = false"
+                                            class="px-4 py-2 rounded-xl bg-white border border-outline-variant/40 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low">
+                                            {{ __('Keep Booking') }}
+                                        </button>
+                                        <form method="POST" action="{{ route('history.cancel', $booking->booking_code) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
+                                                {{ __('Yes, Cancel') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 </div>

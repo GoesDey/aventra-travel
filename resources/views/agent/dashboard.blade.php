@@ -58,8 +58,8 @@
                     </p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-outline-variant/20 text-[11px] text-outline flex justify-between">
-                    <span>Isolated: Your Packages Only</span>
-                    <span class="font-bold text-emerald-700">Multi-tenant Secure</span>
+                    <span>{{ __('Based on your tour packages') }}</span>
+                    <span class="font-bold text-emerald-700">{{ __('Partner Revenue') }}</span>
                 </div>
             </div>
 
@@ -100,8 +100,8 @@
                     </p>
                 </div>
                 <div class="text-xs font-bold text-outline bg-surface-container-low px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
-                    <span class="material-symbols-outlined text-sm">lock</span>
-                    <span>Isolated Financial Access</span>
+                    <span class="material-symbols-outlined text-sm">receipt_long</span>
+                    <span>{{ __('Partner Bookings') }}</span>
                 </div>
             </div>
 

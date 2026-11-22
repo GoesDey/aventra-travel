@@ -254,4 +254,49 @@ class UserBookingController extends Controller
 
         return view('history.show', compact('booking'));
     }
+
+    /**
+     * Membatalkan pesanan milik wisatawan (khusus status menunggu_pembayaran) dan mengembalikan kuota.
+     */
+    public function cancel(string $booking_code)
+    {
+        $booking = Booking::where('booking_code', $booking_code)->firstOrFail();
+
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, __('Access denied. This booking does not belong to your account.'));
+        }
+
+        $cancelled = DB::transaction(function () use ($booking) {
+            $schedule = $booking->package_schedule_id
+                ? PackageSchedule::where('id', $booking->package_schedule_id)->lockForUpdate()->first()
+                : null;
+
+            $lockedBooking = Booking::where('id', $booking->id)->lockForUpdate()->first();
+
+            if (!$lockedBooking || $lockedBooking->status !== 'menunggu_pembayaran') {
+                return false;
+            }
+
+            if ($schedule) {
+                $schedule->increment('quota', $lockedBooking->guest_count);
+            }
+
+            $lockedBooking->update(['status' => 'dibatalkan']);
+
+            $payment = \App\Models\Payment::where('booking_id', $lockedBooking->id)->lockForUpdate()->first();
+            if ($payment && $payment->payment_status === 'pending') {
+                $payment->update(['payment_status' => 'cancel']);
+            }
+
+            return true;
+        }, 3);
+
+        if (!$cancelled) {
+            return redirect()->back()
+                ->with('error', __('Only bookings awaiting payment can be cancelled.'));
+        }
+
+        return redirect()->back()
+            ->with('success', __('Your booking has been cancelled and the schedule quota has been restored.'));
+    }
 }

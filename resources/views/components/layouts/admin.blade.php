@@ -30,9 +30,23 @@
         <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
             <div class="text-xs font-bold text-outline uppercase tracking-wider mb-2 px-3">{{ __('Overview') }}</div>
             @if(auth()->user()?->isSuperAdmin())
+            @php
+                $pendingPartnerAppsCount = \Illuminate\Support\Facades\Schema::hasTable('partner_applications')
+                    ? \App\Models\PartnerApplication::where('status', 'pending')->count()
+                    : 0;
+            @endphp
             <a href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('super-admin.dashboard') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
                 <span class="material-symbols-outlined {{ request()->routeIs('super-admin.dashboard') ? 'fill' : '' }}">admin_panel_settings</span>
                 <span class="font-label-bold text-sm">{{ __('Super Admin') }}</span>
+            </a>
+            <a href="{{ route('super-admin.partner-applications') }}" class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg {{ request()->routeIs('super-admin.partner-applications') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
+                <span class="flex items-center gap-3 min-w-0">
+                    <span class="material-symbols-outlined {{ request()->routeIs('super-admin.partner-applications') ? 'fill' : '' }}">how_to_reg</span>
+                    <span class="font-label-bold text-sm truncate">{{ __('Partner Applications') }}</span>
+                </span>
+                @if($pendingPartnerAppsCount > 0)
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 shrink-0">{{ $pendingPartnerAppsCount }}</span>
+                @endif
             </a>
             @endif
             <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('admin.finance') ? 'bg-primary-container/20 text-oceanic-deep font-bold' : 'text-on-surface-variant hover:bg-surface-container-low transition-colors' }}">
@@ -79,6 +93,7 @@
         @php
             $pageTitle = __('Dashboard');
             if(request()->routeIs('super-admin.dashboard')) $pageTitle = __('Super Admin Dashboard');
+            if(request()->routeIs('super-admin.partner-applications')) $pageTitle = __('Partner Applications');
             if(request()->routeIs('admin.finance')) $pageTitle = __('Financial Overview');
             if(request()->routeIs('admin.destinations')) $pageTitle = __('Destination Management');
             if(request()->routeIs('admin.packages')) $pageTitle = __('Package Management');
